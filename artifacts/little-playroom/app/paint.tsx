@@ -118,7 +118,7 @@ export default function PaintScreen() {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
-      <View style={[styles.topBar, { paddingTop: insets.top + 8 }]}>
+      <View style={[styles.topBar, { paddingTop: insets.top + 28 }]}>
         <Pressable
           testID="paint-back"
           accessibilityRole="button"

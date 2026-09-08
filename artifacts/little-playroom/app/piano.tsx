@@ -64,7 +64,7 @@ export default function PianoScreen() {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { paddingTop: Math.max(insets.top, 14), paddingBottom: 12 }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 24, paddingBottom: 12 }]}>
         <Pressable
           testID="piano-back"
           accessibilityRole="button"
