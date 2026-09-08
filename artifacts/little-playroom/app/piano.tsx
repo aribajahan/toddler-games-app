@@ -93,7 +93,7 @@ export default function PianoScreen() {
           isPortrait && {
             flex: 0,
             height: width,
-            left: 28,
+            left: 110,
             position: 'relative',
             width: height,
             transform: [{ rotate: '90deg' }],
@@ -196,7 +196,7 @@ export default function PianoScreen() {
         style={[
           styles.keyboard,
           {
-            paddingBottom: Math.max(landscapeInsets.bottom, 10) + 58,
+            paddingBottom: Math.max(landscapeInsets.bottom, 10) + 34,
             paddingLeft: landscapeInsets.left + 15,
             paddingRight: landscapeInsets.right + 15,
           },
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   progressDot: { backgroundColor: '#E9DFD2', borderRadius: 3, height: 5, width: 5 },
   progressDotDone: { backgroundColor: '#F0A83C' },
   keyboard: { alignItems: 'stretch', flexDirection: 'row', gap: 5, paddingHorizontal: 15 },
-  key: { alignItems: 'center', borderColor: '#E9DFD2', borderRadius: 14, borderWidth: 1, flex: 1, height: 136, justifyContent: 'flex-end', paddingBottom: 16 },
+  key: { alignItems: 'center', borderColor: '#E9DFD2', borderRadius: 14, borderWidth: 1, flex: 1, height: 190, justifyContent: 'flex-end', paddingBottom: 16 },
   keyNext: { borderColor: '#24313D', borderWidth: 2, transform: [{ translateY: -5 }] },
   keyPressed: { transform: [{ translateY: 3 }] },
   keyLabel: { color: '#9AA29E', fontFamily: 'Inter_700Bold', fontSize: 16 },
