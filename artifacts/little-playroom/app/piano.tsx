@@ -143,7 +143,7 @@ export default function PianoScreen() {
         style={[
           styles.keyboard,
           {
-            paddingBottom: Math.max(landscapeInsets.bottom, 10) + (isPortrait ? 58 : 22),
+            paddingBottom: Math.max(landscapeInsets.bottom, 10) + 58,
             paddingLeft: landscapeInsets.left + 15,
             paddingRight: landscapeInsets.right + 15,
           },
