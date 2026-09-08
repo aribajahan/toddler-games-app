@@ -1,0 +1,11 @@
+Woohoo! It finally works, but there are definitely some things that could be better.
+- I don't know if you've even looked at it, but the titles, you can't even read them. They're overlapping, and they're just too high up, so you can't even read them.
+- You can get rid of "Pick something fun to do with the Gemini's AI sign."
+- You can get rid of "There's no wrong way to play." Just "Extra copy: 3 things to try."
+- "Make and play" is fine. You don't have to say "a little space to."
+- When you go to the color studio, same thing: you can't really see the title. It's like "Color studio," and "Make a picture" is cut off. The word "color" is cut off.
+- The marker and pen are crushed at the bottom, so they're not even fitting right. I think you could just make them a little bit more compact. There's not a lot of difference between marker and pen. Pen is just lighter. I think pen should be really fine, right? Right now, marker and pen are kind of the same. Maybe it's marker and spray, or some other texture. Clear works. That's great.
+- The little piano: I don't hear anything when I try to click them, and again, I can't read. Everything is so high up. Not so sure how to word it, but you're crushing the top and the bottom. The keyboard should just flip horizontal, landscape.
+- In this preview, imagine what's happening is when a kid presses piano, they actually have to flip their phone because the piano keys are landscape, right? That means they're not going side to side on the phone. They go from bottom to top, and bottom to top becomes left to right, right? I'm hoping that makes sense, but I think you should get it.
+- "Find the pairs" is so adorable, but why are those images so basic? Now that we're here, how many? At some point, we should think about having a bank of different themed cards. Once you improve the graphics, we can have that.
+Can you evaluate the app on your own as well and tell me what you see? Please confirm whether all the git history is being stored. Essentially, I'm going to connect you to my GitHub, and I'm working on increasing my GitHub activity (the green boxes), so I really want to make sure all of those are able to carry over.
