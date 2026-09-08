@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -8,26 +8,37 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 
-const KEYS = [
-  { label: 'C', color: '#F16E61' },
-  { label: 'D', color: '#F0A83C' },
-  { label: 'E', color: '#F6D65B' },
-  { label: 'F', color: '#7DC7B6' },
-  { label: 'G', color: '#6DB7D8' },
-  { label: 'A', color: '#8F7BC7' },
-  { label: 'B', color: '#D578A6' },
-  { label: 'C', color: '#F16E61' },
-];
-const TWINKLE = ['C', 'C', 'G', 'G', 'A', 'A', 'G', 'F', 'F', 'E', 'E', 'D', 'D', 'C'];
-const NOTE_SOURCES: Record<string, number> = {
-  C: require('../assets/audio/C.wav'),
-  D: require('../assets/audio/D.wav'),
-  E: require('../assets/audio/E.wav'),
-  F: require('../assets/audio/F.wav'),
-  G: require('../assets/audio/G.wav'),
-  A: require('../assets/audio/A.wav'),
-  B: require('../assets/audio/B.wav'),
+const NOTE_SOURCES = {
+  C4: require('../assets/audio/C.wav'),
+  D4: require('../assets/audio/D.wav'),
+  E4: require('../assets/audio/E.wav'),
+  F4: require('../assets/audio/F.wav'),
+  G4: require('../assets/audio/G.wav'),
+  A4: require('../assets/audio/A.wav'),
+  B4: require('../assets/audio/B.wav'),
+  C5: require('../assets/audio/C5.wav'),
 };
+
+const KEYS = [
+  { label: 'C', color: '#F16E61', source: NOTE_SOURCES.C4 },
+  { label: 'D', color: '#F0A83C', source: NOTE_SOURCES.D4 },
+  { label: 'E', color: '#F6D65B', source: NOTE_SOURCES.E4 },
+  { label: 'F', color: '#7DC7B6', source: NOTE_SOURCES.F4 },
+  { label: 'G', color: '#6DB7D8', source: NOTE_SOURCES.G4 },
+  { label: 'A', color: '#8F7BC7', source: NOTE_SOURCES.A4 },
+  { label: 'B', color: '#D578A6', source: NOTE_SOURCES.B4 },
+  { label: 'C', color: '#F16E61', source: NOTE_SOURCES.C5 },
+] as const;
+
+const SONGS = [
+  { name: 'Twinkle Twinkle', shortName: 'Twinkle', notes: [0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0] },
+  { name: 'Mary Had a Little Lamb', shortName: 'Mary', notes: [2, 1, 0, 1, 2, 2, 2, 1, 1, 1, 2, 4, 4, 2, 1, 0, 1, 2, 2, 2, 2, 1, 1, 2, 1, 0] },
+  { name: 'Row, Row, Row Your Boat', shortName: 'Row Boat', notes: [0, 0, 0, 1, 2, 2, 1, 2, 3, 4, 7, 7, 7, 4, 4, 4, 2, 2, 2, 0, 0, 0, 4, 3, 2, 1, 0] },
+  { name: 'Ode to Joy', shortName: 'Ode to Joy', notes: [2, 2, 3, 4, 4, 3, 2, 1, 0, 0, 1, 2, 2, 1, 1, 2, 2, 3, 4, 4, 3, 2, 1, 0, 0, 1, 2, 1, 0, 0] },
+  { name: 'Jingle Bells', shortName: 'Jingle Bells', notes: [2, 2, 2, 2, 2, 2, 2, 4, 0, 1, 2, 3, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 2, 1, 4] },
+  { name: 'Old MacDonald', shortName: 'Old MacDonald', notes: [0, 0, 0, 4, 5, 5, 4, 2, 2, 1, 1, 0, 4, 0, 0, 0, 4, 5, 5, 4, 2, 2, 1, 1, 0] },
+  { name: 'Happy Birthday', shortName: 'Birthday', notes: [0, 0, 1, 0, 3, 2, 0, 0, 1, 0, 4, 3, 0, 0, 7, 5, 3, 2, 1, 6, 6, 5, 3, 4, 3] },
+] as const;
 
 export default function PianoScreen() {
   const router = useRouter();
@@ -37,8 +48,10 @@ export default function PianoScreen() {
   const [activeKey, setActiveKey] = useState<number | null>(null);
   const [guided, setGuided] = useState(true);
   const [songIndex, setSongIndex] = useState(0);
+  const [selectedSongIndex, setSelectedSongIndex] = useState(0);
   const [soundOn, setSoundOn] = useState(true);
-  const player = useAudioPlayer(NOTE_SOURCES.C);
+  const player = useAudioPlayer(NOTE_SOURCES.C4);
+  const selectedSong = SONGS[selectedSongIndex];
 
   useEffect(() => {
     void ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
@@ -48,20 +61,20 @@ export default function PianoScreen() {
     };
   }, []);
 
-  const pressKey = (key: string, index: number) => {
+  const pressKey = (index: number) => {
     setActiveKey(index);
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (soundOn) {
-      player.replace(NOTE_SOURCES[key] ?? NOTE_SOURCES.C);
+      player.replace(KEYS[index]?.source ?? NOTE_SOURCES.C4);
       void player.seekTo(0);
       player.play();
     }
-    if (guided && key === TWINKLE[songIndex]) {
-      setSongIndex((index) => (index + 1) % TWINKLE.length);
+    if (guided && index === selectedSong.notes[songIndex]) {
+      setSongIndex((index) => (index + 1) % selectedSong.notes.length);
     }
   };
 
-  const nextKey = guided ? TWINKLE[songIndex] : null;
+  const nextKeyIndex = guided ? selectedSong.notes[songIndex] : null;
   const isPortrait = height > width;
   const landscapeInsets = isPortrait
     ? { top: insets.left, right: insets.top, bottom: insets.right, left: insets.bottom }
@@ -114,7 +127,7 @@ export default function PianoScreen() {
           style={[styles.modeToggle, guided && styles.modeToggleActive]}
         >
           <Ionicons name={guided ? 'sparkles' : 'sparkles-outline'} size={16} color={guided ? '#24313D' : '#7E8A92'} />
-          <Text style={[styles.modeText, guided && styles.modeTextActive]}>Twinkle mode</Text>
+          <Text style={[styles.modeText, guided && styles.modeTextActive]}>Guided song</Text>
         </Pressable>
         <Pressable
           testID="piano-sound-toggle"
@@ -128,13 +141,47 @@ export default function PianoScreen() {
         </Pressable>
       </View>
 
+      <ScrollView
+        horizontal
+        style={styles.songScroller}
+        contentContainerStyle={[
+          styles.songChoices,
+          {
+            paddingLeft: landscapeInsets.left + 18,
+            paddingRight: landscapeInsets.right + 18,
+          },
+        ]}
+        showsHorizontalScrollIndicator={false}
+      >
+        {SONGS.map((song, index) => {
+          const selected = selectedSongIndex === index;
+          return (
+            <Pressable
+              key={song.name}
+              testID={`piano-song-${index}`}
+              accessibilityRole="button"
+              accessibilityLabel={`Play ${song.name}`}
+              accessibilityState={{ selected }}
+              onPress={() => {
+                setSelectedSongIndex(index);
+                setSongIndex(0);
+                setGuided(true);
+              }}
+              style={[styles.songChoice, selected && styles.songChoiceSelected]}
+            >
+              <Text style={[styles.songChoiceText, selected && styles.songChoiceTextSelected]}>{song.shortName}</Text>
+            </Pressable>
+          );
+        })}
+      </ScrollView>
+
       <View style={styles.songPrompt}>
         <Text style={styles.songPromptText}>
-          {guided ? `Tap the ${nextKey} key to play along` : 'Play any key you like'}
+          {guided && nextKeyIndex !== null ? `Tap the ${KEYS[nextKeyIndex].label} key to play ${selectedSong.shortName}` : 'Play any key you like'}
         </Text>
         <View style={styles.progressDots}>
-          {TWINKLE.slice(0, 7).map((_, index) => (
-            <View key={index} style={[styles.progressDot, index < songIndex % 7 && styles.progressDotDone]} />
+          {selectedSong.notes.slice(0, 8).map((_, index) => (
+            <View key={index} style={[styles.progressDot, index < songIndex % 8 && styles.progressDotDone]} />
           ))}
         </View>
       </View>
@@ -151,14 +198,14 @@ export default function PianoScreen() {
       >
         {KEYS.map((key, index) => {
           const isActive = activeKey === index;
-          const isNext = guided && nextKey === key.label && (key.label !== 'C' || index === 0);
+          const isNext = guided && nextKeyIndex === index;
           return (
             <Pressable
               key={`${key.label}-${index}`}
               testID={`piano-key-${index}`}
               accessibilityRole="button"
               accessibilityLabel={`${key.label} piano key`}
-              onPressIn={() => pressKey(key.label, index)}
+              onPressIn={() => pressKey(index)}
               onPressOut={() => setActiveKey(null)}
               style={({ pressed }) => [
                 styles.key,
@@ -193,6 +240,12 @@ const styles = StyleSheet.create({
   modeTextActive: { color: '#24313D', fontFamily: 'Inter_600SemiBold' },
   soundToggle: { alignItems: 'center', backgroundColor: '#F1E9DF', borderRadius: 18, height: 36, justifyContent: 'center', width: 36 },
   soundToggleActive: { backgroundColor: '#FFF0C6' },
+  songScroller: { flexGrow: 0 },
+  songChoices: { flexDirection: 'row', gap: 7, paddingVertical: 6 },
+  songChoice: { backgroundColor: '#F1E9DF', borderRadius: 14, paddingHorizontal: 11, paddingVertical: 7 },
+  songChoiceSelected: { backgroundColor: '#FFF0C6', borderColor: '#F0A83C', borderWidth: 1 },
+  songChoiceText: { color: '#7E8A92', fontFamily: 'Inter_500Medium', fontSize: 11 },
+  songChoiceTextSelected: { color: '#24313D', fontFamily: 'Inter_600SemiBold' },
   songPrompt: { alignItems: 'center', flex: 1, justifyContent: 'center' },
   songPromptText: { color: '#51606B', fontFamily: 'Inter_500Medium', fontSize: 14, marginBottom: 12 },
   progressDots: { flexDirection: 'row', gap: 5 },
