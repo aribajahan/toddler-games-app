@@ -173,7 +173,6 @@ export default function PaintScreen() {
 
       <View style={[styles.toolbar, { paddingBottom: insets.bottom + 12 }]}>
         <View style={styles.colorRow}>
-          <Text style={styles.toolLabel}>Colors</Text>
           <View style={styles.colorChoices}>
             {FAVORITE_COLORS.map((color) => (
               <Pressable
@@ -204,7 +203,6 @@ export default function PaintScreen() {
 
         <View style={styles.controlsRow}>
           <View style={styles.toolChoice}>
-            <Text style={styles.toolLabel}>Tool</Text>
             <View style={styles.segmented}>
               <Pressable
                 testID="paint-tool-marker"
@@ -235,7 +233,6 @@ export default function PaintScreen() {
             </View>
           </View>
           <View style={styles.sizeChoice}>
-            <Text style={styles.toolLabel}>Size</Text>
             <View style={styles.sizeRow}>
               {[6, 14, 22].map((size) => (
                 <Pressable
@@ -342,22 +339,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingTop: 11,
   },
-  colorRow: { alignItems: 'center', flexDirection: 'row', marginBottom: 11 },
-  toolLabel: { color: '#9AA29E', fontFamily: 'Inter_600SemiBold', fontSize: 11, letterSpacing: 0.5, textTransform: 'uppercase' },
-  colorChoices: { alignItems: 'center', flex: 1, flexDirection: 'row', gap: 10, justifyContent: 'flex-end' },
+  colorRow: { alignItems: 'center', flexDirection: 'row', marginBottom: 14 },
+  colorChoices: { alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'space-between' },
   colorButton: { borderColor: '#FFFFFF', borderRadius: 16, borderWidth: 2, height: 30, width: 30 },
   colorButtonSelected: { borderColor: '#24313D', borderWidth: 3, transform: [{ scale: 1.12 }] },
   colorPressed: { opacity: 0.72 },
   addColorButton: { alignItems: 'center', borderColor: '#CFC5B8', borderRadius: 16, borderStyle: 'dashed', borderWidth: 1.5, height: 30, justifyContent: 'center', width: 30 },
   controlsRow: { alignItems: 'flex-end', flexDirection: 'row', gap: 10, justifyContent: 'space-between' },
   toolChoice: { flex: 1 },
-  segmented: { backgroundColor: '#F1E9DF', borderRadius: 17, flexDirection: 'row', marginTop: 6, padding: 3, width: 148 },
+  segmented: { backgroundColor: '#F1E9DF', borderRadius: 17, flexDirection: 'row', padding: 3, width: 148 },
   segment: { alignItems: 'center', borderRadius: 14, flex: 1, flexDirection: 'row', gap: 4, justifyContent: 'center', paddingVertical: 7 },
   segmentSelected: { backgroundColor: '#FFFFFF' },
   segmentText: { color: '#9AA29E', fontFamily: 'Inter_500Medium', fontSize: 12 },
   segmentTextSelected: { color: '#24313D', fontFamily: 'Inter_600SemiBold' },
   sizeChoice: { alignItems: 'flex-end' },
-  sizeRow: { flexDirection: 'row', gap: 5, marginTop: 6 },
+  sizeRow: { flexDirection: 'row', gap: 5 },
   sizeButton: { alignItems: 'center', backgroundColor: '#F1E9DF', borderRadius: 15, height: 30, justifyContent: 'center', width: 30 },
   sizeButtonSelected: { backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderWidth: 1 },
   sizeDot: { borderRadius: 12 },
