@@ -67,13 +67,13 @@ export default function HomeScreen() {
       style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={[
         styles.content,
-        { paddingTop: insets.top + 14, paddingBottom: insets.bottom + 28 },
+        { paddingTop: insets.top + 28, paddingBottom: insets.bottom + 28 },
       ]}
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.header}>
-        <View>
-          <Text style={styles.heading}>Make & play</Text>
+        <View style={styles.titleWrap}>
+          <Text style={styles.heading}>MAKE & PLAY</Text>
         </View>
         <View style={styles.sunMark}>
           <View style={styles.sunCore} />
@@ -127,11 +127,12 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     minHeight: 58,
   },
+  titleWrap: { flex: 1, minWidth: 0 },
   heading: {
     color: '#24313D',
     fontFamily: 'Inter_700Bold',
-    fontSize: 35,
-    letterSpacing: -1.5,
+    fontSize: 34,
+    letterSpacing: -1.2,
   },
   sunMark: {
     alignItems: 'center',
