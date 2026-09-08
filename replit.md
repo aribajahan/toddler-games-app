@@ -1,6 +1,6 @@
-# [Project name]
+# Little Playroom
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A calm, colorful mobile playroom for children ages 4 to 8, with simple creative games designed for touch.
 
 ## Run & Operate
 
@@ -22,15 +22,25 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/little-playroom/app/index.tsx` — home screen and game launcher
+- `artifacts/little-playroom/app/paint.tsx` — persistent finger-painting studio
+- `artifacts/little-playroom/app/piano.tsx` — landscape piano with guided Twinkle mode
+- `artifacts/little-playroom/app/memory.tsx` — memory matching game
+- `artifacts/little-playroom/constants/colors.ts` — app palette and semantic color tokens
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- The first build is frontend-only and keeps the child's play state on-device with AsyncStorage.
+- Games use focused full-screen routes with minimal navigation chrome and large touch targets.
+- The piano locks to landscape while open and returns to portrait when leaving.
+- Drawing is rendered as SVG strokes from PanResponder touch points for a smooth, native-friendly canvas.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Home screen with three games: Color Studio, Little Piano, and Find the Pairs.
+- Color Studio includes favorite colors, an expanded color grid, marker/pen tools, stroke sizes, clear, and saved drawings.
+- Little Piano includes large touch keys and a guided Twinkle, Twinkle mode.
+- Find the Pairs includes six matching pairs, move counting, match feedback, and replay.
 
 ## User preferences
 
