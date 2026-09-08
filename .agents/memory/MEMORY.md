@@ -1,0 +1,1 @@
+- [Expo orientation previews](expo-orientation-previews.md) — web preview can reject orientation locks; verify piano layout in both true landscape and rotated portrait fallback.
