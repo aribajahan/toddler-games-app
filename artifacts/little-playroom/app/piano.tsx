@@ -104,6 +104,7 @@ export default function PianoScreen() {
       <View
         style={[
           styles.header,
+          isPortrait && styles.headerPortrait,
           {
             paddingTop: landscapeInsets.top + 12,
             paddingBottom: 12,
@@ -250,6 +251,7 @@ const styles = StyleSheet.create({
   orientationStage: { alignItems: 'center', flex: 1, justifyContent: 'center', overflow: 'hidden' },
   screen: { flex: 1 },
   header: { alignItems: 'center', flexDirection: 'row', gap: 8, paddingHorizontal: 18 },
+  headerPortrait: { transform: [{ translateY: -78 }] },
   backButton: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 20, borderWidth: 1, height: 40, justifyContent: 'center', width: 40 },
   pressed: { opacity: 0.65 },
   headerCopy: { flex: 1, marginLeft: 4, minWidth: 0 },
