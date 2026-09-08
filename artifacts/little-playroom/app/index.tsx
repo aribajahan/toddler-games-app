@@ -73,8 +73,7 @@ export default function HomeScreen() {
     >
       <View style={styles.header}>
         <View>
-          <Text style={styles.eyebrow}>A little space to</Text>
-          <Text style={styles.heading}>make & play</Text>
+          <Text style={styles.heading}>Make & play</Text>
         </View>
         <View style={styles.sunMark}>
           <View style={styles.sunCore} />
@@ -82,12 +81,6 @@ export default function HomeScreen() {
           <View style={styles.sunRayTwo} />
           <View style={styles.sunRayThree} />
         </View>
-      </View>
-
-      <View style={styles.welcomeNote}>
-        <View style={styles.noteDot} />
-        <Text style={styles.noteText}>Pick something fun to do.</Text>
-        <Ionicons name="sparkles-outline" size={19} color="#F0A83C" />
       </View>
 
       <View style={styles.sectionHeading}>
@@ -120,10 +113,6 @@ export default function HomeScreen() {
         testID="home-memory-card"
       />
 
-      <View style={styles.footerTip}>
-        <Ionicons name="heart-outline" size={17} color={colors.mutedForeground} />
-        <Text style={styles.footerTipText}>There is no wrong way to play.</Text>
-      </View>
     </ScrollView>
   );
 }
@@ -135,14 +124,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 26,
-  },
-  eyebrow: {
-    color: '#7E8A92',
-    fontFamily: 'Inter_500Medium',
-    fontSize: 15,
-    letterSpacing: 0.2,
-    marginBottom: 4,
+    marginBottom: 30,
+    minHeight: 58,
   },
   heading: {
     color: '#24313D',
@@ -189,30 +172,6 @@ const styles = StyleSheet.create({
     height: 5,
     position: 'absolute',
     width: 4,
-  },
-  welcomeNote: {
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#E9DFD2',
-    borderRadius: 18,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 32,
-    paddingHorizontal: 16,
-    paddingVertical: 15,
-  },
-  noteDot: {
-    backgroundColor: '#7DC7B6',
-    borderRadius: 5,
-    height: 10,
-    width: 10,
-  },
-  noteText: {
-    color: '#51606B',
-    flex: 1,
-    fontFamily: 'Inter_500Medium',
-    fontSize: 14,
   },
   sectionHeading: {
     alignItems: 'baseline',
@@ -273,16 +232,4 @@ const styles = StyleSheet.create({
     width: 32,
   },
   pressed: { opacity: 0.82, transform: [{ scale: 0.985 }] },
-  footerTip: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 7,
-    justifyContent: 'center',
-    marginTop: 26,
-  },
-  footerTipText: {
-    color: '#9AA29E',
-    fontFamily: 'Inter_400Regular',
-    fontSize: 12,
-  },
 });

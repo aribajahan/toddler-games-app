@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Modal,
   PanResponder,
@@ -37,10 +37,10 @@ export default function PaintScreen() {
   const [currentStroke, setCurrentStroke] = useState<Point[]>([]);
   const [selectedColor, setSelectedColor] = useState(FAVORITE_COLORS[0]);
   const [tool, setTool] = useState<Tool>('marker');
-  const [thickness, setThickness] = useState(12);
+  const [thickness, setThickness] = useState(14);
   const [showColors, setShowColors] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const canvasHeight = Math.max(280, height - insets.top - insets.bottom - 184);
+  const canvasHeight = Math.max(280, height - insets.top - insets.bottom - 194);
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
@@ -62,14 +62,15 @@ export default function PaintScreen() {
     }
   }, [isLoaded, strokes]);
 
-  const strokeOpacity = tool === 'marker' ? 1 : 0.38;
+  const strokeOpacity = tool === 'marker' ? 1 : 0.58;
+  const strokeWidth = tool === 'marker' ? thickness : Math.max(2, thickness * 0.45);
   const canvasBackground = '#FFFEFB';
 
   const finishStroke = () => {
     if (currentStroke.length > 1) {
       setStrokes((previous) => [
         ...previous,
-        { points: currentStroke, color: selectedColor, width: thickness, opacity: strokeOpacity },
+        { points: currentStroke, color: selectedColor, width: strokeWidth, opacity: strokeOpacity },
       ]);
       void Haptics.selectionAsync();
     }
@@ -158,7 +159,7 @@ export default function PaintScreen() {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeOpacity={strokeOpacity}
-              strokeWidth={thickness}
+              strokeWidth={strokeWidth}
             />
           )}
         </Svg>
@@ -209,7 +210,10 @@ export default function PaintScreen() {
                 testID="paint-tool-marker"
                 accessibilityRole="button"
                 accessibilityLabel="Marker tool"
-                onPress={() => setTool('marker')}
+                onPress={() => {
+                  setTool('marker');
+                  setThickness((size) => Math.max(size, 10));
+                }}
                 style={[styles.segment, tool === 'marker' && styles.segmentSelected]}
               >
                 <Ionicons name="brush-outline" size={19} color={tool === 'marker' ? '#24313D' : '#9AA29E'} />
@@ -219,7 +223,10 @@ export default function PaintScreen() {
                 testID="paint-tool-pen"
                 accessibilityRole="button"
                 accessibilityLabel="Pen tool"
-                onPress={() => setTool('pen')}
+                onPress={() => {
+                  setTool('pen');
+                  setThickness((size) => Math.min(size, 10));
+                }}
                 style={[styles.segment, tool === 'pen' && styles.segmentSelected]}
               >
                 <Ionicons name="pencil-outline" size={19} color={tool === 'pen' ? '#24313D' : '#9AA29E'} />
@@ -230,7 +237,7 @@ export default function PaintScreen() {
           <View style={styles.sizeChoice}>
             <Text style={styles.toolLabel}>Size</Text>
             <View style={styles.sizeRow}>
-              {[6, 12, 20].map((size) => (
+              {[6, 14, 22].map((size) => (
                 <Pressable
                   key={size}
                   testID={`paint-size-${size}`}
@@ -295,6 +302,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     minHeight: 67,
     paddingHorizontal: 16,
+    paddingBottom: 12,
   },
   iconButton: {
     alignItems: 'center',
@@ -306,7 +314,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 40,
   },
-  topTitle: { flex: 1, marginLeft: 13 },
+  topTitle: { flex: 1, marginLeft: 13, minWidth: 0 },
   screenEyebrow: {
     color: '#B4A99C',
     fontFamily: 'Inter_700Bold',
@@ -332,24 +340,24 @@ const styles = StyleSheet.create({
     borderTopColor: '#E9DFD2',
     borderTopWidth: 1,
     paddingHorizontal: 18,
-    paddingTop: 13,
+    paddingTop: 11,
   },
-  colorRow: { alignItems: 'center', flexDirection: 'row', marginBottom: 14 },
+  colorRow: { alignItems: 'center', flexDirection: 'row', marginBottom: 11 },
   toolLabel: { color: '#9AA29E', fontFamily: 'Inter_600SemiBold', fontSize: 11, letterSpacing: 0.5, textTransform: 'uppercase' },
   colorChoices: { alignItems: 'center', flex: 1, flexDirection: 'row', gap: 10, justifyContent: 'flex-end' },
   colorButton: { borderColor: '#FFFFFF', borderRadius: 16, borderWidth: 2, height: 30, width: 30 },
   colorButtonSelected: { borderColor: '#24313D', borderWidth: 3, transform: [{ scale: 1.12 }] },
   colorPressed: { opacity: 0.72 },
   addColorButton: { alignItems: 'center', borderColor: '#CFC5B8', borderRadius: 16, borderStyle: 'dashed', borderWidth: 1.5, height: 30, justifyContent: 'center', width: 30 },
-  controlsRow: { alignItems: 'flex-end', flexDirection: 'row', justifyContent: 'space-between' },
+  controlsRow: { alignItems: 'flex-end', flexDirection: 'row', gap: 10, justifyContent: 'space-between' },
   toolChoice: { flex: 1 },
-  segmented: { backgroundColor: '#F1E9DF', borderRadius: 17, flexDirection: 'row', marginTop: 7, padding: 3, width: 157 },
-  segment: { alignItems: 'center', borderRadius: 14, flex: 1, flexDirection: 'row', gap: 5, justifyContent: 'center', paddingVertical: 8 },
+  segmented: { backgroundColor: '#F1E9DF', borderRadius: 17, flexDirection: 'row', marginTop: 6, padding: 3, width: 148 },
+  segment: { alignItems: 'center', borderRadius: 14, flex: 1, flexDirection: 'row', gap: 4, justifyContent: 'center', paddingVertical: 7 },
   segmentSelected: { backgroundColor: '#FFFFFF' },
   segmentText: { color: '#9AA29E', fontFamily: 'Inter_500Medium', fontSize: 12 },
   segmentTextSelected: { color: '#24313D', fontFamily: 'Inter_600SemiBold' },
   sizeChoice: { alignItems: 'flex-end' },
-  sizeRow: { flexDirection: 'row', gap: 6, marginTop: 7 },
+  sizeRow: { flexDirection: 'row', gap: 5, marginTop: 6 },
   sizeButton: { alignItems: 'center', backgroundColor: '#F1E9DF', borderRadius: 15, height: 30, justifyContent: 'center', width: 30 },
   sizeButtonSelected: { backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderWidth: 1 },
   sizeDot: { borderRadius: 12 },
