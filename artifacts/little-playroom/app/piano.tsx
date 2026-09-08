@@ -93,6 +93,8 @@ export default function PianoScreen() {
           isPortrait && {
             flex: 0,
             height: width,
+            left: 28,
+            position: 'relative',
             width: height,
             transform: [{ rotate: '90deg' }],
           },
