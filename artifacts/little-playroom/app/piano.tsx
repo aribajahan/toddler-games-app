@@ -74,6 +74,7 @@ export default function PianoScreen() {
           styles.screen,
           { backgroundColor: colors.background },
           isPortrait && {
+            flex: 0,
             height: width,
             width: height,
             transform: [{ rotate: '90deg' }],
