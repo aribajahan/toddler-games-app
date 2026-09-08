@@ -6,20 +6,39 @@ import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 
-type Card = { id: number; pair: string; icon: keyof typeof Ionicons.glyphMap; color: string; flipped: boolean; matched: boolean };
+type Card = {
+  id: number;
+  pair: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  color: string;
+  surface: string;
+  flipped: boolean;
+  matched: boolean;
+};
 const CARD_PAIRS = [
-  { pair: 'sun', icon: 'sunny-outline' as const, color: '#F0A83C' },
-  { pair: 'leaf', icon: 'leaf-outline' as const, color: '#58B8A4' },
-  { pair: 'star', icon: 'star-outline' as const, color: '#8F7BC7' },
-  { pair: 'heart', icon: 'heart-outline' as const, color: '#E86A82' },
-  { pair: 'cloud', icon: 'cloud-outline' as const, color: '#6DB7D8' },
-  { pair: 'flower', icon: 'flower-outline' as const, color: '#F16E61' },
+  { pair: 'sun', icon: 'sunny-outline' as const, color: '#F0A83C', surface: '#FFF4D7' },
+  { pair: 'leaf', icon: 'leaf-outline' as const, color: '#58B8A4', surface: '#E4F4EF' },
+  { pair: 'star', icon: 'star-outline' as const, color: '#8F7BC7', surface: '#EFE9FA' },
+  { pair: 'heart', icon: 'heart-outline' as const, color: '#E86A82', surface: '#FCE7ED' },
+  { pair: 'cloud', icon: 'cloud-outline' as const, color: '#6DB7D8', surface: '#E5F3FA' },
+  { pair: 'flower', icon: 'flower-outline' as const, color: '#F16E61', surface: '#FCE8E3' },
 ];
 
 function shuffleCards(): Card[] {
   return [...CARD_PAIRS, ...CARD_PAIRS]
     .map((card, index) => ({ ...card, id: index, flipped: false, matched: false }))
     .sort(() => Math.random() - 0.5);
+}
+
+function CardIllustration({ card }: { card: Card }) {
+  return (
+    <View style={[styles.artFrame, { backgroundColor: card.surface }]}>
+      <View style={[styles.artHalo, { borderColor: card.color }]} />
+      <Ionicons name={card.icon} size={40} color={card.color} />
+      <View style={[styles.artSpark, { backgroundColor: card.color }]} />
+      <View style={[styles.artDot, { backgroundColor: card.color }]} />
+    </View>
+  );
 }
 
 export default function MemoryScreen() {
@@ -66,7 +85,7 @@ export default function MemoryScreen() {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 14, paddingBottom: 10 }]}>
         <Pressable
           testID="memory-back"
           accessibilityRole="button"
@@ -120,10 +139,12 @@ export default function MemoryScreen() {
               ]}
             >
               {faceUp ? (
-                <Ionicons name={card.icon} size={34} color={card.color} />
+                <CardIllustration card={card} />
               ) : (
-                <View style={styles.cardMark}>
-                  <Ionicons name="sparkles" size={20} color="#F0A83C" />
+                <View style={styles.cardBackArt}>
+                  <View style={styles.cardBackCircleLarge} />
+                  <View style={styles.cardBackCircleSmall} />
+                  <Ionicons name="sparkles" size={19} color="#F0A83C" />
                 </View>
               )}
             </Pressable>
@@ -153,18 +174,24 @@ const styles = StyleSheet.create({
   eyebrow: { color: '#B4A99C', fontFamily: 'Inter_700Bold', fontSize: 10, letterSpacing: 1.4, marginBottom: 3 },
   title: { color: '#24313D', fontFamily: 'Inter_700Bold', fontSize: 20 },
   resetButton: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 20, borderWidth: 1, height: 40, justifyContent: 'center', width: 40 },
-  statsRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 24, paddingVertical: 22 },
+  statsRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 24, paddingVertical: 16 },
   statsLabel: { color: '#B4A99C', fontFamily: 'Inter_700Bold', fontSize: 10, letterSpacing: 1.2, marginBottom: 5 },
   statsValue: { color: '#24313D', fontFamily: 'Inter_700Bold', fontSize: 25 },
   statsTotal: { color: '#9AA29E', fontFamily: 'Inter_500Medium', fontSize: 13 },
   movesPill: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 17, borderWidth: 1, flexDirection: 'row', gap: 6, paddingHorizontal: 11, paddingVertical: 9 },
   movesText: { color: '#7E8A92', fontFamily: 'Inter_500Medium', fontSize: 12 },
   grid: { alignContent: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center', paddingHorizontal: 22 },
-  card: { alignItems: 'center', borderRadius: 20, borderWidth: 1.5, height: 98, justifyContent: 'center', width: '29%' },
+  card: { alignItems: 'center', borderRadius: 20, borderWidth: 1.5, height: 108, justifyContent: 'center', width: '29%' },
   cardBack: { backgroundColor: '#E4F2EF', borderColor: '#C7E3DC' },
   cardMatched: { opacity: 0.55 },
   cardPressed: { transform: [{ scale: 0.95 }] },
-  cardMark: { alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.65)', borderRadius: 16, height: 38, justifyContent: 'center', width: 38 },
+  artFrame: { alignItems: 'center', borderRadius: 28, height: 70, justifyContent: 'center', overflow: 'hidden', position: 'relative', width: 70 },
+  artHalo: { borderRadius: 23, borderStyle: 'dashed', borderWidth: 1.5, height: 52, position: 'absolute', width: 52 },
+  artSpark: { borderRadius: 3, height: 6, position: 'absolute', right: 12, top: 13, transform: [{ rotate: '45deg' }], width: 6 },
+  artDot: { borderRadius: 4, bottom: 11, height: 7, left: 12, position: 'absolute', width: 7 },
+  cardBackArt: { alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: 28, height: 62, justifyContent: 'center', overflow: 'hidden', position: 'relative', width: 62 },
+  cardBackCircleLarge: { backgroundColor: '#CDEAE5', borderRadius: 34, height: 68, left: -17, position: 'absolute', top: 25, width: 68 },
+  cardBackCircleSmall: { backgroundColor: '#FFF0C6', borderRadius: 18, height: 36, position: 'absolute', right: -3, top: -3, width: 36 },
   winMessage: { alignItems: 'center', backgroundColor: '#FFF0C6', borderRadius: 18, flexDirection: 'row', gap: 8, margin: 20, paddingHorizontal: 16, paddingVertical: 13 },
   winText: { color: '#24313D', flex: 1, fontFamily: 'Inter_600SemiBold', fontSize: 13 },
   playAgain: { color: '#B56A16', fontFamily: 'Inter_700Bold', fontSize: 12 },
