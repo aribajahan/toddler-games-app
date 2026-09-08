@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -33,6 +33,7 @@ export default function PianoScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const colors = useColors();
+  const { height, width } = useWindowDimensions();
   const [activeKey, setActiveKey] = useState<number | null>(null);
   const [guided, setGuided] = useState(true);
   const [songIndex, setSongIndex] = useState(0);
@@ -61,10 +62,47 @@ export default function PianoScreen() {
   };
 
   const nextKey = guided ? TWINKLE[songIndex] : null;
+  const isPortrait = height > width;
+
+  if (isPortrait) {
+    return (
+      <View style={[styles.screen, { backgroundColor: colors.background }]}>
+        <View style={[styles.rotateHeader, { paddingTop: insets.top + 24 }]}>
+          <Pressable
+            testID="piano-rotate-back"
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+            onPress={() => router.back()}
+            style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
+          >
+            <Ionicons name="chevron-back" size={22} color="#24313D" />
+          </Pressable>
+          <Text style={styles.rotateEyebrow}>LITTLE PIANO</Text>
+        </View>
+        <View style={[styles.rotatePrompt, { paddingBottom: insets.bottom + 24 }]}>
+          <View style={styles.rotateIcon}>
+            <Ionicons name="phone-landscape-outline" size={46} color="#24313D" />
+          </View>
+          <Text style={styles.rotateTitle}>Turn your phone sideways</Text>
+          <Text style={styles.rotateText}>The piano is ready in landscape.</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { paddingTop: insets.top + 24, paddingBottom: 12 }]}>
+      <View
+        style={[
+          styles.header,
+          {
+            paddingTop: insets.top + 12,
+            paddingBottom: 12,
+            paddingLeft: insets.left + 18,
+            paddingRight: insets.right + 18,
+          },
+        ]}
+      >
         <Pressable
           testID="piano-back"
           accessibilityRole="button"
@@ -112,7 +150,16 @@ export default function PianoScreen() {
         </View>
       </View>
 
-      <View style={[styles.keyboard, { paddingBottom: Math.max(insets.bottom, 10) }]}>
+      <View
+        style={[
+          styles.keyboard,
+          {
+            paddingBottom: Math.max(insets.bottom, 10),
+            paddingLeft: insets.left + 15,
+            paddingRight: insets.right + 15,
+          },
+        ]}
+      >
         {KEYS.map((key, index) => {
           const isActive = activeKey === index;
           const isNext = guided && nextKey === key.label && (key.label !== 'C' || index === 0);
@@ -144,6 +191,12 @@ export default function PianoScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   header: { alignItems: 'center', flexDirection: 'row', gap: 8, paddingHorizontal: 18 },
+  rotateHeader: { alignItems: 'center', flexDirection: 'row', gap: 14, paddingHorizontal: 18 },
+  rotateEyebrow: { color: '#B4A99C', fontFamily: 'Inter_700Bold', fontSize: 11, letterSpacing: 1.5 },
+  rotatePrompt: { alignItems: 'center', flex: 1, justifyContent: 'center', paddingHorizontal: 32 },
+  rotateIcon: { alignItems: 'center', backgroundColor: '#FFF0C6', borderRadius: 38, height: 76, justifyContent: 'center', marginBottom: 22, width: 76 },
+  rotateTitle: { color: '#24313D', fontFamily: 'Inter_700Bold', fontSize: 25, letterSpacing: -0.6, marginBottom: 8, textAlign: 'center' },
+  rotateText: { color: '#7E8A92', fontFamily: 'Inter_400Regular', fontSize: 14, textAlign: 'center' },
   backButton: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 20, borderWidth: 1, height: 40, justifyContent: 'center', width: 40 },
   pressed: { opacity: 0.65 },
   headerCopy: { flex: 1, marginLeft: 4, minWidth: 0 },
