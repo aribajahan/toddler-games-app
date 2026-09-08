@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -49,6 +49,7 @@ export default function PianoScreen() {
   const [guided, setGuided] = useState(true);
   const [songIndex, setSongIndex] = useState(0);
   const [selectedSongIndex, setSelectedSongIndex] = useState(0);
+  const [showSongMenu, setShowSongMenu] = useState(false);
   const [soundOn, setSoundOn] = useState(true);
   const player = useAudioPlayer(NOTE_SOURCES.C4);
   const selectedSong = SONGS[selectedSongIndex];
@@ -125,15 +126,16 @@ export default function PianoScreen() {
           <Text style={styles.title}>Make a song</Text>
         </View>
         <Pressable
-          testID="piano-guided-toggle"
-          accessibilityRole="switch"
-          accessibilityState={{ checked: guided }}
-          accessibilityLabel="Guided song mode"
-          onPress={() => setGuided((value) => !value)}
+          testID="piano-song-picker"
+          accessibilityRole="button"
+          accessibilityLabel={`Choose a song. Current selection: ${guided ? selectedSong.name : 'Free play'}`}
+          accessibilityState={{ expanded: showSongMenu }}
+          onPress={() => setShowSongMenu((value) => !value)}
           style={[styles.modeToggle, guided && styles.modeToggleActive]}
         >
           <Ionicons name={guided ? 'sparkles' : 'sparkles-outline'} size={16} color={guided ? '#24313D' : '#7E8A92'} />
-          <Text style={[styles.modeText, guided && styles.modeTextActive]}>Guided song</Text>
+          <Text style={[styles.modeText, guided && styles.modeTextActive]}>{guided ? selectedSong.shortName : 'Free play'}</Text>
+          <Ionicons name={showSongMenu ? 'chevron-up' : 'chevron-down'} size={14} color="#7E8A92" />
         </Pressable>
         <Pressable
           testID="piano-sound-toggle"
@@ -147,39 +149,52 @@ export default function PianoScreen() {
         </Pressable>
       </View>
 
-      <ScrollView
-        horizontal
-        style={styles.songScroller}
-        contentContainerStyle={[
-          styles.songChoices,
-          {
-            paddingLeft: landscapeInsets.left + 18,
-            paddingRight: landscapeInsets.right + 18,
-          },
-        ]}
-        showsHorizontalScrollIndicator={false}
-      >
-        {SONGS.map((song, index) => {
-          const selected = selectedSongIndex === index;
-          return (
-            <Pressable
-              key={song.name}
-              testID={`piano-song-${index}`}
-              accessibilityRole="button"
-              accessibilityLabel={`Play ${song.name}`}
-              accessibilityState={{ selected }}
-              onPress={() => {
-                setSelectedSongIndex(index);
-                setSongIndex(0);
-                setGuided(true);
-              }}
-              style={[styles.songChoice, selected && styles.songChoiceSelected]}
-            >
-              <Text style={[styles.songChoiceText, selected && styles.songChoiceTextSelected]}>{song.shortName}</Text>
-            </Pressable>
-          );
-        })}
-      </ScrollView>
+      {showSongMenu && (
+        <View
+          style={[
+            styles.songMenu,
+            {
+              right: landscapeInsets.right + 58,
+              top: landscapeInsets.top + 55,
+            },
+          ]}
+        >
+          <Pressable
+            testID="piano-song-free-play"
+            accessibilityRole="button"
+            accessibilityState={{ selected: !guided }}
+            onPress={() => {
+              setGuided(false);
+              setSongIndex(0);
+              setShowSongMenu(false);
+            }}
+            style={[styles.songMenuChoice, !guided && styles.songMenuChoiceSelected]}
+          >
+            <Text style={[styles.songMenuText, !guided && styles.songMenuTextSelected]}>Free play</Text>
+          </Pressable>
+          {SONGS.map((song, index) => {
+            const selected = guided && selectedSongIndex === index;
+            return (
+              <Pressable
+                key={song.name}
+                testID={`piano-song-${index}`}
+                accessibilityRole="button"
+                accessibilityLabel={`Play ${song.name}`}
+                accessibilityState={{ selected }}
+                onPress={() => {
+                  setSelectedSongIndex(index);
+                  setSongIndex(0);
+                  setGuided(true);
+                  setShowSongMenu(false);
+                }}
+                style={[styles.songMenuChoice, selected && styles.songMenuChoiceSelected]}
+              >
+                <Text style={[styles.songMenuText, selected && styles.songMenuTextSelected]}>{song.shortName}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+      )}
 
       <View style={styles.songPrompt}>
         <Text style={styles.songPromptText}>
@@ -197,8 +212,8 @@ export default function PianoScreen() {
           styles.keyboard,
           {
             paddingBottom: Math.max(landscapeInsets.bottom, 10) + 34,
-            paddingLeft: landscapeInsets.left + 15,
-            paddingRight: landscapeInsets.right + 15,
+            paddingLeft: landscapeInsets.left + (isPortrait ? 110 : 15),
+            paddingRight: landscapeInsets.right + (isPortrait ? 45 : 15),
           },
         ]}
       >
@@ -246,12 +261,11 @@ const styles = StyleSheet.create({
   modeTextActive: { color: '#24313D', fontFamily: 'Inter_600SemiBold' },
   soundToggle: { alignItems: 'center', backgroundColor: '#F1E9DF', borderRadius: 18, height: 36, justifyContent: 'center', width: 36 },
   soundToggleActive: { backgroundColor: '#FFF0C6' },
-  songScroller: { flexGrow: 0 },
-  songChoices: { flexDirection: 'row', gap: 7, paddingVertical: 6 },
-  songChoice: { backgroundColor: '#F1E9DF', borderRadius: 14, paddingHorizontal: 11, paddingVertical: 7 },
-  songChoiceSelected: { backgroundColor: '#FFF0C6', borderColor: '#F0A83C', borderWidth: 1 },
-  songChoiceText: { color: '#7E8A92', fontFamily: 'Inter_500Medium', fontSize: 11 },
-  songChoiceTextSelected: { color: '#24313D', fontFamily: 'Inter_600SemiBold' },
+  songMenu: { backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 16, borderWidth: 1, flexDirection: 'row', flexWrap: 'wrap', gap: 6, padding: 8, position: 'absolute', width: 290, zIndex: 10 },
+  songMenuChoice: { backgroundColor: '#F1E9DF', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 7 },
+  songMenuChoiceSelected: { backgroundColor: '#FFF0C6', borderColor: '#F0A83C', borderWidth: 1 },
+  songMenuText: { color: '#7E8A92', fontFamily: 'Inter_500Medium', fontSize: 11 },
+  songMenuTextSelected: { color: '#24313D', fontFamily: 'Inter_600SemiBold' },
   songPrompt: { alignItems: 'center', flex: 1, justifyContent: 'center' },
   songPromptText: { color: '#51606B', fontFamily: 'Inter_500Medium', fontSize: 14, marginBottom: 12 },
   progressDots: { flexDirection: 'row', gap: 5 },
