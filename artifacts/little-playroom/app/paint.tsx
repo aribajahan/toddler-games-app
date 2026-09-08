@@ -40,7 +40,7 @@ export default function PaintScreen() {
   const [thickness, setThickness] = useState(14);
   const [showColors, setShowColors] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const canvasHeight = Math.max(280, height - insets.top - insets.bottom - 194);
+  const canvasHeight = Math.max(280, height - insets.top - insets.bottom - 222);
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
@@ -118,7 +118,7 @@ export default function PaintScreen() {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
-      <View style={[styles.topBar, { paddingTop: insets.top + 28 }]}>
+      <View style={[styles.topBar, { paddingTop: insets.top + 56 }]}>
         <Pressable
           testID="paint-back"
           accessibilityRole="button"

@@ -85,7 +85,7 @@ export default function MemoryScreen() {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { paddingTop: insets.top + 28, paddingBottom: 10 }]}>
+      <View style={[styles.header, { paddingTop: insets.top + 56, paddingBottom: 10 }]}>
         <Pressable
           testID="memory-back"
           accessibilityRole="button"
