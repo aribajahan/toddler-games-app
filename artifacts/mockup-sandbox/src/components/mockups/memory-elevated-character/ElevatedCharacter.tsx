@@ -1,142 +1,100 @@
-import type { ReactNode } from 'react';
 import '../memory-art-directions/_group.css';
 import { MemoryBoard, type PreviewSubject } from '../memory-art-directions/_shared/MemoryBoard';
 
-const ink = '#24313D';
-
-function Art({ children }: { children: ReactNode }) {
-  return (
-    <svg aria-hidden="true" focusable="false" height="74" viewBox="0 0 80 80" width="74">
-      {children}
-    </svg>
-  );
-}
+const ink = '#29353A';
+const artProps = { 'aria-hidden': true, height: 74, viewBox: '0 0 80 80', width: 74 };
 
 function Cat() {
   return (
-    <Art>
-      <path
-        d="M19 38 18 14q0-3 3-1l14 10q5-2 10 0l14-10q3-2 3 1l-1 24q-1 22-21 26-20-4-21-26Z"
-        fill="#E88727"
-      />
-      <path d="m22 18 10 8-9 4Zm36 0-10 8 9 4Z" fill="#F7BD88" />
-      <path d="M24 39q0-16 16-18 16 2 16 18 0 18-16 22-16-4-16-22Z" fill="#F09A2E" />
-      <path d="M30 29q3-4 7-2m6 0q4-2 7 2" fill="none" stroke="#B96822" strokeLinecap="round" strokeWidth="2" />
-      <ellipse cx="40" cy="48" fill="#FFE1AE" rx="11" ry="10" />
-      <ellipse cx="33" cy="39" fill={ink} rx="3.1" ry="4.2" />
-      <ellipse cx="47" cy="39" fill={ink} rx="3.1" ry="4.2" />
-      <circle cx="34" cy="38" fill="#FFF8E9" r="1.1" />
-      <circle cx="48" cy="38" fill="#FFF8E9" r="1.1" />
-      <path d="m40 46-3 2q3 3 6 0Zm0 3q-1 5-5 5m5-5q1 5 5 5M26 48l-11-2m11 7-10 3m38-8 11-2m-11 7 10 3" fill="none" stroke={ink} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
-      <path d="M23 59q-2 8 5 9h7q-1-7-7-9Zm22 0q-1 7-1 9h8q6-1 3-9Z" fill="#DF7D22" />
-      <path d="M57 58q13 2 12-9-1-7-8-7" fill="none" stroke="#E88727" strokeLinecap="round" strokeWidth="6" />
-    </Art>
+    <svg {...artProps}>
+      <path d="M18 63q-2-15 7-25 3-4 8-6L31 16q0-3 3-1l11 9q6-1 12 2l9-7q3-2 3 2l-1 20q3 5 2 12-1 12-13 16H30q-9-1-12-6Z" fill="#E88727" />
+      <path d="M35 27q8-8 18-2 10 6 9 18-1 15-15 19-15-1-17-14-2-13 5-21Z" fill="#F09B2C" />
+      <path d="m34 19 9 7-9 5Zm29 1-9 7 9 3Z" fill="#F8C18C" />
+      <path d="M36 46q5-7 13-5 5 1 7 7-3 9-11 10-7-2-9-12Z" fill="#FFE0AC" />
+      <ellipse cx="45" cy="36" fill={ink} rx="3.3" ry="4.3" />
+      <circle cx="46" cy="35" fill="#FFF9ED" r="1.1" />
+      <path d="m48 44 3 2-3 3q-4-1-4-3Zm1 5q-1 4-5 5m4-5q2 3 5 3M39 48l-8 1" fill="none" stroke={ink} strokeLinecap="round" strokeWidth="1.7" />
+      <path d="M24 61q6 5 14 4M57 60q6 1 10-5-1 11-11 13" fill="none" stroke="#C9691F" strokeLinecap="round" strokeWidth="5" />
+      <path d="M28 28q3 4 3 8m26-8q-3 3-4 6" fill="none" stroke="#C8661E" strokeLinecap="round" strokeWidth="2" />
+    </svg>
   );
 }
 
 function Duck() {
   return (
-    <Art>
-      <path d="M27 49q-2-16 11-22 10-5 20 3 6 5 4 13 7 2 8 8-3 8-14 6-5 9-17 11H24q0-12 9-15-5-1-6-4Z" fill="#E4B536" />
-      <path d="M40 30q-5-8-1-15 8 3 9 12Z" fill="#F0C84B" />
-      <path d="M57 37q10-3 17 2-4 8-16 6Z" fill="#E77F3C" />
-      <path d="M30 46q8-8 18 1-3 9-15 8Z" fill="#F3C945" />
-      <circle cx="54" cy="29" fill={ink} r="2.7" />
-      <circle cx="55" cy="28" fill="#FFF8E9" r="0.8" />
-      <path d="M39 64v6m16-7v7m-20 0h9m6 0h9" fill="none" stroke={ink} strokeLinecap="round" strokeWidth="2.2" />
-      <path d="M39 25q-2-5 1-9" fill="none" stroke="#D99B25" strokeLinecap="round" strokeWidth="1.8" />
-    </Art>
+    <svg {...artProps}>
+      <path d="M19 54q1-14 12-20 7-4 15-1 8 3 11 11 5 1 10 6-4 7-13 8H31q-10 0-12-4Z" fill="#E7B833" />
+      <path d="M30 37q-1-12 9-18 11-5 18 4 5 7-1 15-5 6-14 5Z" fill="#F2C647" />
+      <path d="M54 34q11-5 19 1-4 7-17 7Z" fill="#E37D34" />
+      <path d="M28 47q9-8 19 0-2 10-14 9Z" fill="#D79F27" />
+      <circle cx="48" cy="27" fill={ink} r="2.5" />
+      <circle cx="48.7" cy="26.2" fill="#FFF9ED" r=".8" />
+      <path d="M35 22q-1-7 5-11 6 5 4 12" fill="#F0C94A" />
+      <path d="M24 61q11 3 21 0" fill="none" stroke="#C99222" strokeLinecap="round" strokeWidth="2" />
+    </svg>
   );
 }
 
 function Elephant() {
   return (
-    <Art>
-      <path d="M18 43q0-22 22-25 22 3 22 25v12q-2 10-22 10T18 55Z" fill="#89AAB9" />
-      <path d="M24 28Q11 22 10 38q0 16 14 17l4-7q-8-2-8-10 0-6 8-5Zm32 0q13-6 14 10 0 16-14 17l-4-7q8-2 8-10 0-6-8-5Z" fill="#AFC6CF" />
-      <path d="M36 39v15q0 11 8 10 7-2 3-8-5 2-6-5V40q0-4-5-1Z" fill="#789BAA" />
-      <ellipse cx="32" cy="37" fill={ink} rx="2.7" ry="3.2" />
-      <ellipse cx="50" cy="37" fill={ink} rx="2.7" ry="3.2" />
-      <circle cx="33" cy="36" fill="#F7FBF7" r="0.8" />
-      <circle cx="51" cy="36" fill="#F7FBF7" r="0.8" />
-      <path d="M35 49q5 4 10 0m-20 9-1 10m12-9v9m16-10 1 10m8-11 2 10M20 70h8m6 0h8m8 0h8m3 0h7" fill="none" stroke={ink} strokeLinecap="round" strokeWidth="2" />
-      <path d="M18 31q-4-4-3-9" fill="none" stroke="#789BAA" strokeLinecap="round" strokeWidth="2.2" />
-    </Art>
+    <svg {...artProps}>
+      <path d="M15 52q-2-15 7-25 9-9 23-7 13 2 19 12 5 9 1 21-4 11-17 12H29q-12-1-14-13Z" fill="#8BAAB8" />
+      <path d="M27 25q-13-9-17 2-3 12 10 20 6 3 11-2-8-7-6-15 1-3 2-5Z" fill="#B2C9D0" />
+      <path d="M49 24q11-5 15 4 3 9-6 15-5 3-10-1 7-7 3-18Z" fill="#A5C2CB" />
+      <path d="M48 37q4 5 3 12-1 10-8 13-5 0-4-5 2-6 0-12-2-8 3-10Z" fill="#7698A8" />
+      <circle cx="34" cy="35" fill={ink} r="2.7" />
+      <circle cx="51" cy="34" fill={ink} r="2.3" />
+      <path d="M35 48q5 3 10 0M25 63q6 2 11-1m8 1q6 3 12-1" fill="none" stroke="#638797" strokeLinecap="round" strokeWidth="1.8" />
+    </svg>
   );
 }
 
 function Apple() {
   return (
-    <Art>
-      <path d="M40 27q-10-8-20-1-11 8-6 25 5 18 17 19 6 1 9-3 3 4 9 3 12-1 17-19 5-17-6-25-10-7-20 1Z" fill="#D9544E" />
-      <path d="M40 27q-1-10 6-16" fill="none" stroke="#70472E" strokeLinecap="round" strokeWidth="3.2" />
-      <path d="M45 14q9-6 18-2-3 10-18 10Z" fill="#6FA268" />
-      <path d="M22 38q3-7 9-8" fill="none" stroke="#F2927E" strokeLinecap="round" strokeWidth="3.5" />
-      <path d="M17 61q-2 4 1 7m45-7q2 4-1 7" fill="none" stroke="#C74C48" strokeLinecap="round" strokeWidth="2" />
-    </Art>
+    <svg {...artProps}>
+      <path d="M40 27q-9-8-19-1-10 8-5 25 5 17 16 19 5 1 8-3 3 4 8 3 12-2 17-19 5-17-5-25-10-7-20 1Z" fill="#D9544E" />
+      <path d="M39.5 27q-1-8 6-15" fill="none" stroke="#72472C" strokeLinecap="round" strokeWidth="3.2" />
+      <path d="M45 14q9-6 18-2-3 10-18 10Z" fill="#6FA267" />
+      <path d="M21 38q3-7 9-9" fill="none" stroke="#F3937E" strokeLinecap="round" strokeWidth="3.4" />
+      <path d="M52 63q-7 4-13 3" fill="none" stroke="#C14745" strokeLinecap="round" strokeWidth="2" />
+    </svg>
   );
 }
 
 function Car() {
   return (
-    <Art>
-      <path d="M12 48h5l6-14q2-5 8-6h18q6 1 9 7l7 13q4 1 4 6v8H9v-9q0-4 3-5Z" fill="#3186AD" />
-      <path d="m25 32-5 15h20V32Zm17 0v15h20l-7-12q-2-3-6-3Z" fill="#BFE0E5" />
-      <path d="M42 32v15" stroke="#28718F" strokeWidth="2" />
-      <path d="M12 52h6m49 0h6" stroke="#F6C83F" strokeLinecap="round" strokeWidth="3.5" />
-      <circle cx="23" cy="63" fill="#24313D" r="8.5" />
-      <circle cx="57" cy="63" fill="#24313D" r="8.5" />
-      <circle cx="23" cy="63" fill="#D9DDD8" r="3.5" />
-      <circle cx="57" cy="63" fill="#D9DDD8" r="3.5" />
-      <path d="M34 52h8" stroke="#236B8A" strokeLinecap="round" strokeWidth="2.5" />
-      <circle cx="70" cy="52" fill="#E67E66" r="2.5" />
-    </Art>
+    <svg {...artProps}>
+      <path d="m11 48 7-15q2-6 10-7h20q7 1 10 7l8 15q4 2 4 7v7H9v-9q0-4 2-5Z" fill="#2F86AD" />
+      <path d="m24 30-5 15h20V30Zm17 0v15h21l-7-12q-2-3-6-3Z" fill="#B9DCE2" />
+      <path d="M41 30v15M12 52h6m48 0h4" fill="none" stroke="#26708D" strokeLinecap="round" strokeWidth="2" />
+      <circle cx="24" cy="63" fill="#293D45" r="8" />
+      <circle cx="57" cy="63" fill="#293D45" r="8" />
+      <circle cx="24" cy="63" fill="#D8DDD8" r="3.5" />
+      <circle cx="57" cy="63" fill="#D8DDD8" r="3.5" />
+      <path d="M12 51h5m51 0h-5" stroke="#F4C642" strokeLinecap="round" strokeWidth="3.5" />
+    </svg>
   );
 }
 
 function Bear() {
   return (
-    <Art>
-      <circle cx="24" cy="25" fill="#956448" r="11" />
-      <circle cx="56" cy="25" fill="#956448" r="11" />
-      <circle cx="24" cy="25" fill="#B98562" r="5" />
-      <circle cx="56" cy="25" fill="#B98562" r="5" />
-      <path d="M19 40q0-21 21-22 21 1 21 22v12q0 18-21 18T19 52Z" fill="#A97550" />
-      <path d="M23 39q3-8 9-10m16 0q6 2 9 10" fill="none" stroke="#8C5C43" strokeLinecap="round" strokeWidth="2" />
-      <ellipse cx="40" cy="49" fill="#E0B28C" rx="12" ry="10" />
-      <ellipse cx="32" cy="39" fill={ink} rx="2.7" ry="3.3" />
-      <ellipse cx="48" cy="39" fill={ink} rx="2.7" ry="3.3" />
-      <circle cx="33" cy="38" fill="#FFF8E9" r="0.8" />
-      <circle cx="49" cy="38" fill="#FFF8E9" r="0.8" />
-      <path d="m40 47-3 2q3 3 6 0Zm0 3q-1 5-5 5m5-5q1 5 5 5M25 62q-3 4-1 7m31-7q3 4 1 7" fill="none" stroke={ink} strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" />
-    </Art>
+    <svg {...artProps}>
+      <path d="M20 29q-3-10 5-14 7-4 12 3 7-4 14 0 8 5 4 14 7 9 3 21-4 11-16 13-14 1-23-7-9-9-3-21Z" fill="#A97550" />
+      <path d="M24 20q5-5 11 1l-3 9q-8 3-11-3-2-4 3-7Zm30 0q-5-5-11 1l3 9q8 3 11-3 2-4-3-7Z" fill="#C18A63" />
+      <path d="M27 39q5-10 13-10t13 10q0 15-13 21-13-6-13-21Z" fill="#B98159" />
+      <ellipse cx="40" cy="48" fill="#E2B48A" rx="11" ry="9" />
+      <ellipse cx="34" cy="37" fill={ink} rx="2.8" ry="3.4" />
+      <ellipse cx="47" cy="37" fill={ink} rx="2.4" ry="3.2" />
+      <path d="m37 46 3-2 3 2-3 3Zm3 3q-1 4-5 4m5-4q1 4 5 4" fill="none" stroke={ink} strokeLinecap="round" strokeWidth="1.7" />
+      <path d="M27 62q6 5 12 1m3 0q6 4 12-1" fill="none" stroke="#8D5E46" strokeLinecap="round" strokeWidth="4" />
+    </svg>
   );
 }
 
-function renderArtwork(subject: PreviewSubject): ReactNode {
-  switch (subject) {
-    case 'cat':
-      return <Cat />;
-    case 'duck':
-      return <Duck />;
-    case 'elephant':
-      return <Elephant />;
-    case 'apple':
-      return <Apple />;
-    case 'car':
-      return <Car />;
-    case 'bear':
-      return <Bear />;
-  }
-  return null;
+function renderArtwork(subject: PreviewSubject) {
+  return { cat: <Cat />, duck: <Duck />, elephant: <Elephant />, apple: <Apple />, car: <Car />, bear: <Bear /> }[subject];
 }
 
 export default function ElevatedCharacter() {
-  return (
-    <MemoryBoard
-      direction="CHARACTER C"
-      note="Friendly shapes, clear clues — remember the little details."
-      renderArtwork={renderArtwork}
-    />
-  );
+  return <MemoryBoard direction="Character C" note="Distinct silhouettes, calm details, easy to remember." renderArtwork={renderArtwork} />;
 }
