@@ -193,7 +193,6 @@ export default function MemoryScreen() {
                 <View style={styles.cardBackArt}>
                   <View style={styles.cardBackCircleLarge} />
                   <View style={styles.cardBackCircleSmall} />
-                  <Ionicons name="sparkles" size={19} color="#F0A83C" />
                 </View>
               )}
             </Pressable>
