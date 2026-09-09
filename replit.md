@@ -7,6 +7,7 @@ A calm, colorful mobile playroom for children ages 4 to 8, with simple creative 
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
+- `pnpm github:sync` — sync committed local `main` history to GitHub using the managed connection
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 - Required env: `DATABASE_URL` — Postgres connection string
@@ -48,7 +49,9 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- `pnpm github:sync` is the credential-safe GitHub backup path. It uses Replit's managed GitHub OAuth connection through the API, never a personal access token.
+- The sync refuses to run from a non-`main` branch or dirty worktree, refuses to overwrite a divergent GitHub `main`, and only performs a non-force update after validating the local commit and tree SHAs.
+- A successful run reports either that GitHub is already up to date or how many commits were pushed. A failed run can leave unreferenced GitHub objects, but it never advances the branch to an unexpected history.
 
 ## Pointers
 

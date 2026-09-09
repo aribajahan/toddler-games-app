@@ -1,1 +1,2 @@
 - [Expo orientation previews](expo-orientation-previews.md) — web preview can reject orientation locks; verify piano layout in both true landscape and rotated portrait fallback.
+- [GitHub OAuth sync](github-oauth-sync.md) — Replit-managed GitHub OAuth is available through the connector proxy, not ordinary Git credential authentication.
