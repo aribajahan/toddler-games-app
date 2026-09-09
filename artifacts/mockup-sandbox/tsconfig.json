@@ -12,7 +12,8 @@
     "allowImportingTsExtensions": true,
     "types": ["node", "vite/client"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "react-native-svg": ["./src/lib/react-native-svg-web.tsx"]
     }
   }
 }

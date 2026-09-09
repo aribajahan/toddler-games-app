@@ -46,10 +46,16 @@ export default defineConfig({
       : []),
   ],
   resolve: {
-    alias: {
-      "@": path.resolve(import.meta.dirname, "src"),
-      "react-native$": "react-native-web",
-    },
+    alias: [
+      { find: "@", replacement: path.resolve(import.meta.dirname, "src") },
+      {
+        find: /^react-native-svg$/,
+        replacement: path.resolve(
+          import.meta.dirname,
+          "src/lib/react-native-svg-web.tsx",
+        ),
+      },
+    ],
   },
   root: path.resolve(import.meta.dirname),
   build: {
