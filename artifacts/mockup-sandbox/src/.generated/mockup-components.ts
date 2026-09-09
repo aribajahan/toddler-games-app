@@ -2,8 +2,8 @@
 type ModuleMap = Record<string, () => Promise<Record<string, unknown>>>;
 export const modules: ModuleMap = {
   "./components/mockups/memory-alt-geometric/CleanGeometric.tsx": () => import("../components/mockups/memory-alt-geometric/CleanGeometric.tsx"),
-  "./components/mockups/memory-alt-soft/SoftDimensional.tsx": () => import("../components/mockups/memory-alt-soft/SoftDimensional.tsx"),
   "./components/mockups/memory-alt-toy/ModernToy.tsx": () => import("../components/mockups/memory-alt-toy/ModernToy.tsx"),
+  "./components/mockups/memory-alt-soft/SoftDimensional.tsx": () => import("../components/mockups/memory-alt-soft/SoftDimensional.tsx"),
   "./components/mockups/memory-art-directions/BoldPrint.tsx": () => import("../components/mockups/memory-art-directions/BoldPrint.tsx"),
   "./components/mockups/memory-art-directions/OutlinedCharacter.tsx": () => import("../components/mockups/memory-art-directions/OutlinedCharacter.tsx"),
   "./components/mockups/memory-art-directions/RefinedC.tsx": () => import("../components/mockups/memory-art-directions/RefinedC.tsx"),
