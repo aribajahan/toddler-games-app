@@ -1,0 +1,44 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "a3EQpQxkUp2dXJbQi8zBZ"
+uri = "file://attached_assets/generated_images/memory-style-flat.png"
+type = "image"
+title = "Option A — Clean flat illustrations"
+description = "Crisp, recognizable vector-style objects designed to stay clear at small card sizes."
+logical_id = "b48b97e9-c784-4924-8e8c-e39a4a3c20c9"
+content_hash = "sha256:34b5ed649c746d97d3b4c470046299857b06151641b3413629e7d87f3552fe50"
+size = 818000
+mtime_ms = 1788912204798
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:4b02c3e8-ffa0-4bac-a68a-a091ad0ee681/b48b97e9-c784-4924-8e8c-e39a4a3c20c9/9bb144c7-2d81-46e2-a3a0-9e9e2b2ee92a"
+storage_version_token = "1788912208091664"
+content_type = "image/png"
+
+[[outputs]]
+id = "j1HUiy7dgROu9ibKV9FFb"
+uri = "file://attached_assets/generated_images/memory-style-sticker.png"
+type = "image"
+title = "Option B — Soft sticker illustrations"
+description = "Warmer, more dimensional familiar objects with a tactile paper-sticker feel."
+logical_id = "c16a2e32-ad1a-4430-87bb-f0f67f61a65a"
+content_hash = "sha256:8c8dfa38f8e826350f1fc2dac5a5547f2e539a63821cf53d31afce05fce797a8"
+size = 932043
+mtime_ms = 1788912207470
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:4b02c3e8-ffa0-4bac-a68a-a091ad0ee681/c16a2e32-ad1a-4430-87bb-f0f67f61a65a/c2089704-c36a-42f5-8db4-0d73a1eb281c"
+storage_version_token = "1788912208652798"
+content_type = "image/png"
+
+[[outputs]]
+id = "DVlMgUek2BSoVH6VA8n77"
+uri = "file://attached_assets/generated_images/memory-style-silhouette.png"
+type = "image"
+title = "Option C — Bold silhouettes"
+description = "Simple, high-contrast familiar forms optimized for the quickest recognition."
+logical_id = "4a872689-03cb-4274-bb1e-c0d57b99ba58"
+content_hash = "sha256:33283f44b84ed933ce33e5193b532a3347593b0a74b19d5ff1b0d790c6a0aa1b"
+size = 804009
+mtime_ms = 1788912204998
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:4b02c3e8-ffa0-4bac-a68a-a091ad0ee681/4a872689-03cb-4274-bb1e-c0d57b99ba58/ce7f193d-e226-48b8-b45f-62d163a91b18"
+storage_version_token = "1788912209214007"
+content_type = "image/png"
