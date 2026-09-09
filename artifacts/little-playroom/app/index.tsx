@@ -85,7 +85,7 @@ export default function HomeScreen() {
 
       <View style={styles.sectionHeading}>
         <Text style={styles.sectionTitle}>Playroom</Text>
-        <Text style={styles.sectionHint}>3 things to try</Text>
+        <Text style={styles.sectionHint}>4 things to try</Text>
       </View>
 
       <GameCard
@@ -111,6 +111,14 @@ export default function HomeScreen() {
         colors={['#FFF0C6', '#FFE5A1']}
         onPress={() => router.push('/memory')}
         testID="home-memory-card"
+      />
+      <GameCard
+        title="Pattern parade"
+        description="Can you remember the order?"
+        icon="shapes-outline"
+        colors={['#EEE8FF', '#DDD1FF']}
+        onPress={() => router.push('/pattern')}
+        testID="home-pattern-card"
       />
 
     </ScrollView>
