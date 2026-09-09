@@ -1,0 +1,41 @@
+export type MemorySubject = 
+  | 'cat'
+  | 'dog'
+  | 'rabbit'
+  | 'duck'
+  | 'elephant'
+  | 'bear'
+  | 'fox'
+  | 'lion'
+  | 'turtle'
+  | 'fish'
+  | 'owl'
+  | 'butterfly'
+  | 'apple'
+  | 'car'
+  | 'banana'
+  | 'strawberry'
+  | 'flower'
+  | 'ball'
+  | 'boat'
+  | 'airplane'
+  | 'train'
+  | 'star'
+  | 'kite'
+  | 'cupcake';
+
+export type AnimalSubject =
+  | 'cat'
+  | 'dog'
+  | 'rabbit'
+  | 'duck'
+  | 'elephant'
+  | 'bear'
+  | 'fox'
+  | 'lion'
+  | 'turtle'
+  | 'fish'
+  | 'owl'
+  | 'butterfly';
+
+export type ObjectSubject = Exclude<MemorySubject, AnimalSubject>;
