@@ -1,28 +1,8 @@
-import animalsSource from '../../../../../little-playroom/components/memory-art/Animals.tsx?raw';
-import objectsSource from '../../../../../little-playroom/components/memory-art/Objects.tsx?raw';
+import React from 'react';
+import Svg from 'react-native-svg';
+import { AnimalIllustrations } from '../../../../../little-playroom/components/memory-art/Animals';
+import { ObjectIllustrations } from '../../../../../little-playroom/components/memory-art/Objects';
 import './_group.css';
-
-const palette: Record<string, string> = {
-  ink: '#2A3439',
-  white: '#FFFFFF',
-  red: '#DF4A41',
-  darkRed: '#B2332B',
-  pink: '#F08B9B',
-  orange: '#E98736',
-  lightOrange: '#FAD8B1',
-  yellow: '#F3C146',
-  lightYellow: '#FDF0C6',
-  green: '#5E9F50',
-  darkGreen: '#45793A',
-  blue: '#3A82C4',
-  lightBlue: '#A6D2EE',
-  darkBlue: '#286299',
-  brown: '#906042',
-  lightBrown: '#C59A7A',
-  darkBrown: '#6B4428',
-  grey: '#92A3A8',
-  lightGrey: '#D5DFE1',
-};
 
 const cards = [
   { subject: 'cat', surface: '#FFF3E4', group: 'Animals' },
@@ -51,38 +31,20 @@ const cards = [
   { subject: 'cupcake', surface: '#FBEAF0', group: 'Objects & foods' },
 ] as const;
 
-function productionSvg(subject: string) {
-  const source = cards.find((card) => card.subject === subject)?.group === 'Animals'
-    ? animalsSource
-    : objectsSource;
-  const match = source.match(new RegExp(`\\n  ${subject}: \\(\\) => \\(\\n([\\s\\S]*?)\\n  \\),`));
-
-  if (!match) return '';
-
-  return match[1]
-    .replace(/<G>/g, '<g>')
-    .replace(/<\/G>/g, '</g>')
-    .replace(/<(Circle|Ellipse|Path|Rect|Polygon|Line)/g, (_, tag: string) => `<${tag.toLowerCase()}`)
-    .replace(/\s(fill|stroke)=\{c\.([A-Za-z]+)\}/g, (_, prop: string, color: string) => ` ${prop}="${palette[color]}"`)
-    .replace(/strokeWidth=/g, 'stroke-width=')
-    .replace(/strokeLinecap=/g, 'stroke-linecap=')
-    .replace(/strokeLinejoin=/g, 'stroke-linejoin=');
-}
+const illustrations = { ...AnimalIllustrations, ...ObjectIllustrations };
 
 function GalleryCard({ subject, surface }: { subject: string; surface: string }) {
+  const Illustration = illustrations[subject as keyof typeof illustrations];
+
   return (
     <article className="flex min-w-0 flex-col items-center gap-3">
       <div
         className="flex aspect-square w-full items-center justify-center rounded-[26px] border border-black/[0.055] shadow-[0_8px_24px_rgba(63,54,44,0.07)]"
         style={{ backgroundColor: surface }}
       >
-        <svg
-          aria-label={subject}
-          className="h-[78%] w-[78%]"
-          role="img"
-          viewBox="0 0 80 80"
-          dangerouslySetInnerHTML={{ __html: productionSvg(subject) }}
-        />
+        <Svg accessibilityLabel={subject} height="78%" viewBox="0 0 80 80" width="78%">
+          <Illustration />
+        </Svg>
       </div>
       <span className="text-[13px] font-semibold capitalize tracking-[-0.01em] text-[#657078]">
         {subject}
