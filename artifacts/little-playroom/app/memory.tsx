@@ -4,25 +4,29 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { MemoryIllustration, type MemorySubject } from '@/components/MemoryIllustrations';
 import { useColors } from '@/hooks/useColors';
 
 type Card = {
   id: number;
-  pair: string;
-  icon: keyof typeof Ionicons.glyphMap;
+  pair: MemorySubject;
   color: string;
   surface: string;
   flipped: boolean;
   matched: boolean;
 };
 const CARD_PAIRS = [
-  { pair: 'sun', icon: 'sunny-outline' as const, color: '#F0A83C', surface: '#FFF4D7' },
-  { pair: 'leaf', icon: 'leaf-outline' as const, color: '#58B8A4', surface: '#E4F4EF' },
-  { pair: 'star', icon: 'star-outline' as const, color: '#8F7BC7', surface: '#EFE9FA' },
-  { pair: 'heart', icon: 'heart-outline' as const, color: '#E86A82', surface: '#FCE7ED' },
-  { pair: 'cloud', icon: 'cloud-outline' as const, color: '#6DB7D8', surface: '#E5F3FA' },
-  { pair: 'flower', icon: 'flower-outline' as const, color: '#F16E61', surface: '#FCE8E3' },
-];
+  { pair: 'cat', color: '#E59B56', surface: '#FFF3E4' },
+  { pair: 'duck', color: '#E4B536', surface: '#FFF7D9' },
+  { pair: 'elephant', color: '#89AAB9', surface: '#EAF3F5' },
+  { pair: 'apple', color: '#DD615B', surface: '#FCEAE7' },
+  { pair: 'car', color: '#5B9EB8', surface: '#E6F3F7' },
+  { pair: 'bear', color: '#9A6A4E', surface: '#F4EADF' },
+] satisfies Array<{
+  pair: MemorySubject;
+  color: string;
+  surface: string;
+}>;
 
 function shuffleCards(): Card[] {
   return [...CARD_PAIRS, ...CARD_PAIRS]
@@ -33,10 +37,7 @@ function shuffleCards(): Card[] {
 function CardIllustration({ card }: { card: Card }) {
   return (
     <View style={[styles.artFrame, { backgroundColor: card.surface }]}>
-      <View style={[styles.artHalo, { borderColor: card.color }]} />
-      <Ionicons name={card.icon} size={40} color={card.color} />
-      <View style={[styles.artSpark, { backgroundColor: card.color }]} />
-      <View style={[styles.artDot, { backgroundColor: card.color }]} />
+      <MemoryIllustration subject={card.pair} size={68} />
     </View>
   );
 }
@@ -185,10 +186,7 @@ const styles = StyleSheet.create({
   cardBack: { backgroundColor: '#E4F2EF', borderColor: '#C7E3DC' },
   cardMatched: { opacity: 0.55 },
   cardPressed: { transform: [{ scale: 0.95 }] },
-  artFrame: { alignItems: 'center', borderRadius: 28, height: 70, justifyContent: 'center', overflow: 'hidden', position: 'relative', width: 70 },
-  artHalo: { borderRadius: 23, borderStyle: 'dashed', borderWidth: 1.5, height: 52, position: 'absolute', width: 52 },
-  artSpark: { borderRadius: 3, height: 6, position: 'absolute', right: 12, top: 13, transform: [{ rotate: '45deg' }], width: 6 },
-  artDot: { borderRadius: 4, bottom: 11, height: 7, left: 12, position: 'absolute', width: 7 },
+  artFrame: { alignItems: 'center', borderRadius: 28, height: 74, justifyContent: 'center', overflow: 'hidden', width: 74 },
   cardBackArt: { alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: 28, height: 62, justifyContent: 'center', overflow: 'hidden', position: 'relative', width: 62 },
   cardBackCircleLarge: { backgroundColor: '#CDEAE5', borderRadius: 34, height: 68, left: -17, position: 'absolute', top: 25, width: 68 },
   cardBackCircleSmall: { backgroundColor: '#FFF0C6', borderRadius: 18, height: 36, position: 'absolute', right: -3, top: -3, width: 36 },
