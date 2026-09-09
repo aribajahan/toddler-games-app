@@ -4,7 +4,12 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { MemoryIllustration, type MemorySubject } from '@/components/MemoryIllustrations';
+import {
+  MEMORY_DECK,
+  MemoryIllustration,
+  type MemoryDeckEntry,
+  type MemorySubject,
+} from '@/components/MemoryIllustrations';
 import { useColors } from '@/hooks/useColors';
 
 type Card = {
@@ -15,23 +20,56 @@ type Card = {
   flipped: boolean;
   matched: boolean;
 };
-const CARD_PAIRS = [
-  { pair: 'cat', color: '#E59B56', surface: '#FFF3E4' },
-  { pair: 'duck', color: '#E4B536', surface: '#FFF7D9' },
-  { pair: 'elephant', color: '#89AAB9', surface: '#EAF3F5' },
-  { pair: 'apple', color: '#DD615B', surface: '#FCEAE7' },
-  { pair: 'car', color: '#5B9EB8', surface: '#E6F3F7' },
-  { pair: 'bear', color: '#9A6A4E', surface: '#F4EADF' },
-] satisfies Array<{
-  pair: MemorySubject;
-  color: string;
-  surface: string;
-}>;
+type Round = {
+  cards: Card[];
+  pairs: MemorySubject[];
+};
 
-function shuffleCards(): Card[] {
-  return [...CARD_PAIRS, ...CARD_PAIRS]
-    .map((card, index) => ({ ...card, id: index, flipped: false, matched: false }))
-    .sort(() => Math.random() - 0.5);
+const PAIRS_PER_ROUND = 6;
+
+function shuffle<T>(items: T[]): T[] {
+  const result = [...items];
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [result[index], result[randomIndex]] = [result[randomIndex], result[index]];
+  }
+  return result;
+}
+
+function samePairSelection(first: MemorySubject[], second: MemorySubject[]): boolean {
+  if (first.length !== second.length) return false;
+  const secondSet = new Set(second);
+  return first.every((pair) => secondSet.has(pair));
+}
+
+function choosePairs(previousPairs: MemorySubject[]): MemoryDeckEntry[] {
+  let selection = shuffle(MEMORY_DECK).slice(0, PAIRS_PER_ROUND);
+
+  if (samePairSelection(selection.map((entry) => entry.pair), previousPairs)) {
+    const replacement = MEMORY_DECK.find(
+      (entry) => !previousPairs.includes(entry.pair),
+    );
+    if (replacement) {
+      selection = [replacement, ...selection.slice(1)];
+    }
+  }
+
+  return selection;
+}
+
+function createRound(previousPairs: MemorySubject[] = []): Round {
+  const selectedPairs = choosePairs(previousPairs);
+  const cards = shuffle([...selectedPairs, ...selectedPairs]).map((card, index) => ({
+    ...card,
+    id: index,
+    flipped: false,
+    matched: false,
+  }));
+
+  return {
+    cards,
+    pairs: selectedPairs.map((entry) => entry.pair),
+  };
 }
 
 function CardIllustration({ card }: { card: Card }) {
@@ -46,9 +84,10 @@ export default function MemoryScreen() {
   const router = useRouter();
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const [cards, setCards] = useState<Card[]>(() => shuffleCards());
+  const [round, setRound] = useState<Round>(() => createRound());
   const [flippedIds, setFlippedIds] = useState<number[]>([]);
   const [moves, setMoves] = useState(0);
+  const cards = round.cards;
 
   const matches = useMemo(() => cards.filter((card) => card.matched).length / 2, [cards]);
 
@@ -59,7 +98,10 @@ export default function MemoryScreen() {
     void Haptics.selectionAsync();
     const nextFlipped = [...flippedIds, id];
     setFlippedIds(nextFlipped);
-    setCards((previous) => previous.map((item) => item.id === id ? { ...item, flipped: true } : item));
+    setRound((previous) => ({
+      ...previous,
+      cards: previous.cards.map((item) => item.id === id ? { ...item, flipped: true } : item),
+    }));
     if (nextFlipped.length === 2) {
       setMoves((value) => value + 1);
       const [firstId, secondId] = nextFlipped;
@@ -67,11 +109,17 @@ export default function MemoryScreen() {
       const second = cards.find((item) => item.id === secondId);
       if (first?.pair === second?.pair) {
         void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        setCards((previous) => previous.map((item) => nextFlipped.includes(item.id) ? { ...item, matched: true } : item));
+        setRound((previous) => ({
+          ...previous,
+          cards: previous.cards.map((item) => nextFlipped.includes(item.id) ? { ...item, matched: true } : item),
+        }));
         setFlippedIds([]);
       } else {
         setTimeout(() => {
-          setCards((previous) => previous.map((item) => nextFlipped.includes(item.id) ? { ...item, flipped: false } : item));
+          setRound((previous) => ({
+            ...previous,
+            cards: previous.cards.map((item) => nextFlipped.includes(item.id) ? { ...item, flipped: false } : item),
+          }));
           setFlippedIds([]);
         }, 720);
       }
@@ -79,7 +127,7 @@ export default function MemoryScreen() {
   };
 
   const reset = () => {
-    setCards(shuffleCards());
+    setRound((previous) => createRound(previous.pairs));
     setFlippedIds([]);
     setMoves(0);
   };
