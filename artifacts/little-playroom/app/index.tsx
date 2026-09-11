@@ -124,7 +124,9 @@ export default function HomeScreen() {
         title="Reading mix"
         description="Listen, sort, and build words"
         icon="book-outline"
-        colors={['#53C7C1', '#53C7C1']}
+        colors={['#D8C9E8', '#D8C9E8']}
+        foreground="#205D67"
+        iconForeground="#205D67"
         onPress={() => router.push('/reading')}
         testID="home-reading-card"
       />

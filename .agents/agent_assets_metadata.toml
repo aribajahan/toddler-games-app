@@ -203,3 +203,66 @@ uri = "file://artifacts/little-playroom/assets/audio/reading-sounds-m-s.mp3"
 type = "audio"
 title = "sort-the-pictures-by-their-first-sound-choose-m-or-s"
 description = "Text-to-speech audio: Sort the pictures by their first sound. Choose M or S."
+
+[[outputs]]
+id = "rEKrvGWV5_Wnq3bihd6ur"
+uri = "file://artifacts/little-playroom/assets/audio/reading-dog.mp3"
+type = "audio"
+title = "dog"
+description = "Text-to-speech audio: dog"
+
+[[outputs]]
+id = "u-ZiGEy377u-hV4FV-Idf"
+uri = "file://artifacts/little-playroom/assets/audio/reading-fish.mp3"
+type = "audio"
+title = "fish"
+description = "Text-to-speech audio: fish"
+
+[[outputs]]
+id = "1c22F1ynfNhI-an1CR0-5"
+uri = "file://artifacts/little-playroom/assets/audio/reading-car.mp3"
+type = "audio"
+title = "car"
+description = "Text-to-speech audio: car"
+
+[[outputs]]
+id = "-w8__E19hn0Sx-HGcR-ts"
+uri = "file://artifacts/little-playroom/assets/audio/reading-boat.mp3"
+type = "audio"
+title = "boat"
+description = "Text-to-speech audio: boat"
+
+[[outputs]]
+id = "Kw3gfM9heQQEVC2hb9zqQ"
+uri = "file://artifacts/little-playroom/assets/audio/reading-duck.mp3"
+type = "audio"
+title = "duck"
+description = "Text-to-speech audio: duck"
+
+[[outputs]]
+id = "La6duwYoHltHFKvA6rnZd"
+uri = "file://artifacts/little-playroom/assets/audio/reading-fox.mp3"
+type = "audio"
+title = "fox"
+description = "Text-to-speech audio: fox"
+
+[[outputs]]
+id = "HFxtyRrIwNKHwigj1xOIF"
+uri = "file://artifacts/little-playroom/assets/audio/reading-ball.mp3"
+type = "audio"
+title = "ball"
+description = "Text-to-speech audio: ball"
+
+[[outputs]]
+id = "5MA1SR0EBctCclDLf-DxD"
+uri = "file://artifacts/little-playroom/assets/audio/reading-build-fox.mp3"
+type = "audio"
+title = "build-the-word-fox"
+description = "Text-to-speech audio: Build the word fox."
+
+[[outputs]]
+id = "LmCeW7bGoW90rWDk4GhMu"
+uri = "file://artifacts/little-playroom/assets/audio/reading-build-car.mp3"
+type = "audio"
+title = "build-the-word-car"
+description = "Text-to-speech audio: Build the word car."

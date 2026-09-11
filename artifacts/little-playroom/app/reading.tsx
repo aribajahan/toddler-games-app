@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,15 +6,16 @@ import * as Haptics from 'expo-haptics';
 import { useAudioPlayer } from 'expo-audio';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
+import { MemoryIllustration, type MemorySubject } from '@/components/MemoryIllustrations';
 
 type Feedback = 'idle' | 'correct' | 'tryAgain' | 'complete';
-type SortBucket = 'first' | 'second';
 
 type Picture = {
   id: string;
   word: string;
-  emoji: string;
+  subject: MemorySubject;
   color: string;
+  surface: string;
 };
 
 type Round =
@@ -36,52 +37,48 @@ type Round =
       type: 'build';
       word: string;
       letters: string[];
-      emoji: string;
+      picture: Picture;
     };
 
-const PICTURES = {
-  cat: { id: 'cat', word: 'cat', emoji: '🐱', color: '#FFE471' },
-  dog: { id: 'dog', word: 'dog', emoji: '🐶', color: '#F5CFA7' },
-  sun: { id: 'sun', word: 'sun', emoji: '☀️', color: '#FFE471' },
-  moon: { id: 'moon', word: 'moon', emoji: '🌙', color: '#B7DCE3' },
-  fish: { id: 'fish', word: 'fish', emoji: '🐟', color: '#A9E1DC' },
-  frog: { id: 'frog', word: 'frog', emoji: '🐸', color: '#B9DDA8' },
-  map: { id: 'map', word: 'map', emoji: '🗺️', color: '#F5CFA7' },
-  mouse: { id: 'mouse', word: 'mouse', emoji: '🐭', color: '#D8C9E8' },
-  sock: { id: 'sock', word: 'sock', emoji: '🧦', color: '#F6B7B8' },
-  star: { id: 'star', word: 'star', emoji: '⭐', color: '#FFE471' },
-  tiger: { id: 'tiger', word: 'tiger', emoji: '🐯', color: '#F5CFA7' },
-  tree: { id: 'tree', word: 'tree', emoji: '🌳', color: '#B9DDA8' },
-} satisfies Record<string, Picture>;
+const PICTURES: Record<string, Picture> = {
+  cat: { id: 'cat', word: 'cat', subject: 'cat', color: '#E59B56', surface: '#FFF3E4' },
+  dog: { id: 'dog', word: 'dog', subject: 'dog', color: '#A97452', surface: '#F6ECE4' },
+  fish: { id: 'fish', word: 'fish', subject: 'fish', color: '#E59B45', surface: '#FFF1DF' },
+  car: { id: 'car', word: 'car', subject: 'car', color: '#5B9EB8', surface: '#E6F3F7' },
+  duck: { id: 'duck', word: 'duck', subject: 'duck', color: '#E4B536', surface: '#FFF7D9' },
+  ball: { id: 'ball', word: 'ball', subject: 'ball', color: '#719A84', surface: '#ECF3EE' },
+  boat: { id: 'boat', word: 'boat', subject: 'boat', color: '#648DA9', surface: '#EAF2F6' },
+  fox: { id: 'fox', word: 'fox', subject: 'fox', color: '#DF7E36', surface: '#FFF0E3' },
+};
 
 const MATCH_ROUNDS: Round[] = [
-  { id: 'match-cat', type: 'match', word: 'cat', choices: [PICTURES.sun, PICTURES.cat, PICTURES.fish] },
-  { id: 'match-moon', type: 'match', word: 'moon', choices: [PICTURES.dog, PICTURES.moon, PICTURES.star] },
-  { id: 'match-frog', type: 'match', word: 'frog', choices: [PICTURES.tree, PICTURES.frog, PICTURES.tiger] },
+  { id: 'match-cat', type: 'match', word: 'cat', choices: [PICTURES.dog, PICTURES.cat, PICTURES.fish] },
+  { id: 'match-dog', type: 'match', word: 'dog', choices: [PICTURES.cat, PICTURES.dog, PICTURES.fox] },
+  { id: 'match-fish', type: 'match', word: 'fish', choices: [PICTURES.ball, PICTURES.fish, PICTURES.boat] },
 ];
 
 const SOUND_ROUNDS: Round[] = [
   {
-    id: 'sounds-m-s',
+    id: 'sounds-c-d',
     type: 'sounds',
-    firstSound: 'M',
-    secondSound: 'S',
-    items: [PICTURES.sun, PICTURES.mouse, PICTURES.sock, PICTURES.moon],
+    firstSound: 'C',
+    secondSound: 'D',
+    items: [PICTURES.cat, PICTURES.dog, PICTURES.car, PICTURES.duck],
   },
   {
-    id: 'sounds-f-t',
+    id: 'sounds-b-f',
     type: 'sounds',
-    firstSound: 'F',
-    secondSound: 'T',
-    items: [PICTURES.tree, PICTURES.fish, PICTURES.tiger, PICTURES.frog],
+    firstSound: 'B',
+    secondSound: 'F',
+    items: [PICTURES.ball, PICTURES.fish, PICTURES.boat, PICTURES.fox],
   },
 ];
 
 const BUILD_ROUNDS: Round[] = [
-  { id: 'build-cat', type: 'build', word: 'CAT', letters: ['T', 'C', 'A'], emoji: PICTURES.cat.emoji },
-  { id: 'build-sun', type: 'build', word: 'SUN', letters: ['N', 'S', 'U'], emoji: PICTURES.sun.emoji },
-  { id: 'build-map', type: 'build', word: 'MAP', letters: ['A', 'P', 'M'], emoji: PICTURES.map.emoji },
-  { id: 'build-dog', type: 'build', word: 'DOG', letters: ['G', 'D', 'O'], emoji: PICTURES.dog.emoji },
+  { id: 'build-cat', type: 'build', word: 'CAT', letters: ['T', 'C', 'A'], picture: PICTURES.cat },
+  { id: 'build-dog', type: 'build', word: 'DOG', letters: ['G', 'D', 'O'], picture: PICTURES.dog },
+  { id: 'build-fox', type: 'build', word: 'FOX', letters: ['X', 'O', 'F'], picture: PICTURES.fox },
+  { id: 'build-car', type: 'build', word: 'CAR', letters: ['R', 'C', 'A'], picture: PICTURES.car },
 ];
 
 const COLORS = {
@@ -96,14 +93,17 @@ const COLORS = {
 
 const READING_PROMPTS = {
   cat: require('../assets/audio/reading-cat.mp3'),
-  moon: require('../assets/audio/reading-moon.mp3'),
-  frog: require('../assets/audio/reading-frog.mp3'),
-  soundsMS: require('../assets/audio/reading-sounds-m-s.mp3'),
-  soundsFT: require('../assets/audio/reading-sounds-f-t.mp3'),
+  dog: require('../assets/audio/reading-dog.mp3'),
+  fish: require('../assets/audio/reading-fish.mp3'),
+  car: require('../assets/audio/reading-car.mp3'),
+  duck: require('../assets/audio/reading-duck.mp3'),
+  ball: require('../assets/audio/reading-ball.mp3'),
+  boat: require('../assets/audio/reading-boat.mp3'),
+  fox: require('../assets/audio/reading-fox.mp3'),
   buildCat: require('../assets/audio/reading-build-cat.mp3'),
-  buildSun: require('../assets/audio/reading-build-sun.mp3'),
-  buildMap: require('../assets/audio/reading-build-map.mp3'),
   buildDog: require('../assets/audio/reading-build-dog.mp3'),
+  buildFox: require('../assets/audio/reading-build-fox.mp3'),
+  buildCar: require('../assets/audio/reading-build-car.mp3'),
 };
 
 function shuffle<T>(items: T[]): T[] {
@@ -119,32 +119,50 @@ function roundKey(round: Round) {
   return round.id;
 }
 
+function prepareRound(round: Round): Round {
+  if (round.type === 'match') {
+    return { ...round, choices: shuffle(round.choices) };
+  }
+  if (round.type === 'sounds') {
+    return { ...round, items: shuffle(round.items) };
+  }
+  return { ...round, letters: shuffle(round.word.split('')) };
+}
+
 function createRounds(previousKeys: string[] = []) {
   let nextRounds = shuffle([
     ...shuffle(MATCH_ROUNDS).slice(0, 2),
     ...shuffle(SOUND_ROUNDS).slice(0, 1),
     ...shuffle(BUILD_ROUNDS).slice(0, 2),
-  ]);
+  ]).map(prepareRound);
   for (let attempt = 0; attempt < 6 && nextRounds.map(roundKey).join('|') === previousKeys.join('|'); attempt += 1) {
     nextRounds = shuffle([
       ...shuffle(MATCH_ROUNDS).slice(0, 2),
       ...shuffle(SOUND_ROUNDS).slice(0, 1),
       ...shuffle(BUILD_ROUNDS).slice(0, 2),
-    ]);
+    ]).map(prepareRound);
   }
   return nextRounds;
 }
 
-function modeForRound(round: Round) {
-  if (round.type === 'match') return { label: 'Find it', icon: 'images-outline' as const };
-  if (round.type === 'sounds') return { label: 'First sound', icon: 'funnel-outline' as const };
-  return { label: 'Build it', icon: 'text-outline' as const };
+function promptForRound(round: Round) {
+  if (round.type === 'match') return 'Listen and find it';
+  if (round.type === 'sounds') return 'Which sound comes first?';
+  return 'Build the word';
 }
 
-function promptForRound(round: Round) {
-  if (round.type === 'match') return `Find ${round.word}`;
-  if (round.type === 'sounds') return `Sort by the first sound: ${round.firstSound} or ${round.secondSound}`;
-  return `Build ${round.word.toLowerCase()}`;
+function promptSourceForRound(round: Round, soundItemIndex: number) {
+  if (round.type === 'match') {
+    return READING_PROMPTS[round.word as 'cat' | 'dog' | 'fish'];
+  }
+  if (round.type === 'sounds') {
+    const word = round.items[soundItemIndex].word as 'cat' | 'dog' | 'car' | 'duck' | 'ball' | 'fish' | 'boat' | 'fox';
+    return READING_PROMPTS[word];
+  }
+  if (round.word === 'CAT') return READING_PROMPTS.buildCat;
+  if (round.word === 'DOG') return READING_PROMPTS.buildDog;
+  if (round.word === 'FOX') return READING_PROMPTS.buildFox;
+  return READING_PROMPTS.buildCar;
 }
 
 export default function ReadingScreen() {
@@ -158,105 +176,96 @@ export default function ReadingScreen() {
     return nextRounds;
   });
   const [roundIndex, setRoundIndex] = useState(0);
+  const [soundItemIndex, setSoundItemIndex] = useState(0);
   const [feedback, setFeedback] = useState<Feedback>('idle');
-  const [selectedPicture, setSelectedPicture] = useState<string | null>(null);
-  const [sorted, setSorted] = useState<Record<string, SortBucket>>({});
   const [selectedLetters, setSelectedLetters] = useState<number[]>([]);
+
   const promptPlayer = useAudioPlayer(READING_PROMPTS.cat);
 
   const round = rounds[roundIndex];
-  const mode = modeForRound(round);
   const isComplete = feedback === 'complete';
-  const availableLetters = useMemo(
-    () => (round.type === 'build' ? round.letters.map((_, index) => index).filter((index) => !selectedLetters.includes(index)) : []),
-    [round, selectedLetters],
-  );
 
   useEffect(() => {
     if (feedback !== 'correct' && feedback !== 'tryAgain') return undefined;
     const timer = setTimeout(() => {
       if (feedback === 'correct') {
-        setRoundIndex((current) => current + 1);
-        setSelectedPicture(null);
-        setSorted({});
-        setSelectedLetters([]);
+        if (round.type === 'sounds' && soundItemIndex < round.items.length - 1) {
+          setSoundItemIndex((current) => current + 1);
+        } else {
+          setRoundIndex((current) => current + 1);
+          setSoundItemIndex(0);
+          setSelectedLetters([]);
+        }
       }
       setFeedback('idle');
     }, feedback === 'correct' ? 780 : 1000);
     return () => clearTimeout(timer);
-  }, [feedback]);
+  }, [feedback, round, soundItemIndex]);
 
-  const hearPrompt = () => {
+  const playPrompt = () => {
     if (isComplete) return;
-    const source =
-      round.type === 'match'
-        ? READING_PROMPTS[round.word as 'cat' | 'moon' | 'frog']
-        : round.type === 'sounds'
-          ? round.firstSound === 'M'
-            ? READING_PROMPTS.soundsMS
-            : READING_PROMPTS.soundsFT
-          : round.word === 'CAT'
-            ? READING_PROMPTS.buildCat
-            : round.word === 'SUN'
-              ? READING_PROMPTS.buildSun
-              : round.word === 'MAP'
-                ? READING_PROMPTS.buildMap
-                : READING_PROMPTS.buildDog;
+    const source = promptSourceForRound(round, soundItemIndex);
     promptPlayer.replace(source);
     void promptPlayer.seekTo(0);
     promptPlayer.play();
   };
 
-  const finishRound = () => {
-    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setFeedback(roundIndex === rounds.length - 1 ? 'complete' : 'correct');
-  };
+  useEffect(() => {
+    if (isComplete) return undefined;
+    const timer = setTimeout(() => {
+      const source = promptSourceForRound(round, soundItemIndex);
+      promptPlayer.replace(source);
+      void promptPlayer.seekTo(0);
+      promptPlayer.play();
+    }, 220);
+    return () => clearTimeout(timer);
+  }, [isComplete, promptPlayer, round, rounds, soundItemIndex]);
 
   const answerMatch = (word: string) => {
     if (feedback !== 'idle' || round.type !== 'match') return;
-    if (word === round.word) finishRound();
-    else {
+    if (word === round.word) {
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setFeedback(roundIndex === rounds.length - 1 ? 'complete' : 'correct');
+    } else {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       setFeedback('tryAgain');
     }
   };
 
-  const choosePicture = (id: string) => {
-    if (feedback !== 'idle' || round.type !== 'sounds' || sorted[id]) return;
-    setSelectedPicture(id);
-    void Haptics.selectionAsync();
-  };
-
-  const sortPicture = (bucket: SortBucket) => {
-    if (feedback !== 'idle' || round.type !== 'sounds' || !selectedPicture) return;
-    const picture = round.items.find((item) => item.id === selectedPicture);
-    if (!picture) return;
-    const expectedBucket = picture.word.toUpperCase().startsWith(round.firstSound) ? 'first' : 'second';
-    if (bucket !== expectedBucket) {
+  const answerSound = (letter: string) => {
+    if (feedback !== 'idle' || round.type !== 'sounds') return;
+    const picture = round.items[soundItemIndex];
+    if (picture.word.toUpperCase().startsWith(letter)) {
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      if (soundItemIndex === round.items.length - 1 && roundIndex === rounds.length - 1) {
+        setFeedback('complete');
+      } else {
+        setFeedback('correct');
+      }
+    } else {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       setFeedback('tryAgain');
-      return;
     }
-    const nextSorted = { ...sorted, [picture.id]: bucket };
-    setSorted(nextSorted);
-    setSelectedPicture(null);
-    void Haptics.selectionAsync();
-    if (Object.keys(nextSorted).length === round.items.length) finishRound();
   };
 
   const chooseLetter = (index: number) => {
     if (feedback !== 'idle' || round.type !== 'build') return;
     const expectedLetter = round.word[selectedLetters.length];
+
     if (round.letters[index] !== expectedLetter) {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-      setSelectedLetters([]);
       setFeedback('tryAgain');
       return;
     }
+
     const nextLetters = [...selectedLetters, index];
     setSelectedLetters(nextLetters);
     void Haptics.selectionAsync();
-    if (nextLetters.length === round.letters.length) finishRound();
+
+    if (nextLetters.length === round.word.length) {
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setFeedback(roundIndex === rounds.length - 1 ? 'complete' : 'correct');
+    }
   };
 
   const reset = () => {
@@ -265,15 +274,14 @@ export default function ReadingScreen() {
     setRounds(nextRounds);
     setRoundIndex(0);
     setFeedback('idle');
-    setSelectedPicture(null);
-    setSorted({});
+    setSoundItemIndex(0);
     setSelectedLetters([]);
   };
 
   const feedbackText = isComplete
-    ? 'You made a word path!'
+    ? 'You did all the reading!'
     : feedback === 'correct'
-      ? 'Nice listening!'
+      ? 'Nice reading!'
       : feedback === 'tryAgain'
         ? 'Try one more time'
         : promptForRound(round);
@@ -296,7 +304,6 @@ export default function ReadingScreen() {
           </Pressable>
           <View style={styles.headerCopy}>
             <Text style={styles.title}>Reading mix</Text>
-            <Text style={styles.subtitle}>Listen, sort, and build</Text>
           </View>
           <Pressable
             testID="reading-reset"
@@ -315,10 +322,6 @@ export default function ReadingScreen() {
               <View key={item.id} style={[styles.progressDot, index < (isComplete ? rounds.length : roundIndex + 1) && styles.progressDotActive]} />
             ))}
           </View>
-          <View style={styles.modePill}>
-            <Ionicons name={mode.icon} size={16} color={COLORS.ink} />
-            <Text style={styles.modeText}>{mode.label}</Text>
-          </View>
         </View>
 
         <View style={styles.instructions}>
@@ -328,8 +331,8 @@ export default function ReadingScreen() {
               <Pressable
                 testID="reading-hear-prompt"
                 accessibilityRole="button"
-                accessibilityLabel="Hear the word or instructions"
-                onPress={hearPrompt}
+                accessibilityLabel="Hear the instructions"
+                onPress={playPrompt}
                 style={({ pressed }) => [styles.listenButton, pressed && styles.answerPressed]}
               >
                 <Ionicons name="volume-high" size={22} color={COLORS.ink} />
@@ -337,107 +340,97 @@ export default function ReadingScreen() {
             )}
           </View>
           {(isComplete || feedback === 'tryAgain') && (
-            <Text style={styles.helper}>{isComplete ? 'Letters, sounds, and pictures all connect.' : 'Listen again and try.'}</Text>
+            <Text style={styles.helper}>{isComplete ? 'You listened, found sounds, and built words.' : 'Listen again and try.'}</Text>
           )}
         </View>
 
         {!isComplete && round.type === 'match' && (
           <View style={styles.matchChoices}>
-            {round.choices.map((picture) => (
+            {round.choices.map((picture, index) => (
               <Pressable
-                key={picture.id}
+                key={`${picture.id}-${index}`}
                 testID={`reading-picture-${picture.id}`}
                 accessibilityRole="button"
                 accessibilityLabel={`Picture of a ${picture.word}`}
                 disabled={feedback !== 'idle'}
                 onPress={() => answerMatch(picture.word)}
-                style={({ pressed }) => [styles.pictureCard, { backgroundColor: picture.color }, pressed && styles.picturePressed]}
+                style={({ pressed }) => [styles.pictureCard, { backgroundColor: picture.surface, borderColor: picture.color }, pressed && styles.picturePressed]}
               >
-                <Text style={styles.pictureEmoji}>{picture.emoji}</Text>
+                <MemoryIllustration subject={picture.subject} size={64} />
               </Pressable>
             ))}
           </View>
         )}
 
         {!isComplete && round.type === 'sounds' && (
-          <>
-            <View style={styles.soundItems}>
-              {round.items.map((picture) => {
-                const isSorted = Boolean(sorted[picture.id]);
-                return (
-                  <Pressable
-                    key={picture.id}
-                    testID={`reading-sort-picture-${picture.id}`}
-                    accessibilityRole="button"
-                    accessibilityLabel={`Choose the ${picture.word} picture`}
-                    disabled={feedback !== 'idle' || isSorted}
-                    onPress={() => choosePicture(picture.id)}
-                    style={({ pressed }) => [
-                      styles.sortPicture,
-                      { backgroundColor: picture.color },
-                      selectedPicture === picture.id && styles.selectedPicture,
-                      isSorted && styles.sortedPicture,
-                      pressed && styles.picturePressed,
-                    ]}
-                  >
-                    <Text style={styles.sortEmoji}>{picture.emoji}</Text>
-                    {isSorted && <Ionicons name="checkmark-circle" size={22} color="#4C9274" style={styles.sortedCheck} />}
-                  </Pressable>
-                );
-              })}
+          <View style={styles.soundsArea}>
+            <View
+              accessibilityLabel={`Picture of a ${round.items[soundItemIndex].word}`}
+              style={[styles.largePictureCard, { backgroundColor: round.items[soundItemIndex].surface, borderColor: round.items[soundItemIndex].color }]}
+            >
+              <MemoryIllustration subject={round.items[soundItemIndex].subject} size={84} />
             </View>
-            <Text style={styles.sortHelper}>{selectedPicture ? 'Which basket does it belong in?' : 'Tap a picture to choose it.'}</Text>
-            <View style={styles.baskets}>
-              {[
-                { bucket: 'first' as const, label: round.firstSound, color: COLORS.yellow },
-                { bucket: 'second' as const, label: round.secondSound, color: COLORS.aqua },
-              ].map((basket) => (
+            <View style={styles.soundProgress} accessibilityLabel={`Picture ${soundItemIndex + 1} of ${round.items.length}`}>
+              {round.items.map((item, index) => (
+                <View key={item.id} style={[styles.soundProgressDot, index <= soundItemIndex && styles.soundProgressDotActive]} />
+              ))}
+            </View>
+            <View style={styles.soundChoices}>
+              {[round.firstSound, round.secondSound].map((letter) => (
                 <Pressable
-                  key={basket.bucket}
-                  testID={`reading-basket-${basket.label}`}
+                  key={letter}
+                  testID={`reading-sound-${letter}`}
                   accessibilityRole="button"
-                  accessibilityLabel={`Put picture in the ${basket.label} sound basket`}
-                  disabled={feedback !== 'idle' || !selectedPicture}
-                  onPress={() => sortPicture(basket.bucket)}
-                  style={({ pressed }) => [styles.basket, { backgroundColor: basket.color }, pressed && styles.answerPressed]}
+                  accessibilityLabel={`Letter ${letter}`}
+                  disabled={feedback !== 'idle'}
+                  onPress={() => answerSound(letter)}
+                  style={({ pressed }) => [styles.soundButton, pressed && styles.answerPressed]}
                 >
-                  <Text style={styles.basketLetter}>{basket.label}</Text>
-                  <Ionicons name="arrow-down" size={21} color={COLORS.ink} />
+                  <Text style={styles.soundButtonText}>{letter}</Text>
                 </Pressable>
               ))}
             </View>
-          </>
+          </View>
         )}
 
         {!isComplete && round.type === 'build' && (
           <>
-            <View style={styles.wordPicture}>
-              <Text style={styles.wordEmoji}>{round.emoji}</Text>
+            <View style={styles.buildArea}>
+              <View style={[styles.wordPicture, { backgroundColor: round.picture.surface, borderColor: round.picture.color }]}>
+                <MemoryIllustration subject={round.picture.subject} size={70} />
+              </View>
             </View>
-            <View style={styles.wordSlots} accessibilityLabel={`Word has ${round.letters.length} letters`}>
+            <View style={styles.wordSlots} accessibilityLabel={`Word has ${round.word.length} letters`}>
               {Array.from({ length: round.word.length }).map((_, position) => {
                 const selectedIndex = selectedLetters[position];
                 return (
-                <View key={`${round.id}-slot-${position}`} style={[styles.wordSlot, selectedIndex !== undefined && styles.wordSlotFilled]}>
-                  {selectedIndex !== undefined && <Text style={styles.slotLetter}>{round.letters[selectedIndex]}</Text>}
-                </View>
+                  <View key={`${round.id}-slot-${position}`} style={[styles.wordSlot, selectedIndex !== undefined && styles.wordSlotFilled]}>
+                    {selectedIndex !== undefined && <Text style={styles.slotLetter}>{round.letters[selectedIndex]}</Text>}
+                  </View>
                 );
               })}
             </View>
             <View style={styles.letterChoices}>
-              {availableLetters.map((index) => (
-                <Pressable
-                  key={`${round.id}-letter-${index}`}
-                  testID={`reading-letter-${round.letters[index]}`}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Letter ${round.letters[index]}`}
-                  disabled={feedback !== 'idle'}
-                  onPress={() => chooseLetter(index)}
-                  style={({ pressed }) => [styles.letterButton, pressed && styles.answerPressed]}
-                >
-                  <Text style={styles.letterText}>{round.letters[index]}</Text>
-                </Pressable>
-              ))}
+              {round.letters.map((letter, index) => {
+                const isUsed = selectedLetters.includes(index);
+                return (
+                  <Pressable
+                    key={`${round.id}-letter-${index}`}
+                    testID={`reading-letter-${letter}`}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Letter ${letter}`}
+                    disabled={feedback !== 'idle' || isUsed}
+                    onPress={() => chooseLetter(index)}
+                    style={({ pressed }) => [
+                      styles.letterButton,
+                      isUsed && styles.letterButtonUsed,
+                      pressed && !isUsed && styles.answerPressed,
+                    ]}
+                  >
+                    <Text style={[styles.letterText, isUsed && styles.letterTextUsed]}>{letter}</Text>
+                  </Pressable>
+                );
+              })}
             </View>
           </>
         )}
@@ -468,10 +461,14 @@ export default function ReadingScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   scrollContent: { paddingHorizontal: 20 },
-  header: { alignItems: 'center', flexDirection: 'row', paddingBottom: 10 },
+  header: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingBottom: 10,
+  },
   backButton: {
     alignItems: 'center',
-    backgroundColor: COLORS.backgroundCard,
+    backgroundColor: '#FFFFFF',
     borderColor: COLORS.line,
     borderRadius: 20,
     borderWidth: 1,
@@ -482,10 +479,9 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.65 },
   headerCopy: { flex: 1, marginLeft: 13 },
   title: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 20 },
-  subtitle: { color: COLORS.muted, fontFamily: 'Inter_400Regular', fontSize: 12, marginTop: 2 },
   resetButton: {
     alignItems: 'center',
-    backgroundColor: COLORS.backgroundCard,
+    backgroundColor: '#FFFFFF',
     borderColor: COLORS.line,
     borderRadius: 20,
     borderWidth: 1,
@@ -493,40 +489,37 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 40,
   },
-  progressHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 16 },
+  progressHeader: { alignItems: 'center', justifyContent: 'center', paddingVertical: 16 },
   progressDots: { flexDirection: 'row', gap: 5 },
   progressDot: { backgroundColor: COLORS.line, borderRadius: 3, height: 6, width: 6 },
   progressDotActive: { backgroundColor: COLORS.yellow },
-  modePill: { alignItems: 'center', backgroundColor: '#EEF6F3', borderRadius: 15, flexDirection: 'row', gap: 5, paddingHorizontal: 10, paddingVertical: 6 },
-  modeText: { color: COLORS.ink, fontFamily: 'Inter_600SemiBold', fontSize: 11 },
-  instructions: { alignItems: 'center', marginTop: 32 },
+  instructions: { alignItems: 'center', marginTop: 32, minHeight: 70 },
   questionRow: { alignItems: 'center', flexDirection: 'row', gap: 10, justifyContent: 'center' },
   question: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 25, textAlign: 'center' },
   listenButton: { alignItems: 'center', backgroundColor: COLORS.yellow, borderRadius: 20, height: 40, justifyContent: 'center', width: 40 },
-  helper: { color: COLORS.muted, fontFamily: 'Inter_400Regular', fontSize: 13, marginTop: 7, textAlign: 'center' },
-  matchChoices: { flexDirection: 'row', flexWrap: 'wrap', gap: 14, justifyContent: 'center', marginTop: 50 },
-  pictureCard: { alignItems: 'center', borderColor: 'rgba(32,93,103,0.13)', borderRadius: 26, borderWidth: 2, height: 112, justifyContent: 'center', width: 104 },
-  pictureEmoji: { fontSize: 52 },
+  helper: { color: COLORS.muted, fontFamily: 'Inter_400Regular', fontSize: 14, marginTop: 7, textAlign: 'center' },
+  matchChoices: { flexDirection: 'row', flexWrap: 'wrap', gap: 16, justifyContent: 'center', marginTop: 50 },
+  pictureCard: { alignItems: 'center', borderRadius: 26, borderWidth: 3, height: 112, justifyContent: 'center', width: 96 },
   picturePressed: { opacity: 0.78, transform: [{ scale: 0.94 }] },
-  soundItems: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center', marginTop: 34 },
-  sortPicture: { alignItems: 'center', borderColor: 'rgba(32,93,103,0.13)', borderRadius: 20, borderWidth: 2, height: 90, justifyContent: 'center', position: 'relative', width: 88 },
-  selectedPicture: { borderColor: COLORS.ink, borderWidth: 4, transform: [{ scale: 1.04 }] },
-  sortedPicture: { opacity: 0.44 },
-  sortEmoji: { fontSize: 41 },
-  sortedCheck: { bottom: 5, position: 'absolute', right: 5 },
-  sortHelper: { color: COLORS.muted, fontFamily: 'Inter_400Regular', fontSize: 13, marginTop: 18, textAlign: 'center' },
-  baskets: { flexDirection: 'row', gap: 16, justifyContent: 'center', marginTop: 14 },
-  basket: { alignItems: 'center', borderRadius: 23, height: 92, justifyContent: 'center', width: 124 },
-  basketLetter: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 30 },
-  wordPicture: { alignItems: 'center', backgroundColor: '#EEF6F3', borderRadius: 34, height: 110, justifyContent: 'center', marginTop: 34, width: 110 },
-  wordEmoji: { fontSize: 56 },
-  wordSlots: { flexDirection: 'row', gap: 10, justifyContent: 'center', marginTop: 30 },
-  wordSlot: { alignItems: 'center', borderBottomColor: COLORS.ink, borderBottomWidth: 3, height: 52, justifyContent: 'center', width: 48 },
-  wordSlotFilled: { backgroundColor: '#FFF7D2', borderRadius: 10, borderBottomWidth: 0 },
-  slotLetter: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 30 },
-  letterChoices: { flexDirection: 'row', gap: 12, justifyContent: 'center', marginTop: 26 },
-  letterButton: { alignItems: 'center', backgroundColor: COLORS.aqua, borderColor: COLORS.ink, borderRadius: 20, borderWidth: 1, height: 64, justifyContent: 'center', width: 64 },
-  letterText: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 25 },
+  soundsArea: { alignItems: 'center', marginTop: 40 },
+  largePictureCard: { alignItems: 'center', borderRadius: 34, borderWidth: 4, height: 160, justifyContent: 'center', width: 160 },
+  soundProgress: { flexDirection: 'row', gap: 6, marginTop: 18 },
+  soundProgressDot: { backgroundColor: COLORS.line, borderRadius: 4, height: 7, width: 16 },
+  soundProgressDotActive: { backgroundColor: COLORS.coral },
+  soundChoices: { flexDirection: 'row', gap: 24, justifyContent: 'center', marginTop: 24 },
+  soundButton: { alignItems: 'center', backgroundColor: '#53C7C1', borderColor: '#205D67', borderRadius: 24, borderWidth: 2, height: 80, justifyContent: 'center', width: 100 },
+  soundButtonText: { color: '#205D67', fontFamily: 'Inter_700Bold', fontSize: 36 },
+  buildArea: { alignItems: 'center', marginTop: 30 },
+  wordPicture: { alignItems: 'center', borderRadius: 32, borderWidth: 3, height: 130, justifyContent: 'center', width: 130 },
+  wordSlots: { flexDirection: 'row', gap: 12, justifyContent: 'center', marginTop: 30 },
+  wordSlot: { alignItems: 'center', borderBottomColor: COLORS.line, borderBottomWidth: 4, height: 56, justifyContent: 'center', width: 50 },
+  wordSlotFilled: { backgroundColor: '#FFF7D2', borderRadius: 12, borderBottomWidth: 0 },
+  slotLetter: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 32 },
+  letterChoices: { flexDirection: 'row', gap: 16, justifyContent: 'center', marginTop: 36 },
+  letterButton: { alignItems: 'center', backgroundColor: '#53C7C1', borderColor: '#205D67', borderRadius: 20, borderWidth: 2, height: 68, justifyContent: 'center', width: 68 },
+  letterButtonUsed: { backgroundColor: '#E9DFD2', borderColor: 'transparent', opacity: 0.5 },
+  letterText: { color: '#205D67', fontFamily: 'Inter_700Bold', fontSize: 30 },
+  letterTextUsed: { color: '#7E8A92' },
   answerPressed: { opacity: 0.75, transform: [{ scale: 0.97 }] },
   completeDots: { flexDirection: 'row', gap: 14, justifyContent: 'center', marginTop: 54 },
   completeDot: { borderRadius: 18, height: 36, width: 36 },
