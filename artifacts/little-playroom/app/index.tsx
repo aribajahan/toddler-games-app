@@ -43,14 +43,11 @@ function GameCard({
     >
       <LinearGradient colors={colors} style={styles.gameCard}>
         <View style={styles.gameIconBubble}>
-          <Ionicons name={icon} size={30} color="#24313D" />
+          <Ionicons name={icon} size={32} color="#24313D" />
         </View>
         <View style={styles.gameCopy}>
           <Text style={styles.gameTitle}>{title}</Text>
           <Text style={styles.gameDescription}>{description}</Text>
-        </View>
-        <View style={styles.arrowBubble}>
-          <Ionicons name="arrow-forward" size={18} color="#24313D" />
         </View>
       </LinearGradient>
     </Pressable>
@@ -73,7 +70,7 @@ export default function HomeScreen() {
     >
       <View style={styles.header}>
         <View style={styles.titleWrap}>
-          <Text style={styles.heading}>MAKE & PLAY</Text>
+          <Text style={styles.heading}>Little Playroom</Text>
         </View>
         <View style={styles.sunMark}>
           <View style={styles.sunCore} />
@@ -81,11 +78,6 @@ export default function HomeScreen() {
           <View style={styles.sunRayTwo} />
           <View style={styles.sunRayThree} />
         </View>
-      </View>
-
-      <View style={styles.sectionHeading}>
-        <Text style={styles.sectionTitle}>Playroom</Text>
-        <Text style={styles.sectionHint}>4 things to try</Text>
       </View>
 
       <GameCard
@@ -182,23 +174,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 4,
   },
-  sectionHeading: {
-    alignItems: 'baseline',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 14,
-  },
-  sectionTitle: {
-    color: '#24313D',
-    fontFamily: 'Inter_700Bold',
-    fontSize: 21,
-    letterSpacing: -0.4,
-  },
-  sectionHint: {
-    color: '#9AA29E',
-    fontFamily: 'Inter_500Medium',
-    fontSize: 12,
-  },
   gameCardPressable: {
     borderRadius: 24,
     marginBottom: 14,
@@ -231,14 +206,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     fontSize: 13,
     lineHeight: 18,
-  },
-  arrowBubble: {
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.56)',
-    borderRadius: 16,
-    height: 32,
-    justifyContent: 'center',
-    width: 32,
   },
   pressed: { opacity: 0.82, transform: [{ scale: 0.985 }] },
 });

@@ -145,8 +145,7 @@ export default function MemoryScreen() {
           <Ionicons name="chevron-back" size={24} color="#24313D" />
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>FIND THE PAIRS</Text>
-          <Text style={styles.title}>Remember where</Text>
+          <Text style={styles.title}>Find the pairs</Text>
         </View>
         <Pressable
           testID="memory-reset"
@@ -160,13 +159,13 @@ export default function MemoryScreen() {
       </View>
 
       <View style={styles.statsRow}>
-        <View>
-          <Text style={styles.statsLabel}>PAIRS FOUND</Text>
-          <Text style={styles.statsValue}>{matches} <Text style={styles.statsTotal}>of 6</Text></Text>
+        <View style={styles.matchesPill}>
+          <Ionicons name="star" size={16} color={matches === 6 ? "#F0A83C" : "#E5E0D8"} />
+          <Text style={styles.statsValue}>{matches}<Text style={styles.statsTotal}>/6</Text></Text>
         </View>
         <View style={styles.movesPill}>
-          <Ionicons name="footsteps-outline" size={16} color="#7E8A92" />
-          <Text style={styles.movesText}>{moves} {moves === 1 ? 'move' : 'moves'}</Text>
+          <Ionicons name="footsteps" size={16} color="#E5E0D8" />
+          <Text style={styles.movesText}>{moves}</Text>
         </View>
       </View>
 
@@ -202,10 +201,10 @@ export default function MemoryScreen() {
 
       {matches === 6 && (
         <View style={styles.winMessage}>
-          <Ionicons name="trophy-outline" size={20} color="#F0A83C" />
-          <Text style={styles.winText}>You found them all!</Text>
-          <Pressable testID="memory-play-again" onPress={reset}>
-            <Text style={styles.playAgain}>Play again</Text>
+          <Ionicons name="trophy" size={22} color="#F0A83C" />
+          <Text style={styles.winText}>All found!</Text>
+          <Pressable testID="memory-play-again" onPress={reset} style={({ pressed }) => [styles.playAgainBtn, pressed && styles.pressed]}>
+            <Ionicons name="refresh" size={18} color="#FFFFFF" />
           </Pressable>
         </View>
       )}
@@ -219,15 +218,14 @@ const styles = StyleSheet.create({
   backButton: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 20, borderWidth: 1, height: 40, justifyContent: 'center', width: 40 },
   pressed: { opacity: 0.65 },
   headerCopy: { flex: 1, marginLeft: 13 },
-  eyebrow: { color: '#B4A99C', fontFamily: 'Inter_700Bold', fontSize: 10, letterSpacing: 1.4, marginBottom: 3 },
   title: { color: '#24313D', fontFamily: 'Inter_700Bold', fontSize: 20 },
   resetButton: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 20, borderWidth: 1, height: 40, justifyContent: 'center', width: 40 },
-  statsRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 24, paddingVertical: 16 },
-  statsLabel: { color: '#B4A99C', fontFamily: 'Inter_700Bold', fontSize: 10, letterSpacing: 1.2, marginBottom: 5 },
-  statsValue: { color: '#24313D', fontFamily: 'Inter_700Bold', fontSize: 25 },
+  statsRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 16, paddingHorizontal: 24, paddingVertical: 16 },
+  matchesPill: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 17, borderWidth: 1, flexDirection: 'row', gap: 6, paddingHorizontal: 12, paddingVertical: 8 },
+  statsValue: { color: '#24313D', fontFamily: 'Inter_700Bold', fontSize: 15 },
   statsTotal: { color: '#9AA29E', fontFamily: 'Inter_500Medium', fontSize: 13 },
-  movesPill: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 17, borderWidth: 1, flexDirection: 'row', gap: 6, paddingHorizontal: 11, paddingVertical: 9 },
-  movesText: { color: '#7E8A92', fontFamily: 'Inter_500Medium', fontSize: 12 },
+  movesPill: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 17, borderWidth: 1, flexDirection: 'row', gap: 6, paddingHorizontal: 12, paddingVertical: 8 },
+  movesText: { color: '#7E8A92', fontFamily: 'Inter_600SemiBold', fontSize: 14 },
   grid: { alignContent: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center', paddingHorizontal: 22 },
   card: { alignItems: 'center', borderRadius: 20, borderWidth: 1.5, height: 108, justifyContent: 'center', width: '29%' },
   cardBack: { backgroundColor: '#E4F2EF', borderColor: '#C7E3DC' },
@@ -237,7 +235,7 @@ const styles = StyleSheet.create({
   cardBackArt: { alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.7)', borderRadius: 28, height: 62, justifyContent: 'center', overflow: 'hidden', position: 'relative', width: 62 },
   cardBackCircleLarge: { backgroundColor: '#CDEAE5', borderRadius: 34, height: 68, left: -17, position: 'absolute', top: 25, width: 68 },
   cardBackCircleSmall: { backgroundColor: '#FFF0C6', borderRadius: 18, height: 36, position: 'absolute', right: -3, top: -3, width: 36 },
-  winMessage: { alignItems: 'center', backgroundColor: '#FFF0C6', borderRadius: 18, flexDirection: 'row', gap: 8, margin: 20, paddingHorizontal: 16, paddingVertical: 13 },
-  winText: { color: '#24313D', flex: 1, fontFamily: 'Inter_600SemiBold', fontSize: 13 },
-  playAgain: { color: '#B56A16', fontFamily: 'Inter_700Bold', fontSize: 12 },
+  winMessage: { alignItems: 'center', backgroundColor: '#FFF0C6', borderRadius: 18, flexDirection: 'row', gap: 10, margin: 20, paddingHorizontal: 16, paddingVertical: 12 },
+  winText: { color: '#24313D', flex: 1, fontFamily: 'Inter_700Bold', fontSize: 15 },
+  playAgainBtn: { alignItems: 'center', backgroundColor: '#F0A83C', borderRadius: 16, height: 32, justifyContent: 'center', width: 32 },
 });
