@@ -22,13 +22,13 @@ type Stroke = { points: Point[]; color: string; width: number; opacity: number; 
 type Tool = 'pen' | 'marker' | 'watercolor';
 
 const STORAGE_KEY = 'little-playroom-paint-strokes';
-const FAVORITE_COLORS = ['#F04444', '#FFB000', '#FFD43B', '#25A55F', '#2787F5', '#7A4FD4', '#24313D'];
+const FAVORITE_COLORS = ['#FF0000', '#FFFF00', '#0000FF', '#00FF00', '#FF8000', '#8000FF', '#000000'];
 const COLOR_GRID = [
-  '#F04444', '#FF6B35', '#FFB000', '#FFD43B', '#9BC53D',
-  '#25A55F', '#13B8A5', '#2787F5', '#365FD8', '#7A4FD4',
-  '#D578A6', '#E86A82', '#8F6F5D', '#24313D', '#7E8A92',
-  '#FF6871', '#FFE471', '#53C7C1', '#205D67', '#FCFAF6',
-  '#F4B6A8', '#B8E3D7', '#A8D4E8', '#C6B8E8',
+  '#FF0000', '#FF8000', '#FFFF00', '#00FF00', '#0000FF',
+  '#8000FF', '#FF00FF', '#00FFFF', '#000000', '#FFFFFF',
+  '#800000', '#808000', '#008000', '#008080', '#000080',
+  '#800080', '#808080', '#C0C0C0', '#FFC0CB', '#A52A2A',
+  '#F4A460', '#D2691E', '#FFD700', '#F5F5DC',
 ];
 
 export default function PaintScreen() {
