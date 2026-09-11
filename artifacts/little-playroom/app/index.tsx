@@ -88,7 +88,7 @@ export default function HomeScreen() {
         title="Color studio"
         description="Draw anything you can imagine"
         icon="color-palette-outline"
-        colors={['#FF6871', '#FF6871']}
+        colors={['#FFE471', '#FFE471']}
         onPress={() => router.push('/paint')}
         testID="home-paint-card"
       />
@@ -96,7 +96,9 @@ export default function HomeScreen() {
         title="Little piano"
         description="Make a song with your fingers"
         icon="musical-notes-outline"
-        colors={['#53C7C1', '#53C7C1']}
+        colors={['#FF6871', '#FF6871']}
+        foreground="#FCFAF6"
+        iconForeground="#205D67"
         onPress={() => router.push('/piano')}
         testID="home-piano-card"
       />
@@ -104,7 +106,7 @@ export default function HomeScreen() {
         title="Find the pairs"
         description="Can you remember where they are?"
         icon="grid-outline"
-        colors={['#FFE471', '#FFE471']}
+        colors={['#53C7C1', '#53C7C1']}
         onPress={() => router.push('/memory')}
         testID="home-memory-card"
       />
