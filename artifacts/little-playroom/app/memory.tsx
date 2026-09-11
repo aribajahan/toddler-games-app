@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -26,6 +26,7 @@ type Round = {
 };
 
 const PAIRS_PER_ROUND = 6;
+const RECENT_ROUND_HISTORY = 3;
 
 function shuffle<T>(items: T[]): T[] {
   const result = [...items];
@@ -42,23 +43,16 @@ function samePairSelection(first: MemorySubject[], second: MemorySubject[]): boo
   return first.every((pair) => secondSet.has(pair));
 }
 
-function choosePairs(previousPairs: MemorySubject[]): MemoryDeckEntry[] {
-  let selection = shuffle(MEMORY_DECK).slice(0, PAIRS_PER_ROUND);
+function choosePairs(previousRounds: MemorySubject[][]): MemoryDeckEntry[] {
+  const recentPairs = new Set(previousRounds.flat());
+  const freshEntries = shuffle(MEMORY_DECK).filter((entry) => !recentPairs.has(entry.pair));
+  const fallbackEntries = shuffle(MEMORY_DECK).filter((entry) => recentPairs.has(entry.pair));
 
-  if (samePairSelection(selection.map((entry) => entry.pair), previousPairs)) {
-    const replacement = MEMORY_DECK.find(
-      (entry) => !previousPairs.includes(entry.pair),
-    );
-    if (replacement) {
-      selection = [replacement, ...selection.slice(1)];
-    }
-  }
-
-  return selection;
+  return [...freshEntries, ...fallbackEntries].slice(0, PAIRS_PER_ROUND);
 }
 
-function createRound(previousPairs: MemorySubject[] = []): Round {
-  const selectedPairs = choosePairs(previousPairs);
+function createRound(previousRounds: MemorySubject[][] = []): Round {
+  const selectedPairs = choosePairs(previousRounds);
   const cards = shuffle([...selectedPairs, ...selectedPairs]).map((card, index) => ({
     ...card,
     id: index,
@@ -84,7 +78,12 @@ export default function MemoryScreen() {
   const router = useRouter();
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const [round, setRound] = useState<Round>(() => createRound());
+  const roundHistory = useRef<MemorySubject[][]>([]);
+  const [round, setRound] = useState<Round>(() => {
+    const nextRound = createRound();
+    roundHistory.current = [nextRound.pairs];
+    return nextRound;
+  });
   const [flippedIds, setFlippedIds] = useState<number[]>([]);
   const [moves, setMoves] = useState(0);
   const cards = round.cards;
@@ -127,7 +126,9 @@ export default function MemoryScreen() {
   };
 
   const reset = () => {
-    setRound((previous) => createRound(previous.pairs));
+    const nextRound = createRound(roundHistory.current.slice(-RECENT_ROUND_HISTORY));
+    roundHistory.current = [...roundHistory.current, nextRound.pairs].slice(-RECENT_ROUND_HISTORY);
+    setRound(nextRound);
     setFlippedIds([]);
     setMoves(0);
   };
