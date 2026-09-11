@@ -69,14 +69,6 @@ function getArithmeticChoices(answer: number, roundIndex: number) {
   return choices.slice(offset).concat(choices.slice(0, offset));
 }
 
-function getRoundLabel(round: Round) {
-  if (round.type === 'compare') {
-    return round.prompt === 'same' ? 'COMPARE' : round.prompt.toUpperCase();
-  }
-  if (round.type === 'fill') return 'FILL THE NUMBER';
-  return 'ADD IT UP';
-}
-
 export default function MathScreen() {
   const router = useRouter();
   const colors = useColors();
@@ -189,8 +181,7 @@ export default function MathScreen() {
             <Ionicons name="chevron-back" size={24} color={COLORS.ink} />
           </Pressable>
           <View style={styles.headerCopy}>
-            <Text style={styles.eyebrow}>MATH MIX</Text>
-            <Text style={styles.title}>Little number games</Text>
+            <Text style={styles.title}>Math mix</Text>
           </View>
           <Pressable
             testID="math-reset"
@@ -204,13 +195,10 @@ export default function MathScreen() {
         </View>
 
         <View style={styles.progressHeader}>
-          <View>
-            <Text style={styles.progressLabel}>ROUND</Text>
-            <Text style={styles.progressValue}>
-              {isComplete ? ROUNDS.length : roundNumber}{' '}
-              <Text style={styles.progressTotal}>of {ROUNDS.length}</Text>
-            </Text>
-          </View>
+          <Text style={styles.progressValue}>
+            {isComplete ? ROUNDS.length : roundNumber}
+            <Text style={styles.progressTotal}> / {ROUNDS.length}</Text>
+          </Text>
           <View style={styles.progressDots} accessibilityLabel={`Round ${roundNumber} of ${ROUNDS.length}`}>
             {ROUNDS.map((_, index) => (
               <View
@@ -226,35 +214,29 @@ export default function MathScreen() {
 
         <View style={styles.instructions}>
           <Text style={styles.question}>{feedbackText}</Text>
-          <Text style={styles.helper}>
-            {isComplete
-              ? 'You counted, compared, and added.'
-              : feedback === 'tryAgain'
-                ? 'The problem is still right here.'
-                : 'Take your time. You can look again.'}
-          </Text>
+          {(isComplete || feedback === 'tryAgain') && (
+            <Text style={styles.helper}>
+              {isComplete ? 'You counted, compared, and added.' : 'Try once more.'}
+            </Text>
+          )}
         </View>
 
-        {round.type === 'compare' && (
-          <View style={styles.gameCard}>
-            <Text style={styles.cardLabel}>{getRoundLabel(round)}</Text>
+        {!isComplete && round.type === 'compare' && (
+          <View style={styles.problemArea}>
             <View style={styles.compareGroups}>
-              <View style={styles.groupPanel}>
-                <Text style={styles.groupLabel}>LEFT</Text>
+              <View style={styles.group}>
                 <DotGroup count={round.left} color={COLORS.coral} />
               </View>
-              <Text style={styles.versus}>and</Text>
-              <View style={styles.groupPanel}>
-                <Text style={styles.groupLabel}>RIGHT</Text>
+              <Text style={styles.versus}>or</Text>
+              <View style={styles.group}>
                 <DotGroup count={round.right} color={COLORS.blue} />
               </View>
             </View>
           </View>
         )}
 
-        {round.type === 'fill' && (
-          <View style={styles.gameCard}>
-            <Text style={styles.cardLabel}>COUNT THE SHAPES</Text>
+        {!isComplete && round.type === 'fill' && (
+          <View style={styles.problemArea}>
             <View style={styles.fillRow}>
               {Array.from({ length: round.target }).map((_, index) => (
                 <View
@@ -263,20 +245,17 @@ export default function MathScreen() {
                     styles.fillSlot,
                     index < fillCount && styles.fillSlotFilled,
                   ]}
-                >
-                  {index < fillCount && <View style={styles.fillDot} />}
-                </View>
+                />
               ))}
             </View>
             <Text style={styles.fillCount}>
-              {fillCount} <Text style={styles.fillTarget}>of {round.target}</Text>
+              {fillCount} <Text style={styles.fillTarget}>/ {round.target}</Text>
             </Text>
           </View>
         )}
 
-        {round.type === 'add' && (
-          <View style={styles.gameCard}>
-            <Text style={styles.cardLabel}>ADD THE GROUPS</Text>
+        {!isComplete && round.type === 'add' && (
+          <View style={styles.problemArea}>
             <View style={styles.additionRow}>
               <DotGroup count={round.first} color={COLORS.yellow} />
               <Text style={styles.additionSign}>+</Text>
@@ -290,7 +269,7 @@ export default function MathScreen() {
           </View>
         )}
 
-        {round.type === 'compare' && (
+        {!isComplete && round.type === 'compare' && (
           <View style={styles.answerChoices}>
             {getCompareAnswers(round.prompt).map((answer) => (
               <Pressable
@@ -308,7 +287,7 @@ export default function MathScreen() {
           </View>
         )}
 
-        {round.type === 'fill' && (
+        {!isComplete && round.type === 'fill' && (
           <Pressable
             testID="math-add-one"
             accessibilityRole="button"
@@ -322,7 +301,7 @@ export default function MathScreen() {
           </Pressable>
         )}
 
-        {round.type === 'add' && (
+        {!isComplete && round.type === 'add' && (
           <View style={styles.answerChoices}>
             {getArithmeticChoices(round.first + round.second, roundIndex).map((answer) => (
               <Pressable
@@ -341,16 +320,22 @@ export default function MathScreen() {
         )}
 
         {isComplete && (
-          <Pressable
-            testID="math-play-again"
-            accessibilityRole="button"
-            accessibilityLabel="Play Math Mix again"
-            onPress={reset}
-            style={({ pressed }) => [styles.playAgain, pressed && styles.answerPressed]}
-          >
-            <Ionicons name="sparkles-outline" size={18} color="#B56A16" />
-            <Text style={styles.playAgainText}>Play again</Text>
-          </Pressable>
+          <>
+            <View style={styles.completeDots}>
+              <View style={[styles.completeDot, { backgroundColor: COLORS.coral }]} />
+              <View style={[styles.completeDot, { backgroundColor: COLORS.yellow }]} />
+              <View style={[styles.completeDot, { backgroundColor: COLORS.blue }]} />
+            </View>
+            <Pressable
+              testID="math-play-again"
+              accessibilityRole="button"
+              accessibilityLabel="Play Math Mix again"
+              onPress={reset}
+              style={({ pressed }) => [styles.playAgain, pressed && styles.answerPressed]}
+            >
+              <Text style={styles.playAgainText}>Play again</Text>
+            </Pressable>
+          </>
         )}
       </ScrollView>
     </View>
@@ -377,13 +362,6 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.65 },
   headerCopy: { flex: 1, marginLeft: 13 },
-  eyebrow: {
-    color: '#B4A99C',
-    fontFamily: 'Inter_700Bold',
-    fontSize: 10,
-    letterSpacing: 1.4,
-    marginBottom: 3,
-  },
   title: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 20 },
   resetButton: {
     alignItems: 'center',
@@ -401,71 +379,42 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 16,
   },
-  progressLabel: {
-    color: '#B4A99C',
-    fontFamily: 'Inter_700Bold',
-    fontSize: 10,
-    letterSpacing: 1.2,
-    marginBottom: 5,
-  },
-  progressValue: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 25 },
+  progressValue: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 15 },
   progressTotal: { color: '#9AA29E', fontFamily: 'Inter_500Medium', fontSize: 13 },
   progressDots: { flexDirection: 'row', gap: 5 },
   progressDot: { backgroundColor: COLORS.line, borderRadius: 3, height: 6, width: 6 },
   progressDotActive: { backgroundColor: COLORS.yellow },
-  instructions: { alignItems: 'center', marginTop: 20 },
-  question: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 23, textAlign: 'center' },
+  instructions: { alignItems: 'center', marginTop: 38 },
+  question: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 26, textAlign: 'center' },
   helper: { color: COLORS.muted, fontFamily: 'Inter_400Regular', fontSize: 13, marginTop: 7, textAlign: 'center' },
-  gameCard: {
+  problemArea: {
     alignItems: 'center',
-    backgroundColor: '#FFF9F1',
-    borderColor: COLORS.line,
-    borderRadius: 25,
-    borderWidth: 1,
-    marginTop: 28,
-    paddingHorizontal: 14,
-    paddingVertical: 20,
-  },
-  cardLabel: {
-    color: '#B4A99C',
-    fontFamily: 'Inter_700Bold',
-    fontSize: 10,
-    letterSpacing: 1.2,
-    marginBottom: 17,
-  },
-  compareGroups: { alignItems: 'center', flexDirection: 'row', gap: 10, justifyContent: 'center', width: '100%' },
-  groupPanel: {
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderColor: COLORS.line,
-    borderRadius: 18,
-    borderWidth: 1,
-    minHeight: 122,
     justifyContent: 'center',
-    paddingHorizontal: 12,
-    width: '40%',
+    marginTop: 42,
+    minHeight: 150,
+    paddingHorizontal: 8,
   },
-  groupLabel: { color: '#B4A99C', fontFamily: 'Inter_700Bold', fontSize: 9, letterSpacing: 1, marginBottom: 12 },
-  versus: { color: '#B4A99C', fontFamily: 'Inter_500Medium', fontSize: 12 },
-  dotGroup: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 6, justifyContent: 'center', maxWidth: 100 },
-  dot: { borderRadius: 10, height: 18, width: 18 },
-  fillRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center', maxWidth: 290 },
+  compareGroups: { alignItems: 'center', flexDirection: 'row', gap: 24, justifyContent: 'center', width: '100%' },
+  group: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 110,
+    width: 120,
+  },
+  versus: { color: '#B4A99C', fontFamily: 'Inter_600SemiBold', fontSize: 14 },
+  dotGroup: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center', maxWidth: 110 },
+  dot: { borderRadius: 15, height: 30, width: 30 },
+  fillRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center', maxWidth: 290 },
   fillSlot: {
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderColor: '#D8CEC1',
-    borderRadius: 15,
-    borderStyle: 'dashed',
-    borderWidth: 1.5,
-    height: 38,
-    justifyContent: 'center',
-    width: 38,
+    backgroundColor: '#EFE8DE',
+    borderRadius: 17,
+    height: 34,
+    width: 34,
   },
-  fillSlotFilled: { backgroundColor: '#FFF0C6', borderColor: COLORS.yellow, borderStyle: 'solid' },
-  fillDot: { backgroundColor: COLORS.yellow, borderRadius: 9, height: 18, width: 18 },
-  fillCount: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 22, marginTop: 16 },
+  fillSlotFilled: { backgroundColor: COLORS.yellow },
+  fillCount: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 22, marginTop: 22 },
   fillTarget: { color: COLORS.muted, fontFamily: 'Inter_500Medium', fontSize: 13 },
-  additionRow: { alignItems: 'center', flexDirection: 'row', gap: 10, justifyContent: 'center', minHeight: 92 },
+  additionRow: { alignItems: 'center', flexDirection: 'row', gap: 14, justifyContent: 'center', minHeight: 92 },
   additionSign: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 24 },
   answerMark: { color: '#CFC5B8', fontFamily: 'Inter_700Bold', fontSize: 31 },
   additionEquation: { color: COLORS.muted, fontFamily: 'Inter_600SemiBold', fontSize: 16, marginTop: 10 },
@@ -512,11 +461,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: '#FFF0C6',
     borderRadius: 18,
-    flexDirection: 'row',
-    gap: 7,
-    marginTop: 24,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    marginTop: 26,
+    paddingHorizontal: 24,
+    paddingVertical: 15,
   },
   playAgainText: { color: '#B56A16', fontFamily: 'Inter_700Bold', fontSize: 13 },
+  completeDots: { flexDirection: 'row', gap: 14, justifyContent: 'center', marginTop: 54 },
+  completeDot: { borderRadius: 18, height: 36, width: 36 },
 });
