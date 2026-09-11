@@ -1,3 +1,4 @@
+- [Bundled learning prompts](bundled-learning-prompts.md) — child-facing spoken prompts stay offline and consistent through bundled audio clips, not runtime text-to-speech.
 - [Expo orientation previews](expo-orientation-previews.md) — web preview can reject orientation locks; verify piano layout in both true landscape and rotated portrait fallback.
 - [Expo phone preview sessions](expo-phone-preview-sessions.md) — a broken phone screen with a healthy web bundle usually needs a fresh Expo Go QR/session, not app-code changes.
 - [GitHub OAuth sync](github-oauth-sync.md) — Replit-managed GitHub OAuth is available through the connector proxy, not ordinary Git credential authentication.
