@@ -8,6 +8,7 @@ const REPOSITORY_NAME = "toddler-games-app";
 const BRANCH = "main";
 const API_PREFIX = `/repos/${REPOSITORY_OWNER}/${REPOSITORY_NAME}`;
 const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+const GIT_OUTPUT_BUFFER_BYTES = 64 * 1024 * 1024;
 
 type TreeEntry = {
   path: string;
@@ -47,6 +48,7 @@ function git(args: string[], options: { allowFailure?: boolean } = {}): string {
     return execFileSync("git", args, {
       cwd: PROJECT_ROOT,
       encoding: "utf8",
+      maxBuffer: GIT_OUTPUT_BUFFER_BYTES,
       stdio: ["ignore", "pipe", "pipe"],
     }).trim();
   } catch (error) {
@@ -62,6 +64,7 @@ function git(args: string[], options: { allowFailure?: boolean } = {}): string {
 function gitBytes(args: string[]): Buffer {
   return execFileSync("git", args, {
     cwd: PROJECT_ROOT,
+    maxBuffer: GIT_OUTPUT_BUFFER_BYTES,
     stdio: ["ignore", "pipe", "pipe"],
   });
 }
