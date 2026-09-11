@@ -15,32 +15,32 @@
 const colors = {
   light: {
     // A soft, paper-like palette with bright color reserved for play.
-    text: '#24313D',
-    tint: '#F16E61',
+    text: '#205D67',
+    tint: '#FF6871',
 
     // Core surfaces
-    background: '#FFF9F1',
-    foreground: '#24313D',
+    background: '#F7FBF5',
+    foreground: '#205D67',
 
     // Cards / elevated surfaces
     card: '#FFFFFF',
-    cardForeground: '#24313D',
+    cardForeground: '#205D67',
 
     // Primary action color (buttons, links, active states)
-    primary: '#F16E61',
+    primary: '#FF6871',
     primaryForeground: '#ffffff',
 
     // Secondary / less-emphasis interactive surfaces
     secondary: '#EEF6F3',
-    secondaryForeground: '#24313D',
+    secondaryForeground: '#205D67',
 
     // Muted / subdued elements (dividers, timestamps, placeholders)
     muted: '#F4EDE3',
     mutedForeground: '#7E8A92',
 
     // Accent highlights (badges, selected items, focus rings)
-    accent: '#FFF0C6',
-    accentForeground: '#24313D',
+    accent: '#FFE471',
+    accentForeground: '#205D67',
 
     // Destructive actions (delete, error states)
     destructive: '#D85050',

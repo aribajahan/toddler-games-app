@@ -20,14 +20,14 @@ const NOTE_SOURCES = {
 };
 
 const KEYS = [
-  { label: 'C', color: '#F16E61', source: NOTE_SOURCES.C4 },
-  { label: 'D', color: '#F0A83C', source: NOTE_SOURCES.D4 },
-  { label: 'E', color: '#F6D65B', source: NOTE_SOURCES.E4 },
-  { label: 'F', color: '#7DC7B6', source: NOTE_SOURCES.F4 },
-  { label: 'G', color: '#6DB7D8', source: NOTE_SOURCES.G4 },
-  { label: 'A', color: '#8F7BC7', source: NOTE_SOURCES.A4 },
-  { label: 'B', color: '#D578A6', source: NOTE_SOURCES.B4 },
-  { label: 'C', color: '#F16E61', source: NOTE_SOURCES.C5 },
+  { label: 'C', color: '#FF6871', source: NOTE_SOURCES.C4 },
+  { label: 'D', color: '#FFE471', source: NOTE_SOURCES.D4 },
+  { label: 'E', color: '#53C7C1', source: NOTE_SOURCES.E4 },
+  { label: 'F', color: '#205D67', source: NOTE_SOURCES.F4 },
+  { label: 'G', color: '#FF6871', source: NOTE_SOURCES.G4 },
+  { label: 'A', color: '#FFE471', source: NOTE_SOURCES.A4 },
+  { label: 'B', color: '#53C7C1', source: NOTE_SOURCES.B4 },
+  { label: 'C', color: '#205D67', source: NOTE_SOURCES.C5 },
 ] as const;
 
 const SONGS = [
@@ -120,7 +120,7 @@ export default function PianoScreen() {
           onPress={() => router.back()}
           style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
         >
-          <Ionicons name="chevron-back" size={22} color="#24313D" />
+          <Ionicons name="chevron-back" size={22} color="#205D67" />
         </Pressable>
         <View style={styles.headerCopy}>
           <Text style={styles.title}>Little piano</Text>
@@ -133,7 +133,7 @@ export default function PianoScreen() {
           onPress={() => setShowSongMenu((value) => !value)}
           style={[styles.modeToggle, guided && styles.modeToggleActive]}
         >
-          <Ionicons name={guided ? selectedSong.icon : 'musical-notes'} size={17} color={guided ? '#24313D' : '#7E8A92'} />
+          <Ionicons name={guided ? selectedSong.icon : 'musical-notes'} size={17} color={guided ? '#205D67' : '#7E8A92'} />
           <Text style={[styles.modeText, guided && styles.modeTextActive]}>{guided ? selectedSong.shortName : 'Free play'}</Text>
           <Ionicons name={showSongMenu ? 'chevron-up' : 'chevron-down'} size={14} color="#7E8A92" />
         </Pressable>
@@ -145,7 +145,7 @@ export default function PianoScreen() {
           onPress={() => setSoundOn((value) => !value)}
           style={[styles.soundToggle, soundOn && styles.soundToggleActive]}
         >
-          <Ionicons name={soundOn ? 'volume-high-outline' : 'volume-mute-outline'} size={18} color={soundOn ? '#24313D' : '#7E8A92'} />
+          <Ionicons name={soundOn ? 'volume-high-outline' : 'volume-mute-outline'} size={18} color={soundOn ? '#205D67' : '#7E8A92'} />
         </Pressable>
       </View>
 
@@ -170,7 +170,7 @@ export default function PianoScreen() {
             }}
             style={[styles.songMenuChoice, !guided && styles.songMenuChoiceSelected]}
           >
-            <Ionicons name="musical-notes" size={18} color={!guided ? '#24313D' : '#7E8A92'} />
+            <Ionicons name="musical-notes" size={18} color={!guided ? '#205D67' : '#7E8A92'} />
             <Text style={[styles.songMenuText, !guided && styles.songMenuTextSelected]}>Free play</Text>
           </Pressable>
           {SONGS.map((song, index) => {
@@ -190,7 +190,7 @@ export default function PianoScreen() {
                 }}
                 style={[styles.songMenuChoice, selected && styles.songMenuChoiceSelected]}
               >
-                <Ionicons name={song.icon} size={18} color={selected ? '#24313D' : '#7E8A92'} />
+                <Ionicons name={song.icon} size={18} color={selected ? '#205D67' : '#7E8A92'} />
                 <Text style={[styles.songMenuText, selected && styles.songMenuTextSelected]}>{song.shortName}</Text>
               </Pressable>
             );
@@ -199,7 +199,6 @@ export default function PianoScreen() {
       )}
 
       <View style={styles.songPrompt}>
-        <Ionicons name={guided ? selectedSong.icon : 'musical-notes'} size={25} color="#F0A83C" />
         <Text style={styles.songPromptText}>
           {guided ? selectedSong.name : 'Free play'}
         </Text>
@@ -239,7 +238,6 @@ export default function PianoScreen() {
               ]}
             >
               <Text style={[styles.keyLabel, isActive && styles.keyLabelActive]}>{key.label}</Text>
-              {isNext && <View style={[styles.keyGlow, { backgroundColor: key.color }]} />}
             </Pressable>
           );
         })}
@@ -257,28 +255,27 @@ const styles = StyleSheet.create({
   backButton: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 20, borderWidth: 1, height: 40, justifyContent: 'center', width: 40 },
   pressed: { opacity: 0.65 },
   headerCopy: { flex: 1, marginLeft: 4, minWidth: 0 },
-  title: { color: '#24313D', fontFamily: 'Inter_700Bold', fontSize: 20 },
+  title: { color: '#205D67', fontFamily: 'Inter_700Bold', fontSize: 20 },
   modeToggle: { alignItems: 'center', backgroundColor: '#F1E9DF', borderRadius: 18, flexDirection: 'row', gap: 6, paddingHorizontal: 12, paddingVertical: 9 },
-  modeToggleActive: { backgroundColor: '#FFF0C6' },
+  modeToggleActive: { backgroundColor: '#FFE471' },
   modeText: { color: '#7E8A92', fontFamily: 'Inter_500Medium', fontSize: 12 },
-  modeTextActive: { color: '#24313D', fontFamily: 'Inter_600SemiBold' },
+  modeTextActive: { color: '#205D67', fontFamily: 'Inter_600SemiBold' },
   soundToggle: { alignItems: 'center', backgroundColor: '#F1E9DF', borderRadius: 18, height: 36, justifyContent: 'center', width: 36 },
-  soundToggleActive: { backgroundColor: '#FFF0C6' },
+  soundToggleActive: { backgroundColor: '#FFE471' },
   songMenu: { backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 16, borderWidth: 1, flexDirection: 'row', flexWrap: 'wrap', gap: 6, padding: 8, position: 'absolute', width: 290, zIndex: 10 },
   songMenuChoice: { alignItems: 'center', backgroundColor: '#F1E9DF', borderRadius: 12, flexDirection: 'row', gap: 6, paddingHorizontal: 10, paddingVertical: 7 },
-  songMenuChoiceSelected: { backgroundColor: '#FFF0C6', borderColor: '#F0A83C', borderWidth: 1 },
+  songMenuChoiceSelected: { backgroundColor: '#FFE471', borderColor: '#205D67', borderWidth: 1 },
   songMenuText: { color: '#7E8A92', fontFamily: 'Inter_500Medium', fontSize: 11 },
-  songMenuTextSelected: { color: '#24313D', fontFamily: 'Inter_600SemiBold' },
+  songMenuTextSelected: { color: '#205D67', fontFamily: 'Inter_600SemiBold' },
   songPrompt: { alignItems: 'center', flex: 1, justifyContent: 'center' },
-  songPromptText: { color: '#51606B', fontFamily: 'Inter_500Medium', fontSize: 14, marginBottom: 12, marginTop: 5 },
+  songPromptText: { color: '#51606B', fontFamily: 'Inter_500Medium', fontSize: 14, marginBottom: 12 },
   progressDots: { flexDirection: 'row', gap: 5 },
   progressDot: { backgroundColor: '#E9DFD2', borderRadius: 3, height: 5, width: 5 },
-  progressDotDone: { backgroundColor: '#F0A83C' },
+  progressDotDone: { backgroundColor: '#FF6871' },
   keyboard: { alignItems: 'stretch', flexDirection: 'row', gap: 5, paddingHorizontal: 15 },
   key: { alignItems: 'center', borderColor: '#E9DFD2', borderRadius: 14, borderWidth: 1, flex: 1, height: 190, justifyContent: 'flex-end', paddingBottom: 16 },
-  keyNext: { borderColor: '#24313D', borderWidth: 2, transform: [{ translateY: -5 }] },
+  keyNext: { borderColor: '#205D67', borderWidth: 3, transform: [{ translateY: -6 }] },
   keyPressed: { transform: [{ translateY: 3 }] },
   keyLabel: { color: '#9AA29E', fontFamily: 'Inter_700Bold', fontSize: 16 },
   keyLabelActive: { color: '#FFFFFF' },
-  keyGlow: { borderRadius: 8, height: 8, marginBottom: 10, position: 'absolute', top: 12, width: 8 },
 });

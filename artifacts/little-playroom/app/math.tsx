@@ -38,11 +38,11 @@ const MATH_PROMPTS = {
 };
 
 const COLORS = {
-  coral: '#F16E61',
-  blue: '#6DB7D8',
-  yellow: '#F0A83C',
-  purple: '#8F7BC7',
-  ink: '#24313D',
+  coral: '#FF6871',
+  blue: '#53C7C1',
+  yellow: '#FFE471',
+  purple: '#205D67',
+  ink: '#205D67',
   muted: '#7E8A92',
   line: '#E9DFD2',
 };
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
   question: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 26, textAlign: 'center' },
   listenButton: {
     alignItems: 'center',
-    backgroundColor: '#FFF0C6',
+    backgroundColor: '#FFE471',
     borderRadius: 20,
     height: 40,
     justifyContent: 'center',
@@ -493,19 +493,19 @@ const styles = StyleSheet.create({
   answerPressed: { opacity: 0.75, transform: [{ scale: 0.97 }] },
   numberButton: {
     alignItems: 'center',
-    backgroundColor: '#EEE8FF',
-    borderColor: '#D9CFFF',
+    backgroundColor: '#53C7C1',
+    borderColor: '#205D67',
     borderRadius: 20,
     borderWidth: 1,
     height: 62,
     justifyContent: 'center',
     width: 62,
   },
-  numberText: { color: '#6C59A8', fontFamily: 'Inter_700Bold', fontSize: 22 },
+  numberText: { color: '#205D67', fontFamily: 'Inter_700Bold', fontSize: 22 },
   playAgainBtn: {
     alignItems: 'center',
     alignSelf: 'center',
-    backgroundColor: '#FFF0C6',
+    backgroundColor: '#FFE471',
     borderRadius: 32,
     height: 64,
     justifyContent: 'center',

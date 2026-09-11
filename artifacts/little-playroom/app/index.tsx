@@ -20,6 +20,7 @@ type GameCardProps = {
   colors: readonly [string, string, ...string[]];
   onPress: () => void;
   testID: string;
+  foreground?: string;
 };
 
 function GameCard({
@@ -29,6 +30,7 @@ function GameCard({
   colors,
   onPress,
   testID,
+  foreground = '#205D67',
 }: GameCardProps) {
   return (
     <Pressable
@@ -43,11 +45,11 @@ function GameCard({
     >
       <LinearGradient colors={colors} style={styles.gameCard}>
         <View style={styles.gameIconBubble}>
-          <Ionicons name={icon} size={32} color="#24313D" />
+          <Ionicons name={icon} size={32} color={foreground} />
         </View>
         <View style={styles.gameCopy}>
-          <Text style={styles.gameTitle}>{title}</Text>
-          <Text style={styles.gameDescription}>{description}</Text>
+          <Text style={[styles.gameTitle, { color: foreground }]}>{title}</Text>
+          <Text style={[styles.gameDescription, { color: foreground }]}>{description}</Text>
         </View>
       </LinearGradient>
     </Pressable>
@@ -84,7 +86,7 @@ export default function HomeScreen() {
         title="Color studio"
         description="Draw anything you can imagine"
         icon="color-palette-outline"
-        colors={['#FFE8DF', '#FFD8C8']}
+        colors={['#FF6871', '#FF6871']}
         onPress={() => router.push('/paint')}
         testID="home-paint-card"
       />
@@ -92,7 +94,7 @@ export default function HomeScreen() {
         title="Little piano"
         description="Make a song with your fingers"
         icon="musical-notes-outline"
-        colors={['#E5F4F1', '#CDEAE5']}
+        colors={['#53C7C1', '#53C7C1']}
         onPress={() => router.push('/piano')}
         testID="home-piano-card"
       />
@@ -100,7 +102,7 @@ export default function HomeScreen() {
         title="Find the pairs"
         description="Can you remember where they are?"
         icon="grid-outline"
-        colors={['#FFF0C6', '#FFE5A1']}
+        colors={['#FFE471', '#FFE471']}
         onPress={() => router.push('/memory')}
         testID="home-memory-card"
       />
@@ -108,7 +110,8 @@ export default function HomeScreen() {
         title="Math mix"
         description="More, less, and little sums"
         icon="calculator-outline"
-        colors={['#EEE8FF', '#DDD1FF']}
+        colors={['#205D67', '#205D67']}
+        foreground="#F7FBF5"
         onPress={() => router.push('/math')}
         testID="home-math-card"
       />
@@ -129,14 +132,14 @@ const styles = StyleSheet.create({
   },
   titleWrap: { flex: 1, minWidth: 0 },
   heading: {
-    color: '#24313D',
+    color: '#205D67',
     fontFamily: 'Inter_700Bold',
     fontSize: 34,
     letterSpacing: -1.2,
   },
   sunMark: {
     alignItems: 'center',
-    backgroundColor: '#FFF0C6',
+    backgroundColor: '#FFE471',
     borderRadius: 27,
     height: 54,
     justifyContent: 'center',
@@ -144,13 +147,13 @@ const styles = StyleSheet.create({
     width: 54,
   },
   sunCore: {
-    backgroundColor: '#F0A83C',
+    backgroundColor: '#FF6871',
     borderRadius: 14,
     height: 27,
     width: 27,
   },
   sunRayOne: {
-    backgroundColor: '#F0A83C',
+    backgroundColor: '#FF6871',
     borderRadius: 2,
     height: 5,
     position: 'absolute',
@@ -158,7 +161,7 @@ const styles = StyleSheet.create({
     width: 4,
   },
   sunRayTwo: {
-    backgroundColor: '#F0A83C',
+    backgroundColor: '#FF6871',
     borderRadius: 2,
     height: 4,
     position: 'absolute',
@@ -167,7 +170,7 @@ const styles = StyleSheet.create({
     width: 6,
   },
   sunRayThree: {
-    backgroundColor: '#F0A83C',
+    backgroundColor: '#FF6871',
     borderRadius: 2,
     bottom: 7,
     height: 5,
@@ -196,7 +199,7 @@ const styles = StyleSheet.create({
   },
   gameCopy: { flex: 1, marginHorizontal: 15 },
   gameTitle: {
-    color: '#24313D',
+    color: '#205D67',
     fontFamily: 'Inter_700Bold',
     fontSize: 18,
     marginBottom: 6,

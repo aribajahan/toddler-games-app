@@ -65,7 +65,7 @@ export default function PaintScreen() {
 
   const strokeOpacity = tool === 'marker' ? 1 : 0.58;
   const strokeWidth = tool === 'marker' ? thickness : Math.max(2, thickness * 0.45);
-  const canvasBackground = '#FFFEFB';
+  const canvasBackground = '#F7FBF5';
 
   const finishStroke = () => {
     if (currentStroke.length > 1) {
@@ -136,7 +136,7 @@ export default function PaintScreen() {
           onPress={() => router.back()}
           style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
         >
-          <Ionicons name="chevron-back" size={24} color="#24313D" />
+          <Ionicons name="chevron-back" size={24} color="#205D67" />
         </Pressable>
         <View style={styles.topTitle}>
           <Text style={styles.screenTitle}>Color studio</Text>
@@ -222,7 +222,7 @@ export default function PaintScreen() {
                 }}
                 style={[styles.segment, tool === 'marker' && styles.segmentSelected]}
               >
-                <Ionicons name={tool === 'marker' ? "brush" : "brush-outline"} size={22} color={tool === 'marker' ? '#24313D' : '#9AA29E'} />
+                <Ionicons name={tool === 'marker' ? "brush" : "brush-outline"} size={22} color={tool === 'marker' ? '#205D67' : '#9AA29E'} />
               </Pressable>
               <Pressable
                 testID="paint-tool-pen"
@@ -234,7 +234,7 @@ export default function PaintScreen() {
                 }}
                 style={[styles.segment, tool === 'pen' && styles.segmentSelected]}
               >
-                <Ionicons name={tool === 'pen' ? "pencil" : "pencil-outline"} size={22} color={tool === 'pen' ? '#24313D' : '#9AA29E'} />
+                <Ionicons name={tool === 'pen' ? "pencil" : "pencil-outline"} size={22} color={tool === 'pen' ? '#205D67' : '#9AA29E'} />
               </Pressable>
             </View>
           </View>
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     width: 40,
   },
   topTitle: { flex: 1, marginLeft: 13, minWidth: 0 },
-  screenTitle: { color: '#24313D', fontFamily: 'Inter_700Bold', fontSize: 20 },
+  screenTitle: { color: '#205D67', fontFamily: 'Inter_700Bold', fontSize: 20 },
   pressed: { opacity: 0.6 },
   canvas: { overflow: 'hidden', position: 'relative' },
   canvasHint: {
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
   },
   canvasHintText: { color: '#D6CEC2', fontFamily: 'Inter_500Medium', fontSize: 14, marginTop: 10 },
   toolbar: {
-    backgroundColor: '#FFF9F1',
+    backgroundColor: '#F7FBF5',
     borderTopColor: '#E9DFD2',
     borderTopWidth: 1,
     paddingHorizontal: 18,
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   colorRow: { alignItems: 'center', flexDirection: 'row', marginBottom: 14 },
   colorChoices: { alignItems: 'center', flex: 1, flexDirection: 'row', justifyContent: 'space-between' },
   colorButton: { borderColor: '#FFFFFF', borderRadius: 16, borderWidth: 2, height: 30, width: 30 },
-  colorButtonSelected: { borderColor: '#24313D', borderWidth: 3, transform: [{ scale: 1.12 }] },
+  colorButtonSelected: { borderColor: '#205D67', borderWidth: 3, transform: [{ scale: 1.12 }] },
   colorPressed: { opacity: 0.72 },
   addColorButton: { alignItems: 'center', borderColor: '#CFC5B8', borderRadius: 16, borderStyle: 'dashed', borderWidth: 1.5, height: 30, justifyContent: 'center', width: 30 },
   controlsRow: { alignItems: 'flex-end', flexDirection: 'row', gap: 10, justifyContent: 'space-between' },
@@ -353,10 +353,10 @@ const styles = StyleSheet.create({
   sizeButtonSelected: { backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderWidth: 1 },
   sizeDot: { borderRadius: 12 },
   modalBackdrop: { alignItems: 'center', backgroundColor: 'rgba(36,49,61,0.28)', flex: 1, justifyContent: 'flex-end' },
-  colorModal: { backgroundColor: '#FFF9F1', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, paddingBottom: 36, width: '100%' },
+  colorModal: { backgroundColor: '#F7FBF5', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, paddingBottom: 36, width: '100%' },
   modalHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
-  modalTitle: { color: '#24313D', fontFamily: 'Inter_700Bold', fontSize: 20 },
+  modalTitle: { color: '#205D67', fontFamily: 'Inter_700Bold', fontSize: 20 },
   colorGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 15 },
   gridColor: { borderColor: '#FFFFFF', borderRadius: 24, borderWidth: 2, height: 46, width: 46 },
-  gridColorSelected: { borderColor: '#24313D', borderWidth: 4 },
+  gridColorSelected: { borderColor: '#205D67', borderWidth: 4 },
 });
