@@ -149,6 +149,19 @@ export default function PaintScreen() {
           <Text style={styles.screenTitle}>Color studio</Text>
         </View>
         <Pressable
+          testID="paint-scroll-toggle"
+          accessibilityRole="button"
+          accessibilityLabel={scrollMode ? 'Draw on canvas' : 'Scroll canvas'}
+          onPress={() => setScrollMode((enabled) => !enabled)}
+          style={({ pressed }) => [
+            styles.iconButton,
+            scrollMode && styles.scrollModeActive,
+            pressed && styles.pressed,
+          ]}
+        >
+          <Ionicons name={scrollMode ? 'create-outline' : 'move-outline'} size={20} color="#205D67" />
+        </Pressable>
+        <Pressable
           testID="paint-clear"
           accessibilityRole="button"
           accessibilityLabel={clearedStrokes ? 'Undo clear picture' : 'Clear picture'}
@@ -203,7 +216,10 @@ export default function PaintScreen() {
                 testID={`paint-color-${color}`}
                 accessibilityRole="button"
                 accessibilityLabel={`Choose ${color}`}
-                onPress={() => setSelectedColor(color)}
+                onPress={() => {
+                  setSelectedColor(color);
+                  setScrollMode(false);
+                }}
                 style={({ pressed }) => [
                   styles.colorButton,
                   { backgroundColor: color },
@@ -233,6 +249,7 @@ export default function PaintScreen() {
                 accessibilityLabel="Marker tool"
                 onPress={() => {
                   setTool('marker');
+                  setScrollMode(false);
                   setThickness((size) => Math.max(size, 10));
                 }}
                 style={({ pressed }) => [
@@ -249,6 +266,7 @@ export default function PaintScreen() {
                 accessibilityLabel="Pen tool"
                 onPress={() => {
                   setTool('pen');
+                  setScrollMode(false);
                   setThickness((size) => Math.min(size, 10));
                 }}
                 style={({ pressed }) => [
@@ -265,6 +283,7 @@ export default function PaintScreen() {
                 accessibilityLabel="Watercolor brush"
                 onPress={() => {
                   setTool('watercolor');
+                  setScrollMode(false);
                   setThickness((size) => Math.max(size, 14));
                 }}
                 style={({ pressed }) => [
@@ -324,6 +343,7 @@ export default function PaintScreen() {
                   accessibilityLabel={`Choose ${color}`}
                   onPress={() => {
                     setSelectedColor(color);
+                    setScrollMode(false);
                     setShowColors(false);
                   }}
                   style={[styles.gridColor, { backgroundColor: color }, selectedColor === color && styles.gridColorSelected]}
@@ -393,6 +413,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 40,
   },
+  scrollModeActive: { backgroundColor: '#53C7C1', borderColor: '#205D67' },
   topTitle: { flex: 1, marginLeft: 13, minWidth: 0 },
   screenTitle: { color: '#205D67', fontFamily: 'Inter_700Bold', fontSize: 20 },
   pressed: { opacity: 0.6 },
