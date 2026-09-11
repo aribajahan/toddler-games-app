@@ -204,7 +204,14 @@ export default function PianoScreen() {
         </Text>
         <View style={[styles.progressDots, !guided && { opacity: 0 }]}>
           {selectedSong.notes.slice(0, 8).map((_, index) => (
-            <View key={index} style={[styles.progressDot, index < songIndex % 8 && styles.progressDotDone]} />
+            <View
+              key={index}
+              style={[
+                styles.progressDot,
+                index < songIndex % 8 && styles.progressDotDone,
+                index === songIndex % 8 && styles.progressDotCurrent,
+              ]}
+            />
           ))}
         </View>
       </View>
@@ -269,9 +276,10 @@ const styles = StyleSheet.create({
   songMenuTextSelected: { color: '#205D67', fontFamily: 'Inter_600SemiBold' },
   songPrompt: { alignItems: 'center', flex: 1, justifyContent: 'center' },
   songPromptText: { color: '#51606B', fontFamily: 'Inter_500Medium', fontSize: 14, marginBottom: 12 },
-  progressDots: { flexDirection: 'row', gap: 5 },
-  progressDot: { backgroundColor: '#E9DFD2', borderRadius: 3, height: 5, width: 5 },
+  progressDots: { flexDirection: 'row', gap: 6 },
+  progressDot: { backgroundColor: '#E9DFD2', borderRadius: 4, height: 6, width: 6 },
   progressDotDone: { backgroundColor: '#FF6871' },
+  progressDotCurrent: { backgroundColor: '#53C7C1', height: 9, width: 9 },
   keyboard: { alignItems: 'stretch', flexDirection: 'row', gap: 5, paddingHorizontal: 15 },
   key: { alignItems: 'center', borderColor: '#E9DFD2', borderRadius: 14, borderWidth: 1, flex: 1, height: 190, justifyContent: 'flex-end', paddingBottom: 16 },
   keyNext: { borderColor: '#205D67', borderWidth: 3, transform: [{ translateY: -6 }] },

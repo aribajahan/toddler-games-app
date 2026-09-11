@@ -220,7 +220,11 @@ export default function PaintScreen() {
                   setTool('marker');
                   setThickness((size) => Math.max(size, 10));
                 }}
-                style={[styles.segment, tool === 'marker' && styles.segmentSelected]}
+                style={({ pressed }) => [
+                  styles.segment,
+                  tool === 'marker' && styles.segmentSelected,
+                  pressed && styles.segmentPressed,
+                ]}
               >
                 <Ionicons name={tool === 'marker' ? "brush" : "brush-outline"} size={22} color={tool === 'marker' ? '#205D67' : '#9AA29E'} />
               </Pressable>
@@ -232,7 +236,11 @@ export default function PaintScreen() {
                   setTool('pen');
                   setThickness((size) => Math.min(size, 10));
                 }}
-                style={[styles.segment, tool === 'pen' && styles.segmentSelected]}
+                style={({ pressed }) => [
+                  styles.segment,
+                  tool === 'pen' && styles.segmentSelected,
+                  pressed && styles.segmentPressed,
+                ]}
               >
                 <Ionicons name={tool === 'pen' ? "pencil" : "pencil-outline"} size={22} color={tool === 'pen' ? '#205D67' : '#9AA29E'} />
               </Pressable>
@@ -346,7 +354,17 @@ const styles = StyleSheet.create({
   toolChoice: { flex: 1 },
   segmented: { backgroundColor: '#F1E9DF', borderRadius: 17, flexDirection: 'row', padding: 3, width: 110 },
   segment: { alignItems: 'center', borderRadius: 14, flex: 1, flexDirection: 'row', gap: 4, justifyContent: 'center', paddingVertical: 7 },
-  segmentSelected: { backgroundColor: '#FFFFFF' },
+  segmentSelected: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#205D67',
+    borderWidth: 1,
+    shadowColor: '#205D67',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  segmentPressed: { opacity: 0.7, transform: [{ scale: 0.96 }] },
   sizeChoice: { alignItems: 'flex-end' },
   sizeRow: { flexDirection: 'row', gap: 5 },
   sizeButton: { alignItems: 'center', backgroundColor: '#F1E9DF', borderRadius: 15, height: 30, justifyContent: 'center', width: 30 },

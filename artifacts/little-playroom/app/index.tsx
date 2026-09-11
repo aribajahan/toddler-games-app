@@ -21,6 +21,7 @@ type GameCardProps = {
   onPress: () => void;
   testID: string;
   foreground?: string;
+  iconForeground?: string;
 };
 
 function GameCard({
@@ -31,6 +32,7 @@ function GameCard({
   onPress,
   testID,
   foreground = '#205D67',
+  iconForeground = foreground,
 }: GameCardProps) {
   return (
     <Pressable
@@ -45,7 +47,7 @@ function GameCard({
     >
       <LinearGradient colors={colors} style={styles.gameCard}>
         <View style={styles.gameIconBubble}>
-          <Ionicons name={icon} size={32} color={foreground} />
+          <Ionicons name={icon} size={32} color={iconForeground} />
         </View>
         <View style={styles.gameCopy}>
           <Text style={[styles.gameTitle, { color: foreground }]}>{title}</Text>
@@ -112,6 +114,7 @@ export default function HomeScreen() {
         icon="calculator-outline"
         colors={['#205D67', '#205D67']}
         foreground="#F7FBF5"
+        iconForeground="#205D67"
         onPress={() => router.push('/math')}
         testID="home-math-card"
       />
@@ -191,8 +194,10 @@ const styles = StyleSheet.create({
   },
   gameIconBubble: {
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.68)',
+    backgroundColor: '#F7FBF5',
+    borderColor: 'rgba(32,93,103,0.12)',
     borderRadius: 24,
+    borderWidth: 1,
     height: 62,
     justifyContent: 'center',
     width: 62,

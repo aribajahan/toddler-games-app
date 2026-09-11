@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   statsTotal: { color: '#9AA29E', fontFamily: 'Inter_500Medium', fontSize: 13 },
   movesPill: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 17, borderWidth: 1, flexDirection: 'row', gap: 6, paddingHorizontal: 12, paddingVertical: 8 },
   movesText: { color: '#7E8A92', fontFamily: 'Inter_600SemiBold', fontSize: 14 },
-  grid: { alignContent: 'center', flex: 1, flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center', paddingHorizontal: 22 },
+  grid: { alignContent: 'flex-start', flex: 1, flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center', paddingHorizontal: 22, paddingTop: 52 },
   card: { alignItems: 'center', borderRadius: 20, borderWidth: 1.5, height: 108, justifyContent: 'center', width: '29%' },
   cardBack: { backgroundColor: '#53C7C1', borderColor: '#205D67' },
   cardMatched: { opacity: 0.55 },
