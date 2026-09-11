@@ -8,23 +8,24 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 
 type ComparePrompt = 'more' | 'less' | 'same';
+type ArithmeticOperator = '+' | '-' | '×';
 type Round =
   | { type: 'compare'; prompt: ComparePrompt; left: number; right: number }
   | { type: 'fill'; target: number }
-  | { type: 'add'; first: number; second: number };
+  | { type: 'arithmetic'; first: number; second: number; operator: ArithmeticOperator };
 type Feedback = 'idle' | 'correct' | 'tryAgain' | 'complete';
 type CompareAnswer = 'left' | 'right' | 'yes' | 'no';
 
 const ROUNDS: Round[] = [
   { type: 'compare', prompt: 'more', left: 1, right: 3 },
   { type: 'fill', target: 3 },
-  { type: 'add', first: 1, second: 1 },
+  { type: 'arithmetic', first: 1, second: 1, operator: '+' },
   { type: 'compare', prompt: 'same', left: 3, right: 3 },
   { type: 'fill', target: 5 },
-  { type: 'add', first: 2, second: 2 },
+  { type: 'arithmetic', first: 3, second: 1, operator: '-' },
   { type: 'compare', prompt: 'less', left: 4, right: 5 },
   { type: 'fill', target: 7 },
-  { type: 'add', first: 3, second: 2 },
+  { type: 'arithmetic', first: 2, second: 2, operator: '×' },
 ];
 
 const MATH_PROMPTS = {
@@ -35,8 +36,8 @@ const MATH_PROMPTS = {
   5: require('../assets/audio/math-make-five.mp3'),
   7: require('../assets/audio/math-make-seven.mp3'),
   add11: require('../assets/audio/math-one-plus-one.mp3'),
-  add22: require('../assets/audio/math-two-plus-two.mp3'),
-  add32: require('../assets/audio/math-three-plus-two.mp3'),
+  subtract31: require('../assets/audio/math-three-minus-one.mp3'),
+  multiply22: require('../assets/audio/math-two-times-two.mp3'),
 };
 
 const COLORS = {
@@ -78,6 +79,12 @@ function getArithmeticChoices(answer: number, roundIndex: number) {
   return choices.slice(offset).concat(choices.slice(0, offset));
 }
 
+function solveArithmetic(first: number, second: number, operator: ArithmeticOperator) {
+  if (operator === '+') return first + second;
+  if (operator === '-') return first - second;
+  return first * second;
+}
+
 export default function MathScreen() {
   const router = useRouter();
   const colors = useColors();
@@ -98,11 +105,11 @@ export default function MathScreen() {
         ? MATH_PROMPTS[round.prompt]
         : round.type === 'fill'
           ? MATH_PROMPTS[round.target as 3 | 5 | 7]
-          : round.first === 1
+          : round.operator === '+'
             ? MATH_PROMPTS.add11
-            : round.first === 2
-              ? MATH_PROMPTS.add22
-              : MATH_PROMPTS.add32;
+            : round.operator === '-'
+              ? MATH_PROMPTS.subtract31
+              : MATH_PROMPTS.multiply22;
     promptPlayer.replace(source);
     void promptPlayer.seekTo(0);
     promptPlayer.play();
@@ -161,8 +168,8 @@ export default function MathScreen() {
   };
 
   const answerArithmetic = (answer: number) => {
-    if (feedback !== 'idle' || round.type !== 'add') return;
-    if (answer === round.first + round.second) {
+    if (feedback !== 'idle' || round.type !== 'arithmetic') return;
+    if (answer === solveArithmetic(round.first, round.second, round.operator)) {
       finishRound();
     } else {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
@@ -184,8 +191,8 @@ export default function MathScreen() {
         ? 'Take another look'
         : round.type === 'fill'
           ? `Make ${round.target}`
-          : round.type === 'add'
-            ? `What is ${round.first} + ${round.second}?`
+          : round.type === 'arithmetic'
+            ? `What is ${round.first} ${round.operator} ${round.second}?`
             : getCompareQuestion(round.prompt);
 
   return (
@@ -237,7 +244,7 @@ export default function MathScreen() {
 
         <View style={styles.instructions}>
           <View style={styles.questionRow}>
-            <Text style={[styles.question, round.type === 'add' && feedback === 'idle' && styles.additionQuestion]}>
+            <Text style={[styles.question, round.type === 'arithmetic' && feedback === 'idle' && styles.additionQuestion]}>
               {feedbackText}
             </Text>
             {!isComplete && feedback === 'idle' && (
@@ -254,7 +261,7 @@ export default function MathScreen() {
           </View>
           {(isComplete || feedback === 'tryAgain') && (
             <Text style={styles.helper}>
-              {isComplete ? 'You counted, compared, and added.' : 'Try once more.'}
+              {isComplete ? 'You counted, compared, and solved.' : 'Try once more.'}
             </Text>
           )}
         </View>
@@ -323,11 +330,11 @@ export default function MathScreen() {
           </View>
         )}
 
-        {!isComplete && round.type === 'add' && (
+        {!isComplete && round.type === 'arithmetic' && (
           <View style={styles.problemArea}>
             <View style={styles.additionHint} accessibilityLabel="Picture hint">
               <DotGroup count={round.first} color={COLORS.yellow} compact />
-              <Text style={styles.additionHintSign}>+</Text>
+              <Text style={styles.additionHintSign}>{round.operator}</Text>
               <DotGroup count={round.second} color={COLORS.blue} compact />
             </View>
           </View>
@@ -359,9 +366,9 @@ export default function MathScreen() {
           </View>
         )}
 
-        {!isComplete && round.type === 'add' && (
+        {!isComplete && round.type === 'arithmetic' && (
           <View style={styles.answerChoices}>
-            {getArithmeticChoices(round.first + round.second, roundIndex).map((answer) => (
+            {getArithmeticChoices(solveArithmetic(round.first, round.second, round.operator), roundIndex).map((answer) => (
               <Pressable
                 key={answer}
                 testID={`math-answer-${answer}`}

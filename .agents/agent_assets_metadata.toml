@@ -126,3 +126,17 @@ uri = "file://artifacts/little-playroom/assets/audio/math-two-plus-two.mp3"
 type = "audio"
 title = "math two plus two prompt"
 description = "Text-to-speech audio: What's two plus two?"
+
+[[outputs]]
+id = "OatB5Gqba2HubrebBdIse"
+uri = "file://artifacts/little-playroom/assets/audio/math-two-times-two.mp3"
+type = "audio"
+title = "math two times two prompt"
+description = "Text-to-speech audio: What's two times two?"
+
+[[outputs]]
+id = "B52aslvbaB68T6q4ELDU-"
+uri = "file://artifacts/little-playroom/assets/audio/math-three-minus-one.mp3"
+type = "audio"
+title = "math three minus one prompt"
+description = "Text-to-speech audio: What's three minus one?"
