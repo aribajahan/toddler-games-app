@@ -26,7 +26,7 @@ function RootLayoutNav() {
       <Stack.Screen name="paint" />
       <Stack.Screen name="piano" />
       <Stack.Screen name="memory" />
-      <Stack.Screen name="pattern" />
+      <Stack.Screen name="math" />
     </Stack>
   );
 }

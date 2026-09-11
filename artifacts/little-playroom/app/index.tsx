@@ -113,12 +113,12 @@ export default function HomeScreen() {
         testID="home-memory-card"
       />
       <GameCard
-        title="Pattern parade"
-        description="Can you remember the order?"
-        icon="shapes-outline"
+        title="Math mix"
+        description="More, less, and little sums"
+        icon="calculator-outline"
         colors={['#EEE8FF', '#DDD1FF']}
-        onPress={() => router.push('/pattern')}
-        testID="home-pattern-card"
+        onPress={() => router.push('/math')}
+        testID="home-math-card"
       />
 
     </ScrollView>
