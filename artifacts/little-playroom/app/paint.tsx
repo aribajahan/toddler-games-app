@@ -40,6 +40,7 @@ export default function PaintScreen() {
   const [thickness, setThickness] = useState(14);
   const [showColors, setShowColors] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [clearedStrokes, setClearedStrokes] = useState<Stroke[] | null>(null);
   const canvasHeight = Math.max(280, height - insets.top - insets.bottom - 222);
 
   useEffect(() => {
@@ -68,6 +69,7 @@ export default function PaintScreen() {
 
   const finishStroke = () => {
     if (currentStroke.length > 1) {
+      setClearedStrokes(null);
       setStrokes((previous) => [
         ...previous,
         { points: currentStroke, color: selectedColor, width: strokeWidth, opacity: strokeOpacity },
@@ -100,7 +102,15 @@ export default function PaintScreen() {
   const clearCanvas = () => {
     if (strokes.length === 0) return;
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    setClearedStrokes(strokes);
     setStrokes([]);
+  };
+
+  const undoClear = () => {
+    if (!clearedStrokes) return;
+    void Haptics.selectionAsync();
+    setStrokes(clearedStrokes);
+    setClearedStrokes(null);
   };
 
   const renderStroke = (stroke: Stroke, index: number) => (
@@ -129,18 +139,16 @@ export default function PaintScreen() {
           <Ionicons name="chevron-back" size={24} color="#24313D" />
         </Pressable>
         <View style={styles.topTitle}>
-          <Text style={styles.screenEyebrow}>COLOR STUDIO</Text>
-          <Text style={styles.screenTitle}>Make a picture</Text>
+          <Text style={styles.screenTitle}>Color studio</Text>
         </View>
         <Pressable
           testID="paint-clear"
           accessibilityRole="button"
-          accessibilityLabel="Clear picture"
-          onPress={clearCanvas}
-          style={({ pressed }) => [styles.clearButton, pressed && styles.pressed]}
+          accessibilityLabel={clearedStrokes ? 'Undo clear picture' : 'Clear picture'}
+          onPress={clearedStrokes ? undoClear : clearCanvas}
+          style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
         >
-          <Ionicons name="refresh-outline" size={19} color="#7E8A92" />
-          <Text style={styles.clearText}>Clear</Text>
+          <Ionicons name={clearedStrokes ? 'arrow-undo' : 'trash-outline'} size={20} color="#7E8A92" />
         </Pressable>
       </View>
 
@@ -214,8 +222,7 @@ export default function PaintScreen() {
                 }}
                 style={[styles.segment, tool === 'marker' && styles.segmentSelected]}
               >
-                <Ionicons name="brush-outline" size={19} color={tool === 'marker' ? '#24313D' : '#9AA29E'} />
-                <Text style={[styles.segmentText, tool === 'marker' && styles.segmentTextSelected]}>Marker</Text>
+                <Ionicons name={tool === 'marker' ? "brush" : "brush-outline"} size={22} color={tool === 'marker' ? '#24313D' : '#9AA29E'} />
               </Pressable>
               <Pressable
                 testID="paint-tool-pen"
@@ -227,8 +234,7 @@ export default function PaintScreen() {
                 }}
                 style={[styles.segment, tool === 'pen' && styles.segmentSelected]}
               >
-                <Ionicons name="pencil-outline" size={19} color={tool === 'pen' ? '#24313D' : '#9AA29E'} />
-                <Text style={[styles.segmentText, tool === 'pen' && styles.segmentTextSelected]}>Pen</Text>
+                <Ionicons name={tool === 'pen' ? "pencil" : "pencil-outline"} size={22} color={tool === 'pen' ? '#24313D' : '#9AA29E'} />
               </Pressable>
             </View>
           </View>
@@ -312,16 +318,7 @@ const styles = StyleSheet.create({
     width: 40,
   },
   topTitle: { flex: 1, marginLeft: 13, minWidth: 0 },
-  screenEyebrow: {
-    color: '#B4A99C',
-    fontFamily: 'Inter_700Bold',
-    fontSize: 10,
-    letterSpacing: 1.4,
-    marginBottom: 4,
-  },
   screenTitle: { color: '#24313D', fontFamily: 'Inter_700Bold', fontSize: 20 },
-  clearButton: { alignItems: 'center', flexDirection: 'row', gap: 5, padding: 8 },
-  clearText: { color: '#7E8A92', fontFamily: 'Inter_500Medium', fontSize: 13 },
   pressed: { opacity: 0.6 },
   canvas: { overflow: 'hidden', position: 'relative' },
   canvasHint: {
@@ -347,11 +344,9 @@ const styles = StyleSheet.create({
   addColorButton: { alignItems: 'center', borderColor: '#CFC5B8', borderRadius: 16, borderStyle: 'dashed', borderWidth: 1.5, height: 30, justifyContent: 'center', width: 30 },
   controlsRow: { alignItems: 'flex-end', flexDirection: 'row', gap: 10, justifyContent: 'space-between' },
   toolChoice: { flex: 1 },
-  segmented: { backgroundColor: '#F1E9DF', borderRadius: 17, flexDirection: 'row', padding: 3, width: 148 },
+  segmented: { backgroundColor: '#F1E9DF', borderRadius: 17, flexDirection: 'row', padding: 3, width: 110 },
   segment: { alignItems: 'center', borderRadius: 14, flex: 1, flexDirection: 'row', gap: 4, justifyContent: 'center', paddingVertical: 7 },
   segmentSelected: { backgroundColor: '#FFFFFF' },
-  segmentText: { color: '#9AA29E', fontFamily: 'Inter_500Medium', fontSize: 12 },
-  segmentTextSelected: { color: '#24313D', fontFamily: 'Inter_600SemiBold' },
   sizeChoice: { alignItems: 'flex-end' },
   sizeRow: { flexDirection: 'row', gap: 5 },
   sizeButton: { alignItems: 'center', backgroundColor: '#F1E9DF', borderRadius: 15, height: 30, justifyContent: 'center', width: 30 },

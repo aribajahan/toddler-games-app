@@ -31,13 +31,13 @@ const KEYS = [
 ] as const;
 
 const SONGS = [
-  { name: 'Twinkle Twinkle', shortName: 'Twinkle', notes: [0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0] },
-  { name: 'Mary Had a Little Lamb', shortName: 'Mary', notes: [2, 1, 0, 1, 2, 2, 2, 1, 1, 1, 2, 4, 4, 2, 1, 0, 1, 2, 2, 2, 2, 1, 1, 2, 1, 0] },
-  { name: 'Row, Row, Row Your Boat', shortName: 'Row Boat', notes: [0, 0, 0, 1, 2, 2, 1, 2, 3, 4, 7, 7, 7, 4, 4, 4, 2, 2, 2, 0, 0, 0, 4, 3, 2, 1, 0] },
-  { name: 'Ode to Joy', shortName: 'Ode to Joy', notes: [2, 2, 3, 4, 4, 3, 2, 1, 0, 0, 1, 2, 2, 1, 1, 2, 2, 3, 4, 4, 3, 2, 1, 0, 0, 1, 2, 1, 0, 0] },
-  { name: 'Jingle Bells', shortName: 'Jingle Bells', notes: [2, 2, 2, 2, 2, 2, 2, 4, 0, 1, 2, 3, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 2, 1, 4] },
-  { name: 'Old MacDonald', shortName: 'Old MacDonald', notes: [0, 0, 0, 4, 5, 5, 4, 2, 2, 1, 1, 0, 4, 0, 0, 0, 4, 5, 5, 4, 2, 2, 1, 1, 0] },
-  { name: 'Happy Birthday', shortName: 'Birthday', notes: [0, 0, 1, 0, 3, 2, 0, 0, 1, 0, 4, 3, 0, 0, 7, 5, 3, 2, 1, 6, 6, 5, 3, 4, 3] },
+  { name: 'Twinkle Twinkle', shortName: 'Twinkle', icon: 'star', notes: [0, 0, 4, 4, 5, 5, 4, 3, 3, 2, 2, 1, 1, 0] },
+  { name: 'Mary Had a Little Lamb', shortName: 'Mary', icon: 'paw', notes: [2, 1, 0, 1, 2, 2, 2, 1, 1, 1, 2, 4, 4, 2, 1, 0, 1, 2, 2, 2, 2, 1, 1, 2, 1, 0] },
+  { name: 'Row, Row, Row Your Boat', shortName: 'Row Boat', icon: 'boat', notes: [0, 0, 0, 1, 2, 2, 1, 2, 3, 4, 7, 7, 7, 4, 4, 4, 2, 2, 2, 0, 0, 0, 4, 3, 2, 1, 0] },
+  { name: 'Ode to Joy', shortName: 'Ode to Joy', icon: 'happy', notes: [2, 2, 3, 4, 4, 3, 2, 1, 0, 0, 1, 2, 2, 1, 1, 2, 2, 3, 4, 4, 3, 2, 1, 0, 0, 1, 2, 1, 0, 0] },
+  { name: 'Jingle Bells', shortName: 'Jingle Bells', icon: 'notifications', notes: [2, 2, 2, 2, 2, 2, 2, 4, 0, 1, 2, 3, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1, 2, 1, 4] },
+  { name: 'Old MacDonald', shortName: 'Old MacDonald', icon: 'leaf', notes: [0, 0, 0, 4, 5, 5, 4, 2, 2, 1, 1, 0, 4, 0, 0, 0, 4, 5, 5, 4, 2, 2, 1, 1, 0] },
+  { name: 'Happy Birthday', shortName: 'Birthday', icon: 'gift', notes: [0, 0, 1, 0, 3, 2, 0, 0, 1, 0, 4, 3, 0, 0, 7, 5, 3, 2, 1, 6, 6, 5, 3, 4, 3] },
 ] as const;
 
 export default function PianoScreen() {
@@ -123,8 +123,7 @@ export default function PianoScreen() {
           <Ionicons name="chevron-back" size={22} color="#24313D" />
         </Pressable>
         <View style={styles.headerCopy}>
-          <Text style={styles.eyebrow}>LITTLE PIANO</Text>
-          <Text style={styles.title}>Make a song</Text>
+          <Text style={styles.title}>Little piano</Text>
         </View>
         <Pressable
           testID="piano-song-picker"
@@ -134,7 +133,7 @@ export default function PianoScreen() {
           onPress={() => setShowSongMenu((value) => !value)}
           style={[styles.modeToggle, guided && styles.modeToggleActive]}
         >
-          <Ionicons name={guided ? 'sparkles' : 'sparkles-outline'} size={16} color={guided ? '#24313D' : '#7E8A92'} />
+          <Ionicons name={guided ? selectedSong.icon : 'musical-notes'} size={17} color={guided ? '#24313D' : '#7E8A92'} />
           <Text style={[styles.modeText, guided && styles.modeTextActive]}>{guided ? selectedSong.shortName : 'Free play'}</Text>
           <Ionicons name={showSongMenu ? 'chevron-up' : 'chevron-down'} size={14} color="#7E8A92" />
         </Pressable>
@@ -171,6 +170,7 @@ export default function PianoScreen() {
             }}
             style={[styles.songMenuChoice, !guided && styles.songMenuChoiceSelected]}
           >
+            <Ionicons name="musical-notes" size={18} color={!guided ? '#24313D' : '#7E8A92'} />
             <Text style={[styles.songMenuText, !guided && styles.songMenuTextSelected]}>Free play</Text>
           </Pressable>
           {SONGS.map((song, index) => {
@@ -190,6 +190,7 @@ export default function PianoScreen() {
                 }}
                 style={[styles.songMenuChoice, selected && styles.songMenuChoiceSelected]}
               >
+                <Ionicons name={song.icon} size={18} color={selected ? '#24313D' : '#7E8A92'} />
                 <Text style={[styles.songMenuText, selected && styles.songMenuTextSelected]}>{song.shortName}</Text>
               </Pressable>
             );
@@ -198,10 +199,11 @@ export default function PianoScreen() {
       )}
 
       <View style={styles.songPrompt}>
+        <Ionicons name={guided ? selectedSong.icon : 'musical-notes'} size={25} color="#F0A83C" />
         <Text style={styles.songPromptText}>
-          {guided && nextKeyIndex !== null ? `Tap the ${KEYS[nextKeyIndex].label} key to play ${selectedSong.shortName}` : 'Play any key you like'}
+          {guided ? selectedSong.name : 'Free play'}
         </Text>
-        <View style={styles.progressDots}>
+        <View style={[styles.progressDots, !guided && { opacity: 0 }]}>
           {selectedSong.notes.slice(0, 8).map((_, index) => (
             <View key={index} style={[styles.progressDot, index < songIndex % 8 && styles.progressDotDone]} />
           ))}
@@ -255,7 +257,6 @@ const styles = StyleSheet.create({
   backButton: { alignItems: 'center', backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 20, borderWidth: 1, height: 40, justifyContent: 'center', width: 40 },
   pressed: { opacity: 0.65 },
   headerCopy: { flex: 1, marginLeft: 4, minWidth: 0 },
-  eyebrow: { color: '#B4A99C', fontFamily: 'Inter_700Bold', fontSize: 10, letterSpacing: 1.4, marginBottom: 3 },
   title: { color: '#24313D', fontFamily: 'Inter_700Bold', fontSize: 20 },
   modeToggle: { alignItems: 'center', backgroundColor: '#F1E9DF', borderRadius: 18, flexDirection: 'row', gap: 6, paddingHorizontal: 12, paddingVertical: 9 },
   modeToggleActive: { backgroundColor: '#FFF0C6' },
@@ -264,12 +265,12 @@ const styles = StyleSheet.create({
   soundToggle: { alignItems: 'center', backgroundColor: '#F1E9DF', borderRadius: 18, height: 36, justifyContent: 'center', width: 36 },
   soundToggleActive: { backgroundColor: '#FFF0C6' },
   songMenu: { backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderRadius: 16, borderWidth: 1, flexDirection: 'row', flexWrap: 'wrap', gap: 6, padding: 8, position: 'absolute', width: 290, zIndex: 10 },
-  songMenuChoice: { backgroundColor: '#F1E9DF', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 7 },
+  songMenuChoice: { alignItems: 'center', backgroundColor: '#F1E9DF', borderRadius: 12, flexDirection: 'row', gap: 6, paddingHorizontal: 10, paddingVertical: 7 },
   songMenuChoiceSelected: { backgroundColor: '#FFF0C6', borderColor: '#F0A83C', borderWidth: 1 },
   songMenuText: { color: '#7E8A92', fontFamily: 'Inter_500Medium', fontSize: 11 },
   songMenuTextSelected: { color: '#24313D', fontFamily: 'Inter_600SemiBold' },
   songPrompt: { alignItems: 'center', flex: 1, justifyContent: 'center' },
-  songPromptText: { color: '#51606B', fontFamily: 'Inter_500Medium', fontSize: 14, marginBottom: 12 },
+  songPromptText: { color: '#51606B', fontFamily: 'Inter_500Medium', fontSize: 14, marginBottom: 12, marginTop: 5 },
   progressDots: { flexDirection: 'row', gap: 5 },
   progressDot: { backgroundColor: '#E9DFD2', borderRadius: 3, height: 5, width: 5 },
   progressDotDone: { backgroundColor: '#F0A83C' },
