@@ -56,3 +56,52 @@ mtime_ms = 1788912753783
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:4b02c3e8-ffa0-4bac-a68a-a091ad0ee681/eb83ab5a-0a2a-4f57-be60-0c736ba989ca/fcadc95b-aa1d-4105-ab2d-a3604b48435f"
 storage_version_token = "1788912760400274"
 content_type = "image/png"
+
+[[outputs]]
+id = "pWlXLD8sxNX2Y5pgZ7SEY"
+uri = "file://artifacts/little-playroom/assets/audio/math-less.mp3"
+type = "audio"
+title = "math less prompt"
+description = "Text-to-speech audio: Which group has less?"
+
+[[outputs]]
+id = "BDsbX_IeLwGTyYHj7LaLt"
+uri = "file://artifacts/little-playroom/assets/audio/math-make-three.mp3"
+type = "audio"
+title = "math make-three prompt"
+description = "Text-to-speech audio: Make three."
+
+[[outputs]]
+id = "zNHN3nugYOWRo_wiGhmEM"
+uri = "file://artifacts/little-playroom/assets/audio/math-same.mp3"
+type = "audio"
+title = "math same prompt"
+description = "Text-to-speech audio: Are the groups the same?"
+
+[[outputs]]
+id = "4M1dGA03loebU3YPXESuV"
+uri = "file://artifacts/little-playroom/assets/audio/math-make-seven.mp3"
+type = "audio"
+title = "math make-seven prompt"
+description = "Text-to-speech audio: Make seven."
+
+[[outputs]]
+id = "zuCeuri7Fl9J_pZpTKBkU"
+uri = "file://artifacts/little-playroom/assets/audio/math-total.mp3"
+type = "audio"
+title = "math total prompt"
+description = "Text-to-speech audio: What is the total?"
+
+[[outputs]]
+id = "nRE_vSGCdJ3T_qfOHrX7r"
+uri = "file://artifacts/little-playroom/assets/audio/math-make-five.mp3"
+type = "audio"
+title = "math make-five prompt"
+description = "Text-to-speech audio: Make five."
+
+[[outputs]]
+id = "vVU1g651NGyQGRcxj1VhB"
+uri = "file://artifacts/little-playroom/assets/audio/math-more.mp3"
+type = "audio"
+title = "math more prompt"
+description = "Text-to-speech audio: Which group has more?"

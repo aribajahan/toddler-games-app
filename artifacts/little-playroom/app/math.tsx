@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { useAudioPlayer } from 'expo-audio';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 
@@ -25,6 +26,16 @@ const ROUNDS: Round[] = [
   { type: 'fill', target: 7 },
   { type: 'add', first: 3, second: 2 },
 ];
+
+const MATH_PROMPTS = {
+  more: require('../assets/audio/math-more.mp3'),
+  same: require('../assets/audio/math-same.mp3'),
+  less: require('../assets/audio/math-less.mp3'),
+  3: require('../assets/audio/math-make-three.mp3'),
+  5: require('../assets/audio/math-make-five.mp3'),
+  7: require('../assets/audio/math-make-seven.mp3'),
+  total: require('../assets/audio/math-total.mp3'),
+};
 
 const COLORS = {
   coral: '#F16E61',
@@ -72,10 +83,24 @@ export default function MathScreen() {
   const [roundIndex, setRoundIndex] = useState(0);
   const [fillCount, setFillCount] = useState(0);
   const [feedback, setFeedback] = useState<Feedback>('idle');
+  const promptPlayer = useAudioPlayer(MATH_PROMPTS.more);
 
   const round = ROUNDS[roundIndex];
   const roundNumber = roundIndex + 1;
   const isComplete = feedback === 'complete';
+
+  const playPrompt = () => {
+    if (isComplete) return;
+    const source =
+      round.type === 'compare'
+        ? MATH_PROMPTS[round.prompt]
+        : round.type === 'fill'
+          ? MATH_PROMPTS[round.target as 3 | 5 | 7]
+          : MATH_PROMPTS.total;
+    promptPlayer.replace(source);
+    void promptPlayer.seekTo(0);
+    promptPlayer.play();
+  };
 
   useEffect(() => {
     if (feedback !== 'correct' && feedback !== 'tryAgain') return undefined;
@@ -191,10 +216,6 @@ export default function MathScreen() {
         </View>
 
         <View style={styles.progressHeader}>
-          <Text style={styles.progressValue}>
-            {isComplete ? ROUNDS.length : roundNumber}
-            <Text style={styles.progressTotal}> / {ROUNDS.length}</Text>
-          </Text>
           <View style={styles.progressDots} accessibilityLabel={`Round ${roundNumber} of ${ROUNDS.length}`}>
             {ROUNDS.map((_, index) => (
               <View
@@ -209,7 +230,20 @@ export default function MathScreen() {
         </View>
 
         <View style={styles.instructions}>
-          <Text style={styles.question}>{feedbackText}</Text>
+          <View style={styles.questionRow}>
+            <Text style={styles.question}>{feedbackText}</Text>
+            {!isComplete && feedback === 'idle' && (
+              <Pressable
+                testID="math-hear-prompt"
+                accessibilityRole="button"
+                accessibilityLabel="Hear the question"
+                onPress={playPrompt}
+                style={({ pressed }) => [styles.listenButton, pressed && styles.answerPressed]}
+              >
+                <Ionicons name="volume-high" size={22} color={COLORS.ink} />
+              </Pressable>
+            )}
+          </View>
           {(isComplete || feedback === 'tryAgain') && (
             <Text style={styles.helper}>
               {isComplete ? 'You counted, compared, and added.' : 'Try once more.'}
@@ -234,7 +268,6 @@ export default function MathScreen() {
               >
                 <DotGroup count={round.left} color={COLORS.coral} />
               </Pressable>
-              <Text style={styles.versus}>or</Text>
               <Pressable
                 testID="math-answer-right"
                 accessibilityRole="button"
@@ -256,19 +289,29 @@ export default function MathScreen() {
         {!isComplete && round.type === 'fill' && (
           <View style={styles.problemArea}>
             <View style={styles.fillRow}>
-              {Array.from({ length: round.target }).map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.fillSlot,
-                    index < fillCount && styles.fillSlotFilled,
-                  ]}
-                />
-              ))}
+              {Array.from({ length: round.target }).map((_, index) => {
+                const isFilled = index < fillCount;
+                return (
+                  <Pressable
+                    key={index}
+                    testID={index === fillCount ? "math-add-one" : `math-slot-${index}`}
+                    accessibilityRole="button"
+                    accessibilityLabel={isFilled ? "Filled shape" : "Empty shape, tap to fill"}
+                    disabled={feedback !== 'idle' || isFilled}
+                    onPress={addOne}
+                    style={({ pressed }) => [
+                      styles.fillSlot,
+                      isFilled && styles.fillSlotFilled,
+                      pressed && !isFilled && styles.slotPressed,
+                    ]}
+                  >
+                    {!isFilled && index === fillCount && (
+                      <Ionicons name="add" size={20} color="#CFC5B8" />
+                    )}
+                  </Pressable>
+                );
+              })}
             </View>
-            <Text style={styles.fillCount}>
-              {fillCount} <Text style={styles.fillTarget}>/ {round.target}</Text>
-            </Text>
           </View>
         )}
 
@@ -281,9 +324,6 @@ export default function MathScreen() {
               <Text style={styles.additionSign}>=</Text>
               <Text style={styles.answerMark}>?</Text>
             </View>
-            <Text style={styles.additionEquation}>
-              {round.first} + {round.second} = ?
-            </Text>
           </View>
         )}
 
@@ -311,20 +351,6 @@ export default function MathScreen() {
               </Pressable>
             ))}
           </View>
-        )}
-
-        {!isComplete && round.type === 'fill' && (
-          <Pressable
-            testID="math-add-one"
-            accessibilityRole="button"
-            accessibilityLabel="Add one shape"
-            disabled={feedback !== 'idle'}
-            onPress={addOne}
-            style={({ pressed }) => [styles.primaryButton, pressed && styles.answerPressed]}
-          >
-            <Ionicons name="add" size={20} color="#FFFFFF" />
-            <Text style={styles.primaryButtonText}>Add one</Text>
-          </Pressable>
         )}
 
         {!isComplete && round.type === 'add' && (
@@ -357,9 +383,9 @@ export default function MathScreen() {
               accessibilityRole="button"
               accessibilityLabel="Play Math Mix again"
               onPress={reset}
-              style={({ pressed }) => [styles.playAgain, pressed && styles.answerPressed]}
+              style={({ pressed }) => [styles.playAgainBtn, pressed && styles.answerPressed]}
             >
-              <Text style={styles.playAgainText}>Play again</Text>
+              <Ionicons name="refresh" size={28} color="#B56A16" />
             </Pressable>
           </>
         )}
@@ -402,16 +428,23 @@ const styles = StyleSheet.create({
   progressHeader: {
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     paddingVertical: 16,
   },
-  progressValue: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 15 },
-  progressTotal: { color: '#9AA29E', fontFamily: 'Inter_500Medium', fontSize: 13 },
   progressDots: { flexDirection: 'row', gap: 5 },
   progressDot: { backgroundColor: COLORS.line, borderRadius: 3, height: 6, width: 6 },
   progressDotActive: { backgroundColor: COLORS.yellow },
   instructions: { alignItems: 'center', marginTop: 38 },
+  questionRow: { alignItems: 'center', flexDirection: 'row', gap: 10, justifyContent: 'center' },
   question: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 26, textAlign: 'center' },
+  listenButton: {
+    alignItems: 'center',
+    backgroundColor: '#FFF0C6',
+    borderRadius: 20,
+    height: 40,
+    justifyContent: 'center',
+    width: 40,
+  },
   helper: { color: COLORS.muted, fontFamily: 'Inter_400Regular', fontSize: 13, marginTop: 7, textAlign: 'center' },
   problemArea: {
     alignItems: 'center',
@@ -430,23 +463,22 @@ const styles = StyleSheet.create({
   },
   tappableGroup: { backgroundColor: 'rgba(255,255,255,0.52)' },
   groupPressed: { opacity: 0.72, transform: [{ scale: 0.92 }] },
-  versus: { color: '#B4A99C', fontFamily: 'Inter_600SemiBold', fontSize: 14 },
   dotGroup: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center', maxWidth: 110 },
   dot: { borderRadius: 15, height: 30, width: 30 },
   fillRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center', maxWidth: 290 },
   fillSlot: {
+    alignItems: 'center',
     backgroundColor: '#EFE8DE',
     borderRadius: 17,
     height: 34,
+    justifyContent: 'center',
     width: 34,
   },
   fillSlotFilled: { backgroundColor: COLORS.yellow },
-  fillCount: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 22, marginTop: 22 },
-  fillTarget: { color: COLORS.muted, fontFamily: 'Inter_500Medium', fontSize: 13 },
+  slotPressed: { opacity: 0.7, transform: [{ scale: 0.9 }] },
   additionRow: { alignItems: 'center', flexDirection: 'row', gap: 14, justifyContent: 'center', minHeight: 92 },
   additionSign: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 24 },
   answerMark: { color: '#CFC5B8', fontFamily: 'Inter_700Bold', fontSize: 31 },
-  additionEquation: { color: COLORS.muted, fontFamily: 'Inter_600SemiBold', fontSize: 16, marginTop: 10 },
   answerChoices: { flexDirection: 'row', gap: 10, justifyContent: 'center', marginTop: 24 },
   symbolChoices: { flexDirection: 'row', gap: 20, justifyContent: 'center', marginTop: 20 },
   symbolButton: {
@@ -459,19 +491,6 @@ const styles = StyleSheet.create({
   yesButton: { backgroundColor: '#E1F2E9' },
   noButton: { backgroundColor: '#F7E7E4' },
   answerPressed: { opacity: 0.75, transform: [{ scale: 0.97 }] },
-  primaryButton: {
-    alignItems: 'center',
-    alignSelf: 'center',
-    backgroundColor: COLORS.ink,
-    borderRadius: 18,
-    flexDirection: 'row',
-    gap: 6,
-    justifyContent: 'center',
-    marginTop: 24,
-    minHeight: 54,
-    paddingHorizontal: 24,
-  },
-  primaryButtonText: { color: '#FFFFFF', fontFamily: 'Inter_700Bold', fontSize: 14 },
   numberButton: {
     alignItems: 'center',
     backgroundColor: '#EEE8FF',
@@ -483,16 +502,16 @@ const styles = StyleSheet.create({
     width: 62,
   },
   numberText: { color: '#6C59A8', fontFamily: 'Inter_700Bold', fontSize: 22 },
-  playAgain: {
+  playAgainBtn: {
     alignItems: 'center',
     alignSelf: 'center',
     backgroundColor: '#FFF0C6',
-    borderRadius: 18,
+    borderRadius: 32,
+    height: 64,
+    justifyContent: 'center',
     marginTop: 26,
-    paddingHorizontal: 24,
-    paddingVertical: 15,
+    width: 64,
   },
-  playAgainText: { color: '#B56A16', fontFamily: 'Inter_700Bold', fontSize: 13 },
   completeDots: { flexDirection: 'row', gap: 14, justifyContent: 'center', marginTop: 54 },
   completeDot: { borderRadius: 18, height: 36, width: 36 },
 });
