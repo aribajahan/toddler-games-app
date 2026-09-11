@@ -113,7 +113,7 @@ export default function HomeScreen() {
         description="More, less, and little sums"
         icon="calculator-outline"
         colors={['#205D67', '#205D67']}
-        foreground="#F7FBF5"
+        foreground="#FCFAF6"
         iconForeground="#205D67"
         onPress={() => router.push('/math')}
         testID="home-math-card"
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   },
   gameIconBubble: {
     alignItems: 'center',
-    backgroundColor: '#F7FBF5',
+    backgroundColor: '#FCFAF6',
     borderColor: 'rgba(32,93,103,0.12)',
     borderRadius: 24,
     borderWidth: 1,

@@ -27,7 +27,7 @@ const COLOR_GRID = [
   '#F16E61', '#EF8A5B', '#F0A83C', '#F6D65B', '#C9D84B',
   '#7DC7B6', '#58B8A4', '#6DB7D8', '#5F93D2', '#8F7BC7',
   '#D578A6', '#E86A82', '#8F6F5D', '#24313D', '#7E8A92',
-  '#FF6871', '#FFE471', '#53C7C1', '#205D67', '#F7FBF5',
+  '#FF6871', '#FFE471', '#53C7C1', '#205D67', '#FCFAF6',
   '#F4B6A8', '#B8E3D7', '#A8D4E8', '#C6B8E8',
 ];
 
@@ -74,7 +74,7 @@ export default function PaintScreen() {
       : tool === 'watercolor'
         ? Math.max(12, thickness * 1.35)
         : Math.max(2, thickness * 0.45);
-  const canvasBackground = '#F7FBF5';
+  const canvasBackground = '#FCFAF6';
 
   const finishStroke = () => {
     if (currentStroke.length > 1) {
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   },
   canvasHintText: { color: '#D6CEC2', fontFamily: 'Inter_500Medium', fontSize: 14, marginTop: 10 },
   toolbar: {
-    backgroundColor: '#F7FBF5',
+    backgroundColor: '#FCFAF6',
     borderTopColor: '#E9DFD2',
     borderTopWidth: 1,
     paddingHorizontal: 18,
@@ -462,7 +462,7 @@ const styles = StyleSheet.create({
   sizeButtonSelected: { backgroundColor: '#FFFFFF', borderColor: '#E9DFD2', borderWidth: 1 },
   sizeDot: { borderRadius: 12 },
   modalBackdrop: { alignItems: 'center', backgroundColor: 'rgba(36,49,61,0.28)', flex: 1, justifyContent: 'flex-end' },
-  colorModal: { backgroundColor: '#F7FBF5', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, paddingBottom: 36, width: '100%' },
+  colorModal: { backgroundColor: '#FCFAF6', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, paddingBottom: 36, width: '100%' },
   modalHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
   modalTitle: { color: '#205D67', fontFamily: 'Inter_700Bold', fontSize: 20 },
   colorGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
