@@ -4,6 +4,7 @@ import {
   PanResponder,
   Pressable,
   StyleSheet,
+  ScrollView,
   Text,
   View,
   useWindowDimensions,
@@ -17,8 +18,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 
 type Point = { x: number; y: number };
-type Stroke = { points: Point[]; color: string; width: number; opacity: number };
-type Tool = 'pen' | 'marker';
+type Stroke = { points: Point[]; color: string; width: number; opacity: number; tool?: Tool };
+type Tool = 'pen' | 'marker' | 'watercolor';
 
 const STORAGE_KEY = 'little-playroom-paint-strokes';
 const FAVORITE_COLORS = ['#F16E61', '#F0A83C', '#F6D65B', '#7DC7B6', '#6DB7D8', '#8F7BC7', '#24313D'];
@@ -26,6 +27,8 @@ const COLOR_GRID = [
   '#F16E61', '#EF8A5B', '#F0A83C', '#F6D65B', '#C9D84B',
   '#7DC7B6', '#58B8A4', '#6DB7D8', '#5F93D2', '#8F7BC7',
   '#D578A6', '#E86A82', '#8F6F5D', '#24313D', '#7E8A92',
+  '#FF6871', '#FFE471', '#53C7C1', '#205D67', '#F7FBF5',
+  '#F4B6A8', '#B8E3D7', '#A8D4E8', '#C6B8E8',
 ];
 
 export default function PaintScreen() {
@@ -39,6 +42,7 @@ export default function PaintScreen() {
   const [tool, setTool] = useState<Tool>('marker');
   const [thickness, setThickness] = useState(14);
   const [showColors, setShowColors] = useState(false);
+  const [scrollMode, setScrollMode] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [clearedStrokes, setClearedStrokes] = useState<Stroke[] | null>(null);
   const canvasHeight = Math.max(280, height - insets.top - insets.bottom - 222);
@@ -63,8 +67,13 @@ export default function PaintScreen() {
     }
   }, [isLoaded, strokes]);
 
-  const strokeOpacity = tool === 'marker' ? 1 : 0.58;
-  const strokeWidth = tool === 'marker' ? thickness : Math.max(2, thickness * 0.45);
+  const strokeOpacity = tool === 'marker' ? 1 : tool === 'watercolor' ? 0.2 : 0.58;
+  const strokeWidth =
+    tool === 'marker'
+      ? thickness
+      : tool === 'watercolor'
+        ? Math.max(12, thickness * 1.35)
+        : Math.max(2, thickness * 0.45);
   const canvasBackground = '#F7FBF5';
 
   const finishStroke = () => {
@@ -72,7 +81,7 @@ export default function PaintScreen() {
       setClearedStrokes(null);
       setStrokes((previous) => [
         ...previous,
-        { points: currentStroke, color: selectedColor, width: strokeWidth, opacity: strokeOpacity },
+        { points: currentStroke, color: selectedColor, width: strokeWidth, opacity: strokeOpacity, tool },
       ]);
       void Haptics.selectionAsync();
     }
@@ -114,15 +123,13 @@ export default function PaintScreen() {
   };
 
   const renderStroke = (stroke: Stroke, index: number) => (
-    <Polyline
+    <StrokeVisual
       key={`stroke-${index}`}
-      points={stroke.points.map((point) => `${point.x},${point.y}`).join(' ')}
-      fill="none"
-      stroke={stroke.color}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeOpacity={stroke.opacity}
-      strokeWidth={stroke.width}
+      points={stroke.points}
+      color={stroke.color}
+      width={stroke.width}
+      opacity={stroke.opacity}
+      tool={stroke.tool}
     />
   );
 
@@ -152,31 +159,39 @@ export default function PaintScreen() {
         </Pressable>
       </View>
 
-      <View
-        testID="paint-canvas"
-        style={[styles.canvas, { height: canvasHeight, backgroundColor: canvasBackground }]}
-        {...panResponder.panHandlers}
-      >
-        <Svg height={canvasHeight} width={width}>
-          {strokes.map(renderStroke)}
-          {currentStroke.length > 1 && (
-            <Polyline
-              points={currentStroke.map((point) => `${point.x},${point.y}`).join(' ')}
-              fill="none"
-              stroke={selectedColor}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeOpacity={strokeOpacity}
-              strokeWidth={strokeWidth}
-            />
-          )}
-        </Svg>
-        {strokes.length === 0 && currentStroke.length === 0 && (
-          <View pointerEvents="none" style={styles.canvasHint}>
-            <Ionicons name="color-wand-outline" size={26} color="#D6CEC2" />
-            <Text style={styles.canvasHintText}>Draw something wonderful</Text>
+      <View style={[styles.canvasViewport, { height: canvasHeight }]}>
+        <ScrollView
+          style={styles.canvasScroll}
+          contentContainerStyle={{ minHeight: canvasHeight * 2 }}
+          scrollEnabled={scrollMode}
+          showsVerticalScrollIndicator={scrollMode}
+          bounces={scrollMode}
+        >
+          <View
+            testID="paint-canvas"
+            style={[styles.canvas, { height: canvasHeight * 2, backgroundColor: canvasBackground }]}
+            {...(scrollMode ? {} : panResponder.panHandlers)}
+          >
+            <Svg height={canvasHeight * 2} width={width}>
+              {strokes.map(renderStroke)}
+              {currentStroke.length > 1 && (
+                <StrokeVisual
+                  points={currentStroke}
+                  color={selectedColor}
+                  width={strokeWidth}
+                  opacity={strokeOpacity}
+                  tool={tool}
+                />
+              )}
+            </Svg>
+            {strokes.length === 0 && currentStroke.length === 0 && (
+              <View pointerEvents="none" style={styles.canvasHint}>
+                <Ionicons name="color-wand-outline" size={26} color="#D6CEC2" />
+                <Text style={styles.canvasHintText}>Draw something wonderful</Text>
+              </View>
+            )}
           </View>
-        )}
+        </ScrollView>
       </View>
 
       <View style={[styles.toolbar, { paddingBottom: insets.bottom + 12 }]}>
@@ -244,6 +259,22 @@ export default function PaintScreen() {
               >
                 <Ionicons name={tool === 'pen' ? "pencil" : "pencil-outline"} size={22} color={tool === 'pen' ? '#205D67' : '#9AA29E'} />
               </Pressable>
+              <Pressable
+                testID="paint-tool-watercolor"
+                accessibilityRole="button"
+                accessibilityLabel="Watercolor brush"
+                onPress={() => {
+                  setTool('watercolor');
+                  setThickness((size) => Math.max(size, 14));
+                }}
+                style={({ pressed }) => [
+                  styles.segment,
+                  tool === 'watercolor' && styles.segmentSelected,
+                  pressed && styles.segmentPressed,
+                ]}
+              >
+                <Ionicons name={tool === 'watercolor' ? "water" : "water-outline"} size={21} color={tool === 'watercolor' ? '#205D67' : '#9AA29E'} />
+              </Pressable>
             </View>
           </View>
           <View style={styles.sizeChoice}>
@@ -306,6 +337,43 @@ export default function PaintScreen() {
   );
 }
 
+function StrokeVisual({
+  points,
+  color,
+  width,
+  opacity,
+  tool,
+}: {
+  points: Point[];
+  color: string;
+  width: number;
+  opacity: number;
+  tool?: Tool;
+}) {
+  const pointString = points.map((point) => `${point.x},${point.y}`).join(' ');
+  if (tool !== 'watercolor') {
+    return (
+      <Polyline
+        points={pointString}
+        fill="none"
+        stroke={color}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeOpacity={opacity}
+        strokeWidth={width}
+      />
+    );
+  }
+
+  return (
+    <>
+      <Polyline points={pointString} fill="none" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeOpacity={0.08} strokeWidth={width * 1.8} />
+      <Polyline points={pointString} fill="none" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeOpacity={0.14} strokeWidth={width * 1.35} />
+      <Polyline points={pointString} fill="none" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeOpacity={0.1} strokeWidth={width * 0.82} />
+    </>
+  );
+}
+
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   topBar: {
@@ -328,6 +396,8 @@ const styles = StyleSheet.create({
   topTitle: { flex: 1, marginLeft: 13, minWidth: 0 },
   screenTitle: { color: '#205D67', fontFamily: 'Inter_700Bold', fontSize: 20 },
   pressed: { opacity: 0.6 },
+  canvasViewport: { borderBottomColor: '#E9DFD2', borderBottomWidth: 1, overflow: 'hidden' },
+  canvasScroll: { flex: 1 },
   canvas: { overflow: 'hidden', position: 'relative' },
   canvasHint: {
     alignItems: 'center',
@@ -352,7 +422,7 @@ const styles = StyleSheet.create({
   addColorButton: { alignItems: 'center', borderColor: '#CFC5B8', borderRadius: 16, borderStyle: 'dashed', borderWidth: 1.5, height: 30, justifyContent: 'center', width: 30 },
   controlsRow: { alignItems: 'flex-end', flexDirection: 'row', gap: 10, justifyContent: 'space-between' },
   toolChoice: { flex: 1 },
-  segmented: { backgroundColor: '#F1E9DF', borderRadius: 17, flexDirection: 'row', padding: 3, width: 110 },
+  segmented: { backgroundColor: '#F1E9DF', borderRadius: 17, flexDirection: 'row', padding: 3, width: 164 },
   segment: { alignItems: 'center', borderRadius: 14, flex: 1, flexDirection: 'row', gap: 4, justifyContent: 'center', paddingVertical: 7 },
   segmentSelected: {
     backgroundColor: '#FFFFFF',
@@ -374,7 +444,7 @@ const styles = StyleSheet.create({
   colorModal: { backgroundColor: '#F7FBF5', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, paddingBottom: 36, width: '100%' },
   modalHeader: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
   modalTitle: { color: '#205D67', fontFamily: 'Inter_700Bold', fontSize: 20 },
-  colorGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 15 },
-  gridColor: { borderColor: '#FFFFFF', borderRadius: 24, borderWidth: 2, height: 46, width: 46 },
-  gridColorSelected: { borderColor: '#205D67', borderWidth: 4 },
+  colorGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  gridColor: { borderColor: '#FFFFFF', borderRadius: 19, borderWidth: 2, height: 38, width: 38 },
+  gridColorSelected: { borderColor: '#205D67', borderWidth: 3 },
 });
