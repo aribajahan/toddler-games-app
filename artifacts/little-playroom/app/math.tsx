@@ -52,10 +52,6 @@ function getCompareQuestion(prompt: ComparePrompt) {
   return 'Are the groups the same?';
 }
 
-function getCompareAnswers(prompt: ComparePrompt): CompareAnswer[] {
-  return prompt === 'same' ? ['yes', 'no'] : ['left', 'right'];
-}
-
 function getCompareAnswerLabel(answer: CompareAnswer) {
   if (answer === 'left') return 'Left group';
   if (answer === 'right') return 'Right group';
@@ -224,13 +220,35 @@ export default function MathScreen() {
         {!isComplete && round.type === 'compare' && (
           <View style={styles.problemArea}>
             <View style={styles.compareGroups}>
-              <View style={styles.group}>
+              <Pressable
+                testID="math-answer-left"
+                accessibilityRole="button"
+                accessibilityLabel="Choose the red group"
+                disabled={feedback !== 'idle' || round.prompt === 'same'}
+                onPress={() => answerCompare('left')}
+                style={({ pressed }) => [
+                  styles.group,
+                  round.prompt !== 'same' && styles.tappableGroup,
+                  pressed && styles.groupPressed,
+                ]}
+              >
                 <DotGroup count={round.left} color={COLORS.coral} />
-              </View>
+              </Pressable>
               <Text style={styles.versus}>or</Text>
-              <View style={styles.group}>
+              <Pressable
+                testID="math-answer-right"
+                accessibilityRole="button"
+                accessibilityLabel="Choose the blue group"
+                disabled={feedback !== 'idle' || round.prompt === 'same'}
+                onPress={() => answerCompare('right')}
+                style={({ pressed }) => [
+                  styles.group,
+                  round.prompt !== 'same' && styles.tappableGroup,
+                  pressed && styles.groupPressed,
+                ]}
+              >
                 <DotGroup count={round.right} color={COLORS.blue} />
-              </View>
+              </Pressable>
             </View>
           </View>
         )}
@@ -269,9 +287,9 @@ export default function MathScreen() {
           </View>
         )}
 
-        {!isComplete && round.type === 'compare' && (
-          <View style={styles.answerChoices}>
-            {getCompareAnswers(round.prompt).map((answer) => (
+        {!isComplete && round.type === 'compare' && round.prompt === 'same' && (
+          <View style={styles.symbolChoices}>
+            {(['yes', 'no'] as CompareAnswer[]).map((answer) => (
               <Pressable
                 key={answer}
                 testID={`math-answer-${answer}`}
@@ -279,9 +297,17 @@ export default function MathScreen() {
                 accessibilityLabel={getCompareAnswerLabel(answer)}
                 disabled={feedback !== 'idle'}
                 onPress={() => answerCompare(answer)}
-                style={({ pressed }) => [styles.answerButton, pressed && styles.answerPressed]}
+                style={({ pressed }) => [
+                  styles.symbolButton,
+                  answer === 'yes' ? styles.yesButton : styles.noButton,
+                  pressed && styles.answerPressed,
+                ]}
               >
-                <Text style={styles.answerText}>{getCompareAnswerLabel(answer)}</Text>
+                <Ionicons
+                  name={answer === 'yes' ? 'checkmark' : 'close'}
+                  size={38}
+                  color={answer === 'yes' ? '#4C9274' : '#A66B66'}
+                />
               </Pressable>
             ))}
           </View>
@@ -397,10 +423,13 @@ const styles = StyleSheet.create({
   compareGroups: { alignItems: 'center', flexDirection: 'row', gap: 24, justifyContent: 'center', width: '100%' },
   group: {
     alignItems: 'center',
+    borderRadius: 28,
     justifyContent: 'center',
     minHeight: 110,
     width: 120,
   },
+  tappableGroup: { backgroundColor: 'rgba(255,255,255,0.52)' },
+  groupPressed: { opacity: 0.72, transform: [{ scale: 0.92 }] },
   versus: { color: '#B4A99C', fontFamily: 'Inter_600SemiBold', fontSize: 14 },
   dotGroup: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center', maxWidth: 110 },
   dot: { borderRadius: 15, height: 30, width: 30 },
@@ -419,18 +448,16 @@ const styles = StyleSheet.create({
   answerMark: { color: '#CFC5B8', fontFamily: 'Inter_700Bold', fontSize: 31 },
   additionEquation: { color: COLORS.muted, fontFamily: 'Inter_600SemiBold', fontSize: 16, marginTop: 10 },
   answerChoices: { flexDirection: 'row', gap: 10, justifyContent: 'center', marginTop: 24 },
-  answerButton: {
+  symbolChoices: { flexDirection: 'row', gap: 20, justifyContent: 'center', marginTop: 20 },
+  symbolButton: {
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderColor: COLORS.line,
-    borderRadius: 18,
-    borderWidth: 1,
+    borderRadius: 32,
+    height: 64,
     justifyContent: 'center',
-    minHeight: 56,
-    paddingHorizontal: 16,
-    width: '46%',
+    width: 86,
   },
-  answerText: { color: COLORS.ink, fontFamily: 'Inter_600SemiBold', fontSize: 13, textAlign: 'center' },
+  yesButton: { backgroundColor: '#E1F2E9' },
+  noButton: { backgroundColor: '#F7E7E4' },
   answerPressed: { opacity: 0.75, transform: [{ scale: 0.97 }] },
   primaryButton: {
     alignItems: 'center',
