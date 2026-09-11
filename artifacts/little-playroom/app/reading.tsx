@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import * as Speech from 'expo-speech';
+import { useAudioPlayer } from 'expo-audio';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 
@@ -78,10 +78,10 @@ const SOUND_ROUNDS: Round[] = [
 ];
 
 const BUILD_ROUNDS: Round[] = [
-  { id: 'build-cat', type: 'build', word: 'CAT', letters: ['C', 'A', 'T'], emoji: PICTURES.cat.emoji },
-  { id: 'build-sun', type: 'build', word: 'SUN', letters: ['S', 'U', 'N'], emoji: PICTURES.sun.emoji },
-  { id: 'build-map', type: 'build', word: 'MAP', letters: ['M', 'A', 'P'], emoji: PICTURES.map.emoji },
-  { id: 'build-dog', type: 'build', word: 'DOG', letters: ['D', 'O', 'G'], emoji: PICTURES.dog.emoji },
+  { id: 'build-cat', type: 'build', word: 'CAT', letters: ['T', 'C', 'A'], emoji: PICTURES.cat.emoji },
+  { id: 'build-sun', type: 'build', word: 'SUN', letters: ['N', 'S', 'U'], emoji: PICTURES.sun.emoji },
+  { id: 'build-map', type: 'build', word: 'MAP', letters: ['A', 'P', 'M'], emoji: PICTURES.map.emoji },
+  { id: 'build-dog', type: 'build', word: 'DOG', letters: ['G', 'D', 'O'], emoji: PICTURES.dog.emoji },
 ];
 
 const COLORS = {
@@ -92,6 +92,18 @@ const COLORS = {
   line: '#E9DFD2',
   muted: '#7E8A92',
   backgroundCard: '#FFFFFF',
+};
+
+const READING_PROMPTS = {
+  cat: require('../assets/audio/reading-cat.mp3'),
+  moon: require('../assets/audio/reading-moon.mp3'),
+  frog: require('../assets/audio/reading-frog.mp3'),
+  soundsMS: require('../assets/audio/reading-sounds-m-s.mp3'),
+  soundsFT: require('../assets/audio/reading-sounds-f-t.mp3'),
+  buildCat: require('../assets/audio/reading-build-cat.mp3'),
+  buildSun: require('../assets/audio/reading-build-sun.mp3'),
+  buildMap: require('../assets/audio/reading-build-map.mp3'),
+  buildDog: require('../assets/audio/reading-build-dog.mp3'),
 };
 
 function shuffle<T>(items: T[]): T[] {
@@ -150,6 +162,7 @@ export default function ReadingScreen() {
   const [selectedPicture, setSelectedPicture] = useState<string | null>(null);
   const [sorted, setSorted] = useState<Record<string, SortBucket>>({});
   const [selectedLetters, setSelectedLetters] = useState<number[]>([]);
+  const promptPlayer = useAudioPlayer(READING_PROMPTS.cat);
 
   const round = rounds[roundIndex];
   const mode = modeForRound(round);
@@ -173,20 +186,25 @@ export default function ReadingScreen() {
     return () => clearTimeout(timer);
   }, [feedback]);
 
-  useEffect(() => () => {
-    Speech.stop();
-  }, []);
-
-  const speak = (text: string) => {
-    Speech.stop();
-    Speech.speak(text, { language: 'en-US', rate: 0.78, pitch: 1.08 });
-  };
-
   const hearPrompt = () => {
     if (isComplete) return;
-    if (round.type === 'match') speak(round.word);
-    if (round.type === 'sounds') speak(`Sort the pictures by their first sound. Choose ${round.firstSound} or ${round.secondSound}.`);
-    if (round.type === 'build') speak(`Build the word ${round.word.toLowerCase()}.`);
+    const source =
+      round.type === 'match'
+        ? READING_PROMPTS[round.word as 'cat' | 'moon' | 'frog']
+        : round.type === 'sounds'
+          ? round.firstSound === 'M'
+            ? READING_PROMPTS.soundsMS
+            : READING_PROMPTS.soundsFT
+          : round.word === 'CAT'
+            ? READING_PROMPTS.buildCat
+            : round.word === 'SUN'
+              ? READING_PROMPTS.buildSun
+              : round.word === 'MAP'
+                ? READING_PROMPTS.buildMap
+                : READING_PROMPTS.buildDog;
+    promptPlayer.replace(source);
+    void promptPlayer.seekTo(0);
+    promptPlayer.play();
   };
 
   const finishRound = () => {
@@ -228,8 +246,8 @@ export default function ReadingScreen() {
 
   const chooseLetter = (index: number) => {
     if (feedback !== 'idle' || round.type !== 'build') return;
-    const expectedIndex = selectedLetters.length;
-    if (index !== expectedIndex) {
+    const expectedLetter = round.word[selectedLetters.length];
+    if (round.letters[index] !== expectedLetter) {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       setSelectedLetters([]);
       setFeedback('tryAgain');
@@ -397,11 +415,14 @@ export default function ReadingScreen() {
               <Text style={styles.wordEmoji}>{round.emoji}</Text>
             </View>
             <View style={styles.wordSlots} accessibilityLabel={`Word has ${round.letters.length} letters`}>
-              {round.letters.map((letter, index) => (
-                <View key={`${letter}-${index}`} style={[styles.wordSlot, selectedLetters.includes(index) && styles.wordSlotFilled]}>
-                  {selectedLetters.includes(index) && <Text style={styles.slotLetter}>{letter}</Text>}
+              {Array.from({ length: round.word.length }).map((_, position) => {
+                const selectedIndex = selectedLetters[position];
+                return (
+                <View key={`${round.id}-slot-${position}`} style={[styles.wordSlot, selectedIndex !== undefined && styles.wordSlotFilled]}>
+                  {selectedIndex !== undefined && <Text style={styles.slotLetter}>{round.letters[selectedIndex]}</Text>}
                 </View>
-              ))}
+                );
+              })}
             </View>
             <View style={styles.letterChoices}>
               {availableLetters.map((index) => (

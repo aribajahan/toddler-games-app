@@ -140,3 +140,66 @@ uri = "file://artifacts/little-playroom/assets/audio/math-three-minus-one.mp3"
 type = "audio"
 title = "math three minus one prompt"
 description = "Text-to-speech audio: What's three minus one?"
+
+[[outputs]]
+id = "X9YgMWmAEgwfdiIWenI6H"
+uri = "file://artifacts/little-playroom/assets/audio/reading-cat.mp3"
+type = "audio"
+title = "cat"
+description = "Text-to-speech audio: cat"
+
+[[outputs]]
+id = "7oXZdeZHTSr6BMw1G9lT1"
+uri = "file://artifacts/little-playroom/assets/audio/reading-moon.mp3"
+type = "audio"
+title = "moon"
+description = "Text-to-speech audio: moon"
+
+[[outputs]]
+id = "BqawSb7_j4PQM_K4UO7i9"
+uri = "file://artifacts/little-playroom/assets/audio/reading-build-cat.mp3"
+type = "audio"
+title = "build-the-word-cat"
+description = "Text-to-speech audio: Build the word cat."
+
+[[outputs]]
+id = "gnqQwwQGRmjcbpJdS7yv0"
+uri = "file://artifacts/little-playroom/assets/audio/reading-build-sun.mp3"
+type = "audio"
+title = "build-the-word-sun"
+description = "Text-to-speech audio: Build the word sun."
+
+[[outputs]]
+id = "zdVanUXxXwX1nPzJiHLci"
+uri = "file://artifacts/little-playroom/assets/audio/reading-frog.mp3"
+type = "audio"
+title = "frog"
+description = "Text-to-speech audio: frog"
+
+[[outputs]]
+id = "2kr6P6h1hqmRep6zYVsxd"
+uri = "file://artifacts/little-playroom/assets/audio/reading-build-map.mp3"
+type = "audio"
+title = "build-the-word-map"
+description = "Text-to-speech audio: Build the word map."
+
+[[outputs]]
+id = "XZ_DEUxaMaZvPUhtfASY1"
+uri = "file://artifacts/little-playroom/assets/audio/reading-build-dog.mp3"
+type = "audio"
+title = "build-the-word-dog"
+description = "Text-to-speech audio: Build the word dog."
+
+[[outputs]]
+id = "RwznXTVy6veuKg1oWkI7s"
+uri = "file://artifacts/little-playroom/assets/audio/reading-sounds-f-t.mp3"
+type = "audio"
+title = "sort-the-pictures-by-their-first-sound-choose-f-or-t"
+description = "Text-to-speech audio: Sort the pictures by their first sound. Choose F or T."
+
+[[outputs]]
+id = "XGcTDPFmkJzYudssLsUbr"
+uri = "file://artifacts/little-playroom/assets/audio/reading-sounds-m-s.mp3"
+type = "audio"
+title = "sort-the-pictures-by-their-first-sound-choose-m-or-s"
+description = "Text-to-speech audio: Sort the pictures by their first sound. Choose M or S."

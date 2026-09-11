@@ -56,7 +56,6 @@
   },
   "dependencies": {
     "expo-audio": "~57.0.4",
-    "expo-screen-orientation": "~57.0.2",
-    "expo-speech": "~14.0.8"
+    "expo-screen-orientation": "~57.0.2"
   }
 }
