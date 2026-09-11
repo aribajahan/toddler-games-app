@@ -120,6 +120,14 @@ export default function HomeScreen() {
         onPress={() => router.push('/math')}
         testID="home-math-card"
       />
+      <GameCard
+        title="Reading mix"
+        description="Listen, sort, and build words"
+        icon="book-outline"
+        colors={['#53C7C1', '#53C7C1']}
+        onPress={() => router.push('/reading')}
+        testID="home-reading-card"
+      />
 
     </ScrollView>
   );
