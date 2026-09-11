@@ -37,12 +37,6 @@ function shuffle<T>(items: T[]): T[] {
   return result;
 }
 
-function samePairSelection(first: MemorySubject[], second: MemorySubject[]): boolean {
-  if (first.length !== second.length) return false;
-  const secondSet = new Set(second);
-  return first.every((pair) => secondSet.has(pair));
-}
-
 function choosePairs(previousRounds: MemorySubject[][]): MemoryDeckEntry[] {
   const recentPairs = new Set(previousRounds.flat());
   const freshEntries = shuffle(MEMORY_DECK).filter((entry) => !recentPairs.has(entry.pair));

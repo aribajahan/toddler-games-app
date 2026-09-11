@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,17 +16,58 @@ type Round =
 type Feedback = 'idle' | 'correct' | 'tryAgain' | 'complete';
 type CompareAnswer = 'left' | 'right' | 'yes' | 'no';
 
-const ROUNDS: Round[] = [
+const COMPARE_ROUNDS: Round[] = [
   { type: 'compare', prompt: 'more', left: 1, right: 3 },
-  { type: 'fill', target: 3 },
-  { type: 'arithmetic', first: 1, second: 1, operator: '+' },
+  { type: 'compare', prompt: 'more', left: 2, right: 5 },
+  { type: 'compare', prompt: 'more', left: 4, right: 2 },
   { type: 'compare', prompt: 'same', left: 3, right: 3 },
+  { type: 'compare', prompt: 'same', left: 4, right: 4 },
+  { type: 'compare', prompt: 'less', left: 2, right: 5 },
+];
+
+const FILL_ROUNDS: Round[] = [
+  { type: 'fill', target: 3 },
   { type: 'fill', target: 5 },
-  { type: 'arithmetic', first: 3, second: 1, operator: '-' },
-  { type: 'compare', prompt: 'less', left: 4, right: 5 },
   { type: 'fill', target: 7 },
+];
+
+const ARITHMETIC_ROUNDS: Round[] = [
+  { type: 'arithmetic', first: 1, second: 1, operator: '+' },
+  { type: 'arithmetic', first: 3, second: 1, operator: '-' },
   { type: 'arithmetic', first: 2, second: 2, operator: '×' },
 ];
+
+function shuffle<T>(items: T[]): T[] {
+  const result = [...items];
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [result[index], result[randomIndex]] = [result[randomIndex], result[index]];
+  }
+  return result;
+}
+
+function roundKey(round: Round): string {
+  if (round.type === 'compare') return `compare:${round.prompt}:${round.left}:${round.right}`;
+  if (round.type === 'fill') return `fill:${round.target}`;
+  return `arithmetic:${round.first}:${round.operator}:${round.second}`;
+}
+
+function createRounds(previousKeys: string[] = []): Round[] {
+  let nextRounds: Round[] = [];
+  let nextKeys = '';
+
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    nextRounds = shuffle([
+      ...shuffle(COMPARE_ROUNDS).slice(0, 3),
+      ...shuffle(FILL_ROUNDS),
+      ...shuffle(ARITHMETIC_ROUNDS),
+    ]);
+    nextKeys = nextRounds.map(roundKey).join('|');
+    if (nextKeys !== previousKeys.join('|')) break;
+  }
+
+  return nextRounds;
+}
 
 const MATH_PROMPTS = {
   more: require('../assets/audio/math-more.mp3'),
@@ -89,12 +130,18 @@ export default function MathScreen() {
   const router = useRouter();
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const roundHistory = useRef<string[]>([]);
+  const [rounds, setRounds] = useState<Round[]>(() => {
+    const nextRounds = createRounds();
+    roundHistory.current = nextRounds.map(roundKey);
+    return nextRounds;
+  });
   const [roundIndex, setRoundIndex] = useState(0);
   const [fillCount, setFillCount] = useState(0);
   const [feedback, setFeedback] = useState<Feedback>('idle');
   const promptPlayer = useAudioPlayer(MATH_PROMPTS.more);
 
-  const round = ROUNDS[roundIndex];
+  const round = rounds[roundIndex];
   const roundNumber = roundIndex + 1;
   const isComplete = feedback === 'complete';
 
@@ -131,7 +178,7 @@ export default function MathScreen() {
 
   const finishRound = () => {
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setFeedback(roundIndex === ROUNDS.length - 1 ? 'complete' : 'correct');
+    setFeedback(roundIndex === rounds.length - 1 ? 'complete' : 'correct');
   };
 
   const answerCompare = (answer: CompareAnswer) => {
@@ -178,6 +225,9 @@ export default function MathScreen() {
   };
 
   const reset = () => {
+    const nextRounds = createRounds(roundHistory.current);
+    roundHistory.current = nextRounds.map(roundKey);
+    setRounds(nextRounds);
     setRoundIndex(0);
     setFillCount(0);
     setFeedback('idle');
@@ -229,13 +279,13 @@ export default function MathScreen() {
         </View>
 
         <View style={styles.progressHeader}>
-          <View style={styles.progressDots} accessibilityLabel={`Round ${roundNumber} of ${ROUNDS.length}`}>
-            {ROUNDS.map((_, index) => (
+            <View style={styles.progressDots} accessibilityLabel={`Round ${roundNumber} of ${rounds.length}`}>
+            {rounds.map((_, index) => (
               <View
                 key={index}
                 style={[
                   styles.progressDot,
-                  index < (isComplete ? ROUNDS.length : roundNumber) && styles.progressDotActive,
+                  index < (isComplete ? rounds.length : roundNumber) && styles.progressDotActive,
                 ]}
               />
             ))}

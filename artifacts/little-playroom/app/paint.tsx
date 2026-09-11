@@ -22,10 +22,10 @@ type Stroke = { points: Point[]; color: string; width: number; opacity: number; 
 type Tool = 'pen' | 'marker' | 'watercolor';
 
 const STORAGE_KEY = 'little-playroom-paint-strokes';
-const FAVORITE_COLORS = ['#F16E61', '#F0A83C', '#F6D65B', '#7DC7B6', '#6DB7D8', '#8F7BC7', '#24313D'];
+const FAVORITE_COLORS = ['#F04444', '#FFB000', '#FFD43B', '#25A55F', '#2787F5', '#7A4FD4', '#24313D'];
 const COLOR_GRID = [
-  '#F16E61', '#EF8A5B', '#F0A83C', '#F6D65B', '#C9D84B',
-  '#7DC7B6', '#58B8A4', '#6DB7D8', '#5F93D2', '#8F7BC7',
+  '#F04444', '#FF6B35', '#FFB000', '#FFD43B', '#9BC53D',
+  '#25A55F', '#13B8A5', '#2787F5', '#365FD8', '#7A4FD4',
   '#D578A6', '#E86A82', '#8F6F5D', '#24313D', '#7E8A92',
   '#FF6871', '#FFE471', '#53C7C1', '#205D67', '#FCFAF6',
   '#F4B6A8', '#B8E3D7', '#A8D4E8', '#C6B8E8',
