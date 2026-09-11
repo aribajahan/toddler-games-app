@@ -34,7 +34,9 @@ const MATH_PROMPTS = {
   3: require('../assets/audio/math-make-three.mp3'),
   5: require('../assets/audio/math-make-five.mp3'),
   7: require('../assets/audio/math-make-seven.mp3'),
-  total: require('../assets/audio/math-total.mp3'),
+  add11: require('../assets/audio/math-one-plus-one.mp3'),
+  add22: require('../assets/audio/math-two-plus-two.mp3'),
+  add32: require('../assets/audio/math-three-plus-two.mp3'),
 };
 
 const COLORS = {
@@ -47,11 +49,11 @@ const COLORS = {
   line: '#E9DFD2',
 };
 
-function DotGroup({ count, color }: { count: number; color: string }) {
+function DotGroup({ count, color, compact = false }: { count: number; color: string; compact?: boolean }) {
   return (
-    <View style={styles.dotGroup} accessibilityLabel={`${count} shapes`}>
+    <View style={[styles.dotGroup, compact && styles.dotGroupCompact]} accessibilityLabel={`${count} shapes`}>
       {Array.from({ length: count }).map((_, index) => (
-        <View key={index} style={[styles.dot, { backgroundColor: color }]} />
+        <View key={index} style={[compact ? styles.dotCompact : styles.dot, { backgroundColor: color }]} />
       ))}
     </View>
   );
@@ -96,7 +98,11 @@ export default function MathScreen() {
         ? MATH_PROMPTS[round.prompt]
         : round.type === 'fill'
           ? MATH_PROMPTS[round.target as 3 | 5 | 7]
-          : MATH_PROMPTS.total;
+          : round.first === 1
+            ? MATH_PROMPTS.add11
+            : round.first === 2
+              ? MATH_PROMPTS.add22
+              : MATH_PROMPTS.add32;
     promptPlayer.replace(source);
     void promptPlayer.seekTo(0);
     promptPlayer.play();
@@ -179,7 +185,7 @@ export default function MathScreen() {
         : round.type === 'fill'
           ? `Make ${round.target}`
           : round.type === 'add'
-            ? 'What is the total?'
+            ? `What is ${round.first} + ${round.second}?`
             : getCompareQuestion(round.prompt);
 
   return (
@@ -231,7 +237,9 @@ export default function MathScreen() {
 
         <View style={styles.instructions}>
           <View style={styles.questionRow}>
-            <Text style={styles.question}>{feedbackText}</Text>
+            <Text style={[styles.question, round.type === 'add' && feedback === 'idle' && styles.additionQuestion]}>
+              {feedbackText}
+            </Text>
             {!isComplete && feedback === 'idle' && (
               <Pressable
                 testID="math-hear-prompt"
@@ -317,12 +325,10 @@ export default function MathScreen() {
 
         {!isComplete && round.type === 'add' && (
           <View style={styles.problemArea}>
-            <View style={styles.additionRow}>
-              <DotGroup count={round.first} color={COLORS.yellow} />
-              <Text style={styles.additionSign}>+</Text>
-              <DotGroup count={round.second} color={COLORS.purple} />
-              <Text style={styles.additionSign}>=</Text>
-              <Text style={styles.answerMark}>?</Text>
+            <View style={styles.additionHint} accessibilityLabel="Picture hint">
+              <DotGroup count={round.first} color={COLORS.yellow} compact />
+              <Text style={styles.additionHintSign}>+</Text>
+              <DotGroup count={round.second} color={COLORS.blue} compact />
             </View>
           </View>
         )}
@@ -437,6 +443,7 @@ const styles = StyleSheet.create({
   instructions: { alignItems: 'center', marginTop: 38 },
   questionRow: { alignItems: 'center', flexDirection: 'row', gap: 10, justifyContent: 'center' },
   question: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 26, textAlign: 'center' },
+  additionQuestion: { fontSize: 38 },
   listenButton: {
     alignItems: 'center',
     backgroundColor: '#FFE471',
@@ -456,15 +463,27 @@ const styles = StyleSheet.create({
   compareGroups: { alignItems: 'center', flexDirection: 'row', gap: 24, justifyContent: 'center', width: '100%' },
   group: {
     alignItems: 'center',
+    borderColor: 'rgba(32,93,103,0.18)',
     borderRadius: 28,
+    borderWidth: 2,
     justifyContent: 'center',
-    minHeight: 110,
-    width: 120,
+    minHeight: 124,
+    width: 132,
   },
-  tappableGroup: { backgroundColor: 'rgba(255,255,255,0.52)' },
-  groupPressed: { opacity: 0.72, transform: [{ scale: 0.92 }] },
+  tappableGroup: {
+    backgroundColor: '#FFFFFF',
+    borderColor: COLORS.blue,
+    shadowColor: COLORS.ink,
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  groupPressed: { backgroundColor: 'rgba(83,199,193,0.16)', opacity: 0.86, transform: [{ scale: 0.95 }] },
   dotGroup: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 10, justifyContent: 'center', maxWidth: 110 },
+  dotGroupCompact: { gap: 6, maxWidth: 64 },
   dot: { borderRadius: 15, height: 30, width: 30 },
+  dotCompact: { borderRadius: 7, height: 14, width: 14 },
   fillRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center', maxWidth: 290 },
   fillSlot: {
     alignItems: 'center',
@@ -476,9 +495,19 @@ const styles = StyleSheet.create({
   },
   fillSlotFilled: { backgroundColor: COLORS.yellow },
   slotPressed: { opacity: 0.7, transform: [{ scale: 0.9 }] },
-  additionRow: { alignItems: 'center', flexDirection: 'row', gap: 14, justifyContent: 'center', minHeight: 92 },
-  additionSign: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 24 },
-  answerMark: { color: '#CFC5B8', fontFamily: 'Inter_700Bold', fontSize: 31 },
+  additionHint: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.66)',
+    borderColor: 'rgba(32,93,103,0.12)',
+    borderRadius: 22,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    justifyContent: 'center',
+    minHeight: 62,
+    paddingHorizontal: 20,
+  },
+  additionHintSign: { color: COLORS.muted, fontFamily: 'Inter_600SemiBold', fontSize: 18 },
   answerChoices: { flexDirection: 'row', gap: 10, justifyContent: 'center', marginTop: 24 },
   symbolChoices: { flexDirection: 'row', gap: 20, justifyContent: 'center', marginTop: 20 },
   symbolButton: {

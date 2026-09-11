@@ -105,3 +105,24 @@ uri = "file://artifacts/little-playroom/assets/audio/math-more.mp3"
 type = "audio"
 title = "math more prompt"
 description = "Text-to-speech audio: Which group has more?"
+
+[[outputs]]
+id = "_Y7eNJNNDQpgk56ZMxjvo"
+uri = "file://artifacts/little-playroom/assets/audio/math-one-plus-one.mp3"
+type = "audio"
+title = "math one plus one prompt"
+description = "Text-to-speech audio: What's one plus one?"
+
+[[outputs]]
+id = "tJ81_Zu_XizP15yTnJMDj"
+uri = "file://artifacts/little-playroom/assets/audio/math-three-plus-two.mp3"
+type = "audio"
+title = "math three plus two prompt"
+description = "Text-to-speech audio: What's three plus two?"
+
+[[outputs]]
+id = "sW1WB_XnUa7QrUcHja8eK"
+uri = "file://artifacts/little-playroom/assets/audio/math-two-plus-two.mp3"
+type = "audio"
+title = "math two plus two prompt"
+description = "Text-to-speech audio: What's two plus two?"
