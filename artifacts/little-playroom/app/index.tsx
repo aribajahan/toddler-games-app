@@ -73,7 +73,7 @@ export default function HomeScreen() {
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.header}>
-        <Text style={styles.heading}>Little Playroom</Text>
+        <Text style={styles.heading}>LITTLE PLAYROOM</Text>
       </View>
 
       <GameCard
@@ -136,8 +136,8 @@ const styles = StyleSheet.create({
   heading: {
     color: '#205D67',
     fontFamily: 'Inter_700Bold',
-    fontSize: 34,
-    letterSpacing: -1.2,
+    fontSize: 28,
+    letterSpacing: 0.8,
   },
   gameCardPressable: {
     borderRadius: 24,
