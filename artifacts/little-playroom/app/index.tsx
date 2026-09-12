@@ -73,15 +73,7 @@ export default function HomeScreen() {
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.header}>
-        <View style={styles.titleWrap}>
-          <Text style={styles.heading}>Little Playroom</Text>
-        </View>
-        <View style={styles.sunMark}>
-          <View style={styles.sunCore} />
-          <View style={styles.sunRayOne} />
-          <View style={styles.sunRayTwo} />
-          <View style={styles.sunRayThree} />
-        </View>
+        <Text style={styles.heading}>Little Playroom</Text>
       </View>
 
       <GameCard
@@ -139,58 +131,13 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { paddingHorizontal: 20 },
   header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     marginBottom: 30,
-    minHeight: 58,
   },
-  titleWrap: { flex: 1, minWidth: 0 },
   heading: {
     color: '#205D67',
     fontFamily: 'Inter_700Bold',
     fontSize: 34,
     letterSpacing: -1.2,
-  },
-  sunMark: {
-    alignItems: 'center',
-    backgroundColor: '#FFE471',
-    borderRadius: 27,
-    height: 54,
-    justifyContent: 'center',
-    position: 'relative',
-    width: 54,
-  },
-  sunCore: {
-    backgroundColor: '#FF6871',
-    borderRadius: 14,
-    height: 27,
-    width: 27,
-  },
-  sunRayOne: {
-    backgroundColor: '#FF6871',
-    borderRadius: 2,
-    height: 5,
-    position: 'absolute',
-    top: 7,
-    width: 4,
-  },
-  sunRayTwo: {
-    backgroundColor: '#FF6871',
-    borderRadius: 2,
-    height: 4,
-    position: 'absolute',
-    right: 8,
-    transform: [{ rotate: '45deg' }],
-    width: 6,
-  },
-  sunRayThree: {
-    backgroundColor: '#FF6871',
-    borderRadius: 2,
-    bottom: 7,
-    height: 5,
-    position: 'absolute',
-    width: 4,
   },
   gameCardPressable: {
     borderRadius: 24,

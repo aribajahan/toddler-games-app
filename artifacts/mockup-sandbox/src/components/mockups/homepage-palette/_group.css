@@ -27,9 +27,6 @@
 .lp-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  min-height: 58px;
   margin-bottom: 30px;
 }
 
@@ -41,49 +38,6 @@
   font-weight: 700;
   letter-spacing: -0.075em;
   line-height: 0.98;
-}
-
-.lp-sun {
-  position: relative;
-  display: grid;
-  flex: 0 0 auto;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: #ffe471;
-}
-
-.lp-sun::before,
-.lp-sun::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 4px;
-  height: 7px;
-  border-radius: 8px;
-  background: #ff6871;
-  transform: translate(-50%, -50%);
-}
-
-.lp-sun::before {
-  margin-top: -22px;
-  box-shadow: 22px 22px 0 -1px #ff6871, -22px 22px 0 -1px #ff6871;
-}
-
-.lp-sun::after {
-  margin-left: 22px;
-  transform: translate(-50%, -50%) rotate(90deg);
-  box-shadow: 22px 22px 0 -1px #ff6871, -22px 22px 0 -1px #ff6871;
-}
-
-.lp-sun-core {
-  z-index: 1;
-  width: 27px;
-  height: 27px;
-  border-radius: 50%;
-  background: #ff6871;
 }
 
 .lp-card-list {
@@ -138,11 +92,13 @@
 }
 
 .lp-card-copy {
+  flex: 1;
   min-width: 0;
   margin: 0 0 0 15px;
 }
 
 .lp-card-title {
+  display: block;
   margin: 0 0 6px;
   color: inherit;
   font-size: 18px;
@@ -152,6 +108,7 @@
 }
 
 .lp-card-description {
+  display: block;
   max-width: 220px;
   margin: 0;
   color: inherit;

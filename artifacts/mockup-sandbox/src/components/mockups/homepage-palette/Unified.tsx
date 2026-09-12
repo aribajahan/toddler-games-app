@@ -26,7 +26,6 @@ export default function Unified() {
       <section className="lp-phone" aria-label="Little Playroom unified home">
         <header className="lp-header">
           <h1 className="lp-heading">Little Playroom</h1>
-          <span className="lp-sun" aria-hidden="true"><span className="lp-sun-core" /></span>
         </header>
 
         <div className="lp-card-list">
