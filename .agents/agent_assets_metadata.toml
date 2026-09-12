@@ -371,3 +371,66 @@ uri = "file://artifacts/little-playroom/assets/audio/reading-build-car_2.mp3"
 type = "audio"
 title = "reading build car full instruction"
 description = "Text-to-speech audio: Tap the letters in order to build the word car."
+
+[[outputs]]
+id = "RDbukjcgXGx1m_jtUMYwM"
+uri = "file://artifacts/little-playroom/assets/audio/math-reading-more.mp3"
+type = "audio"
+title = "math more reading voice"
+description = "Text-to-speech audio: Tap the group that has more."
+
+[[outputs]]
+id = "E4YqjCR3-_OL6pQqN18Qv"
+uri = "file://artifacts/little-playroom/assets/audio/math-reading-less.mp3"
+type = "audio"
+title = "math less reading voice"
+description = "Text-to-speech audio: Tap the group that has less."
+
+[[outputs]]
+id = "G_Y7bT9Ha3tMk3WerDVMF"
+uri = "file://artifacts/little-playroom/assets/audio/math-reading-make-three.mp3"
+type = "audio"
+title = "math make three reading voice"
+description = "Text-to-speech audio: Tap the empty spots until you make three."
+
+[[outputs]]
+id = "xnbu37aEpkIxoKtAdbIQr"
+uri = "file://artifacts/little-playroom/assets/audio/math-reading-make-five.mp3"
+type = "audio"
+title = "math make five reading voice"
+description = "Text-to-speech audio: Tap the empty spots until you make five."
+
+[[outputs]]
+id = "8diqzDfhYPnBCqXAonZV2"
+uri = "file://artifacts/little-playroom/assets/audio/math-reading-same.mp3"
+type = "audio"
+title = "math same reading voice"
+description = "Text-to-speech audio: Are the groups the same? Tap the check mark for yes, or the X for no."
+
+[[outputs]]
+id = "zKT6iWABPq1NlmDNCiidV"
+uri = "file://artifacts/little-playroom/assets/audio/math-reading-make-seven.mp3"
+type = "audio"
+title = "math make seven reading voice"
+description = "Text-to-speech audio: Tap the empty spots until you make seven."
+
+[[outputs]]
+id = "-vkfziJbnFsFjsfJNQYg6"
+uri = "file://artifacts/little-playroom/assets/audio/math-reading-one-plus-one.mp3"
+type = "audio"
+title = "math one plus one reading voice"
+description = "Text-to-speech audio: What is one plus one? Tap the answer."
+
+[[outputs]]
+id = "8UFwu1QwQM4CBeM0Ug-1I"
+uri = "file://artifacts/little-playroom/assets/audio/math-reading-two-times-two.mp3"
+type = "audio"
+title = "math two times two reading voice"
+description = "Text-to-speech audio: What is two times two? Tap the answer."
+
+[[outputs]]
+id = "L4Q0neEdasWSK22X2Q2sB"
+uri = "file://artifacts/little-playroom/assets/audio/math-reading-three-minus-one.mp3"
+type = "audio"
+title = "math three minus one reading voice"
+description = "Text-to-speech audio: What is three minus one? Tap the answer."

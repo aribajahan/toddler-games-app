@@ -70,15 +70,15 @@ function createRounds(previousKeys: string[] = []): Round[] {
 }
 
 const MATH_PROMPTS = {
-  more: require('../assets/audio/math-more.mp3'),
-  same: require('../assets/audio/math-same.mp3'),
-  less: require('../assets/audio/math-less.mp3'),
-  3: require('../assets/audio/math-make-three.mp3'),
-  5: require('../assets/audio/math-make-five.mp3'),
-  7: require('../assets/audio/math-make-seven.mp3'),
-  add11: require('../assets/audio/math-one-plus-one.mp3'),
-  subtract31: require('../assets/audio/math-three-minus-one.mp3'),
-  multiply22: require('../assets/audio/math-two-times-two.mp3'),
+  more: require('../assets/audio/math-reading-more.mp3'),
+  same: require('../assets/audio/math-reading-same.mp3'),
+  less: require('../assets/audio/math-reading-less.mp3'),
+  3: require('../assets/audio/math-reading-make-three.mp3'),
+  5: require('../assets/audio/math-reading-make-five.mp3'),
+  7: require('../assets/audio/math-reading-make-seven.mp3'),
+  add11: require('../assets/audio/math-reading-one-plus-one.mp3'),
+  subtract31: require('../assets/audio/math-reading-three-minus-one.mp3'),
+  multiply22: require('../assets/audio/math-reading-two-times-two.mp3'),
 };
 
 const COLORS = {
