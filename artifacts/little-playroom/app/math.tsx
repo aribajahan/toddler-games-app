@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, PanResponder, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -73,9 +73,9 @@ const MATH_PROMPTS = {
   more: require('../assets/audio/math-reading-more.mp3'),
   same: require('../assets/audio/math-reading-same.mp3'),
   less: require('../assets/audio/math-reading-less.mp3'),
-  3: require('../assets/audio/math-reading-make-three.mp3'),
-  5: require('../assets/audio/math-reading-make-five.mp3'),
-  7: require('../assets/audio/math-reading-make-seven.mp3'),
+  3: require('../assets/audio/math-reading-basket-three.mp3'),
+  5: require('../assets/audio/math-reading-basket-five.mp3'),
+  7: require('../assets/audio/math-reading-basket-seven.mp3'),
   add11: require('../assets/audio/math-reading-one-plus-one.mp3'),
   subtract31: require('../assets/audio/math-reading-three-minus-one.mp3'),
   multiply22: require('../assets/audio/math-reading-two-times-two.mp3'),
@@ -98,6 +98,63 @@ function DotGroup({ count, color, compact = false }: { count: number; color: str
         <View key={index} style={[compact ? styles.dotCompact : styles.dot, { backgroundColor: color }]} />
       ))}
     </View>
+  );
+}
+
+function Ball({ small = false }: { small?: boolean }) {
+  return (
+    <View style={[styles.ball, small && styles.ballSmall]}>
+      <View style={[styles.ballShine, small && styles.ballShineSmall]} />
+    </View>
+  );
+}
+
+function DraggableBall({
+  index,
+  onDrop,
+}: {
+  index: number;
+  onDrop: (pageX: number, pageY: number, resetPosition: () => void) => void;
+}) {
+  const position = useRef(new Animated.ValueXY()).current;
+  const panResponder = useMemo(() => {
+    const resetPosition = () => {
+      Animated.spring(position, {
+        friction: 6,
+        tension: 90,
+        toValue: { x: 0, y: 0 },
+        useNativeDriver: true,
+      }).start();
+    };
+
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {
+        void Haptics.selectionAsync();
+      },
+      onPanResponderMove: Animated.event([null, { dx: position.x, dy: position.y }], {
+        useNativeDriver: false,
+      }),
+      onPanResponderRelease: (_event, gesture) => {
+        onDrop(gesture.moveX, gesture.moveY, resetPosition);
+      },
+      onPanResponderTerminate: resetPosition,
+      onPanResponderTerminationRequest: () => false,
+    });
+  }, [onDrop, position]);
+
+  return (
+    <Animated.View
+      {...panResponder.panHandlers}
+      testID={index === 0 ? 'math-add-one' : `math-ball-${index}`}
+      accessible
+      accessibilityRole="button"
+      accessibilityLabel="Ball. Drag it into the basket."
+      style={[styles.draggableBall, { transform: position.getTranslateTransform() }]}
+    >
+      <Ball />
+    </Animated.View>
   );
 }
 
@@ -131,6 +188,7 @@ export default function MathScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const roundHistory = useRef<string[]>([]);
+  const basketRef = useRef<View>(null);
   const [rounds, setRounds] = useState<Round[]>(() => {
     const nextRounds = createRounds();
     roundHistory.current = nextRounds.map(roundKey);
@@ -205,13 +263,30 @@ export default function MathScreen() {
     }
   };
 
-  const addOne = () => {
+  const collectBall = () => {
     if (feedback !== 'idle' || round.type !== 'fill' || fillCount >= round.target) return;
 
     const nextCount = fillCount + 1;
     setFillCount(nextCount);
     void Haptics.selectionAsync();
     if (nextCount === round.target) finishRound();
+  };
+
+  const dropBallInBasket = (pageX: number, pageY: number, resetPosition: () => void) => {
+    if (feedback !== 'idle' || round.type !== 'fill') {
+      resetPosition();
+      return;
+    }
+
+    basketRef.current?.measureInWindow((x, y, width, height) => {
+      const isInsideBasket = pageX >= x && pageX <= x + width && pageY >= y && pageY <= y + height;
+      if (isInsideBasket) {
+        collectBall();
+      } else {
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        resetPosition();
+      }
+    });
   };
 
   const answerArithmetic = (answer: number) => {
@@ -240,7 +315,7 @@ export default function MathScreen() {
       : feedback === 'tryAgain'
         ? 'Take another look'
         : round.type === 'fill'
-          ? `Make ${round.target}`
+          ? `Put ${round.target} balls in the basket`
           : round.type === 'arithmetic'
             ? `What is ${round.first} ${round.operator} ${round.second}?`
             : getCompareQuestion(round.prompt);
@@ -352,30 +427,31 @@ export default function MathScreen() {
         )}
 
         {!isComplete && round.type === 'fill' && (
-          <View style={styles.problemArea}>
-            <View style={styles.fillRow}>
-              {Array.from({ length: round.target }).map((_, index) => {
-                const isFilled = index < fillCount;
-                return (
-                  <Pressable
-                    key={index}
-                    testID={index === fillCount ? "math-add-one" : `math-slot-${index}`}
-                    accessibilityRole="button"
-                    accessibilityLabel={isFilled ? "Filled shape" : "Empty shape, tap to fill"}
-                    disabled={feedback !== 'idle' || isFilled}
-                    onPress={addOne}
-                    style={({ pressed }) => [
-                      styles.fillSlot,
-                      isFilled && styles.fillSlotFilled,
-                      pressed && !isFilled && styles.slotPressed,
-                    ]}
-                  >
-                    {!isFilled && index === fillCount && (
-                      <Ionicons name="add" size={20} color="#CFC5B8" />
-                    )}
-                  </Pressable>
-                );
-              })}
+          <View style={[styles.problemArea, styles.fillProblemArea]}>
+            <View style={styles.fillActivity}>
+              <View
+                ref={basketRef}
+                style={styles.basket}
+                accessibilityLabel={`${fillCount} of ${round.target} balls are in the basket`}
+              >
+                <View style={styles.basketHandle} />
+                <View style={styles.basketBalls}>
+                  {Array.from({ length: fillCount }).map((_, index) => (
+                    <Ball key={`collected-${index}`} small />
+                  ))}
+                </View>
+                <View style={styles.basketStripe} />
+              </View>
+
+              <View style={styles.ballBank} accessibilityLabel={`${round.target - fillCount} balls left`}>
+                {Array.from({ length: round.target - fillCount }).map((_, index) => (
+                  <DraggableBall
+                    key={`bank-${fillCount}-${index}`}
+                    index={index}
+                    onDrop={dropBallInBasket}
+                  />
+                ))}
+              </View>
             </View>
           </View>
         )}
@@ -541,17 +617,82 @@ const styles = StyleSheet.create({
   dotGroupCompact: { gap: 6, maxWidth: 64 },
   dot: { borderRadius: 15, height: 30, width: 30 },
   dotCompact: { borderRadius: 7, height: 14, width: 14 },
-  fillRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center', maxWidth: 290 },
-  fillSlot: {
+  fillProblemArea: { marginTop: 26, minHeight: 300 },
+  fillActivity: { alignItems: 'center', gap: 34, width: '100%' },
+  basket: {
     alignItems: 'center',
-    backgroundColor: '#EFE8DE',
-    borderRadius: 17,
-    height: 34,
-    justifyContent: 'center',
-    width: 34,
+    backgroundColor: '#F6D79A',
+    borderColor: '#B56A16',
+    borderRadius: 18,
+    borderWidth: 2,
+    height: 118,
+    justifyContent: 'flex-end',
+    paddingBottom: 15,
+    paddingHorizontal: 16,
+    position: 'relative',
+    width: 222,
   },
-  fillSlotFilled: { backgroundColor: COLORS.yellow },
-  slotPressed: { opacity: 0.7, transform: [{ scale: 0.9 }] },
+  basketHandle: {
+    borderColor: '#B56A16',
+    borderRadius: 50,
+    borderWidth: 3,
+    height: 76,
+    position: 'absolute',
+    top: -28,
+    width: 130,
+  },
+  basketBalls: {
+    alignContent: 'flex-end',
+    flexDirection: 'row',
+    flexWrap: 'wrap-reverse',
+    gap: 6,
+    justifyContent: 'center',
+    minHeight: 68,
+    width: '100%',
+  },
+  basketStripe: {
+    backgroundColor: 'rgba(181,106,22,0.22)',
+    bottom: 31,
+    height: 2,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+  },
+  ballBank: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.72)',
+    borderColor: 'rgba(32,93,103,0.14)',
+    borderRadius: 24,
+    borderWidth: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    justifyContent: 'center',
+    minHeight: 92,
+    padding: 14,
+    width: 300,
+  },
+  draggableBall: { zIndex: 5 },
+  ball: {
+    backgroundColor: COLORS.coral,
+    borderColor: '#C94753',
+    borderRadius: 24,
+    borderWidth: 2,
+    height: 46,
+    position: 'relative',
+    width: 46,
+  },
+  ballSmall: { borderRadius: 15, borderWidth: 1, height: 30, width: 30 },
+  ballShine: {
+    backgroundColor: 'rgba(255,255,255,0.68)',
+    borderRadius: 5,
+    height: 10,
+    left: 8,
+    position: 'absolute',
+    top: 7,
+    width: 10,
+  },
+  ballShineSmall: { borderRadius: 3, height: 6, left: 5, top: 4, width: 6 },
   additionHint: {
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.66)',

@@ -434,3 +434,24 @@ uri = "file://artifacts/little-playroom/assets/audio/math-reading-three-minus-on
 type = "audio"
 title = "math three minus one reading voice"
 description = "Text-to-speech audio: What is three minus one? Tap the answer."
+
+[[outputs]]
+id = "jd64Poxm3PmGRTsfBLv0b"
+uri = "file://artifacts/little-playroom/assets/audio/math-reading-basket-three.mp3"
+type = "audio"
+title = "math basket three instruction"
+description = "Text-to-speech audio: Drag three balls into the basket."
+
+[[outputs]]
+id = "Fe91fpGdmIpU_Ju49vMUa"
+uri = "file://artifacts/little-playroom/assets/audio/math-reading-basket-five.mp3"
+type = "audio"
+title = "math basket five instruction"
+description = "Text-to-speech audio: Drag five balls into the basket."
+
+[[outputs]]
+id = "nIu9sc11SYSg6T4H5lWzJ"
+uri = "file://artifacts/little-playroom/assets/audio/math-reading-basket-seven.mp3"
+type = "audio"
+title = "math basket seven instruction"
+description = "Text-to-speech audio: Drag seven balls into the basket."

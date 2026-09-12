@@ -8,3 +8,9 @@ Use bundled voice clips through the app's existing audio player for child-facing
 **Why:** Bundled clips work offline, keep pronunciation and pacing consistent, and avoid native speech-package compatibility or device-voice differences. The user explicitly confirmed that a short arrival pause followed by a complete spoken instruction was a strong improvement.
 
 **How to apply:** Add clearly named prompt files alongside the existing game audio and map each fixed learning round to its clip. Use the same narrator and voice settings across learning games unless a deliberately different character voice is requested. When audio carries the instruction, let the screen settle for about one second before autoplay and speak the complete action, target, and choices—not only the target word. Keep a replay control available.
+
+After adding new bundled audio files, restart the Expo workflow so Metro rebuilds its static-asset map.
+
+**Why:** Hot reload can leave new MP3 paths unregistered and cause a web `NotSupportedError` even when the files are valid.
+
+**How to apply:** Restart once after adding or renaming bundled audio, then verify one prompt through the running app and check browser logs for media-loading errors.
