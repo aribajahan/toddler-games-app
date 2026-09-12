@@ -7,6 +7,7 @@ import { useAudioPlayer } from 'expo-audio';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 import { MemoryIllustration, type MemorySubject } from '@/components/MemoryIllustrations';
+import { useSpokenGuidance } from '@/context/SpokenGuidanceContext';
 
 type Feedback = 'idle' | 'correct' | 'tryAgain' | 'complete';
 
@@ -187,8 +188,10 @@ export default function ReadingScreen() {
   const router = useRouter();
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const { isLoaded: audioSettingLoaded, spokenGuidanceEnabled, setSpokenGuidanceEnabled } = useSpokenGuidance();
   const history = useRef<string[]>([]);
   const autoPromptTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const skipNextAutoplay = useRef(false);
   const [rounds, setRounds] = useState<Round[]>(() => {
     const nextRounds = createRounds();
     history.current = nextRounds.map(roundKey);
@@ -221,7 +224,7 @@ export default function ReadingScreen() {
     return () => clearTimeout(timer);
   }, [feedback, round, soundItemIndex]);
 
-  const playPrompt = () => {
+  const playCurrentPrompt = () => {
     if (isComplete) return;
     if (autoPromptTimer.current) {
       clearTimeout(autoPromptTimer.current);
@@ -233,8 +236,27 @@ export default function ReadingScreen() {
     promptPlayer.play();
   };
 
+  const toggleSpokenGuidance = () => {
+    const nextEnabled = !spokenGuidanceEnabled;
+    setSpokenGuidanceEnabled(nextEnabled);
+    if (nextEnabled) {
+      skipNextAutoplay.current = true;
+      playCurrentPrompt();
+    } else {
+      if (autoPromptTimer.current) {
+        clearTimeout(autoPromptTimer.current);
+        autoPromptTimer.current = null;
+      }
+      promptPlayer.pause();
+    }
+  };
+
   useEffect(() => {
-    if (isComplete) return undefined;
+    if (!audioSettingLoaded || !spokenGuidanceEnabled || isComplete) return undefined;
+    if (skipNextAutoplay.current) {
+      skipNextAutoplay.current = false;
+      return undefined;
+    }
     autoPromptTimer.current = setTimeout(() => {
       const source = promptSourceForRound(round, soundItemIndex);
       promptPlayer.replace(source);
@@ -248,7 +270,7 @@ export default function ReadingScreen() {
         autoPromptTimer.current = null;
       }
     };
-  }, [isComplete, promptPlayer, round, rounds, soundItemIndex]);
+  }, [audioSettingLoaded, isComplete, promptPlayer, round, rounds, soundItemIndex, spokenGuidanceEnabled]);
 
   const answerMatch = (word: string) => {
     if (feedback !== 'idle' || round.type !== 'match') return;
@@ -360,11 +382,12 @@ export default function ReadingScreen() {
               <Pressable
                 testID="reading-hear-prompt"
                 accessibilityRole="button"
-                accessibilityLabel="Hear the instructions"
-                onPress={playPrompt}
+                accessibilityLabel={spokenGuidanceEnabled ? 'Turn spoken instructions off' : 'Turn spoken instructions on'}
+                accessibilityState={{ checked: spokenGuidanceEnabled }}
+                onPress={toggleSpokenGuidance}
                 style={({ pressed }) => [styles.listenButton, pressed && styles.answerPressed]}
               >
-                <Ionicons name="volume-high" size={22} color={COLORS.ink} />
+                <Ionicons name={spokenGuidanceEnabled ? 'volume-high' : 'volume-mute'} size={22} color={COLORS.ink} />
               </Pressable>
             )}
           </View>

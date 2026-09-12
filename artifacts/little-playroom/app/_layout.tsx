@@ -13,6 +13,7 @@ import {
 } from '@expo-google-fonts/inter';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { SpokenGuidanceProvider } from '@/context/SpokenGuidanceContext';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -54,7 +55,9 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <GestureHandlerRootView>
             <KeyboardProvider>
-              <RootLayoutNav />
+              <SpokenGuidanceProvider>
+                <RootLayoutNav />
+              </SpokenGuidanceProvider>
             </KeyboardProvider>
           </GestureHandlerRootView>
         </QueryClientProvider>

@@ -6,6 +6,7 @@ import * as Haptics from 'expo-haptics';
 import { useAudioPlayer } from 'expo-audio';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
+import { useSpokenGuidance } from '@/context/SpokenGuidanceContext';
 
 type ComparePrompt = 'more' | 'less' | 'same';
 type ArithmeticOperator = '+' | '-' | '×';
@@ -183,12 +184,23 @@ function solveArithmetic(first: number, second: number, operator: ArithmeticOper
   return first * second;
 }
 
+function promptSourceForRound(round: Round) {
+  if (round.type === 'compare') return MATH_PROMPTS[round.prompt];
+  if (round.type === 'fill') return MATH_PROMPTS[round.target as 3 | 5 | 7];
+  if (round.operator === '+') return MATH_PROMPTS.add11;
+  if (round.operator === '-') return MATH_PROMPTS.subtract31;
+  return MATH_PROMPTS.multiply22;
+}
+
 export default function MathScreen() {
   const router = useRouter();
   const colors = useColors();
   const insets = useSafeAreaInsets();
+  const { isLoaded: audioSettingLoaded, spokenGuidanceEnabled, setSpokenGuidanceEnabled } = useSpokenGuidance();
   const roundHistory = useRef<string[]>([]);
   const basketRef = useRef<View>(null);
+  const autoPromptTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const skipNextAutoplay = useRef(false);
   const [rounds, setRounds] = useState<Round[]>(() => {
     const nextRounds = createRounds();
     roundHistory.current = nextRounds.map(roundKey);
@@ -203,22 +215,55 @@ export default function MathScreen() {
   const roundNumber = roundIndex + 1;
   const isComplete = feedback === 'complete';
 
-  const playPrompt = () => {
+  const playCurrentPrompt = () => {
     if (isComplete) return;
-    const source =
-      round.type === 'compare'
-        ? MATH_PROMPTS[round.prompt]
-        : round.type === 'fill'
-          ? MATH_PROMPTS[round.target as 3 | 5 | 7]
-          : round.operator === '+'
-            ? MATH_PROMPTS.add11
-            : round.operator === '-'
-              ? MATH_PROMPTS.subtract31
-              : MATH_PROMPTS.multiply22;
+    if (autoPromptTimer.current) {
+      clearTimeout(autoPromptTimer.current);
+      autoPromptTimer.current = null;
+    }
+    const source = promptSourceForRound(round);
     promptPlayer.replace(source);
     void promptPlayer.seekTo(0);
     promptPlayer.play();
   };
+
+  const toggleSpokenGuidance = () => {
+    const nextEnabled = !spokenGuidanceEnabled;
+    setSpokenGuidanceEnabled(nextEnabled);
+    if (nextEnabled) {
+      skipNextAutoplay.current = true;
+      playCurrentPrompt();
+    } else {
+      if (autoPromptTimer.current) {
+        clearTimeout(autoPromptTimer.current);
+        autoPromptTimer.current = null;
+      }
+      promptPlayer.pause();
+    }
+  };
+
+  useEffect(() => {
+    if (!audioSettingLoaded || !spokenGuidanceEnabled || isComplete) return undefined;
+    if (skipNextAutoplay.current) {
+      skipNextAutoplay.current = false;
+      return undefined;
+    }
+
+    autoPromptTimer.current = setTimeout(() => {
+      const source = promptSourceForRound(round);
+      promptPlayer.replace(source);
+      void promptPlayer.seekTo(0);
+      promptPlayer.play();
+      autoPromptTimer.current = null;
+    }, 1000);
+
+    return () => {
+      if (autoPromptTimer.current) {
+        clearTimeout(autoPromptTimer.current);
+        autoPromptTimer.current = null;
+      }
+    };
+  }, [audioSettingLoaded, isComplete, promptPlayer, round, rounds, spokenGuidanceEnabled]);
 
   useEffect(() => {
     if (feedback !== 'correct' && feedback !== 'tryAgain') return undefined;
@@ -376,11 +421,12 @@ export default function MathScreen() {
               <Pressable
                 testID="math-hear-prompt"
                 accessibilityRole="button"
-                accessibilityLabel="Hear the question"
-                onPress={playPrompt}
+                accessibilityLabel={spokenGuidanceEnabled ? 'Turn spoken instructions off' : 'Turn spoken instructions on'}
+                accessibilityState={{ checked: spokenGuidanceEnabled }}
+                onPress={toggleSpokenGuidance}
                 style={({ pressed }) => [styles.listenButton, pressed && styles.answerPressed]}
               >
-                <Ionicons name="volume-high" size={22} color={COLORS.ink} />
+                <Ionicons name={spokenGuidanceEnabled ? 'volume-high' : 'volume-mute'} size={22} color={COLORS.ink} />
               </Pressable>
             )}
           </View>

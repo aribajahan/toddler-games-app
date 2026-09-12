@@ -14,3 +14,9 @@ After adding new bundled audio files, restart the Expo workflow so Metro rebuild
 **Why:** Hot reload can leave new MP3 paths unregistered and cause a web `NotSupportedError` even when the files are valid.
 
 **How to apply:** Restart once after adding or renaming bundled audio, then verify one prompt through the running app and check browser logs for media-loading errors.
+
+Treat the speaker icon in learning games as one persistent, global spoken-guidance toggle rather than a replay button.
+
+**Why:** The user wants one clear preference: off means no narrated instructions in Reading or Math; on means instructions read themselves without requiring a tap each round.
+
+**How to apply:** Default narration to on. Turning it off must stop current speech and suppress future autoplay across learning games. Turning it on must read the current prompt immediately and autoplay later prompts after the arrival pause. Persist the choice across navigation and reloads. Do not use this setting to mute interactive piano notes.
