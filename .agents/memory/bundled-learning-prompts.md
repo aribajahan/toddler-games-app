@@ -7,4 +7,4 @@ Use bundled voice clips through the app's existing audio player for child-facing
 
 **Why:** Bundled clips work offline, keep pronunciation and pacing consistent, and avoid native speech-package compatibility or device-voice differences.
 
-**How to apply:** Add short, clearly named prompt files alongside the existing game audio and map each fixed learning round to its clip. Reuse the established audio-player pattern.
+**How to apply:** Add clearly named prompt files alongside the existing game audio and map each fixed learning round to its clip. When audio carries the instruction, let the screen settle for about one second before autoplay and speak the complete action, target, and choices—not only the target word. Keep a replay control available.

@@ -92,18 +92,27 @@ const COLORS = {
 };
 
 const READING_PROMPTS = {
-  cat: require('../assets/audio/reading-cat.mp3'),
-  dog: require('../assets/audio/reading-dog.mp3'),
-  fish: require('../assets/audio/reading-fish.mp3'),
-  car: require('../assets/audio/reading-car.mp3'),
-  duck: require('../assets/audio/reading-duck.mp3'),
-  ball: require('../assets/audio/reading-ball.mp3'),
-  boat: require('../assets/audio/reading-boat.mp3'),
-  fox: require('../assets/audio/reading-fox.mp3'),
-  buildCat: require('../assets/audio/reading-build-cat.mp3'),
-  buildDog: require('../assets/audio/reading-build-dog.mp3'),
-  buildFox: require('../assets/audio/reading-build-fox.mp3'),
-  buildCar: require('../assets/audio/reading-build-car.mp3'),
+  match: {
+    cat: require('../assets/audio/reading-match-cat.mp3'),
+    dog: require('../assets/audio/reading-match-dog.mp3'),
+    fish: require('../assets/audio/reading-match-fish.mp3'),
+  },
+  soundsCD: {
+    cat: require('../assets/audio/reading-sound-cat-c-d.mp3'),
+    dog: require('../assets/audio/reading-sound-dog-c-d.mp3'),
+    car: require('../assets/audio/reading-sound-car-c-d.mp3'),
+    duck: require('../assets/audio/reading-sound-duck-c-d.mp3'),
+  },
+  soundsBF: {
+    ball: require('../assets/audio/reading-sound-ball-b-f.mp3'),
+    fish: require('../assets/audio/reading-sound-fish-b-f.mp3'),
+    boat: require('../assets/audio/reading-sound-boat-b-f.mp3'),
+    fox: require('../assets/audio/reading-sound-fox-b-f.mp3'),
+  },
+  buildCat: require('../assets/audio/reading-build-cat_2.mp3'),
+  buildDog: require('../assets/audio/reading-build-dog_2.mp3'),
+  buildFox: require('../assets/audio/reading-build-fox_2.mp3'),
+  buildCar: require('../assets/audio/reading-build-car_2.mp3'),
 };
 
 function shuffle<T>(items: T[]): T[] {
@@ -146,18 +155,21 @@ function createRounds(previousKeys: string[] = []) {
 }
 
 function promptForRound(round: Round) {
-  if (round.type === 'match') return 'Listen and find it';
-  if (round.type === 'sounds') return 'Which sound comes first?';
-  return 'Build the word';
+  if (round.type === 'match') return 'Tap the picture you hear';
+  if (round.type === 'sounds') return 'Tap the first sound';
+  return 'Tap the letters in order';
 }
 
 function promptSourceForRound(round: Round, soundItemIndex: number) {
   if (round.type === 'match') {
-    return READING_PROMPTS[round.word as 'cat' | 'dog' | 'fish'];
+    return READING_PROMPTS.match[round.word as keyof typeof READING_PROMPTS.match];
   }
   if (round.type === 'sounds') {
-    const word = round.items[soundItemIndex].word as 'cat' | 'dog' | 'car' | 'duck' | 'ball' | 'fish' | 'boat' | 'fox';
-    return READING_PROMPTS[word];
+    const word = round.items[soundItemIndex].word;
+    if (round.firstSound === 'C') {
+      return READING_PROMPTS.soundsCD[word as keyof typeof READING_PROMPTS.soundsCD];
+    }
+    return READING_PROMPTS.soundsBF[word as keyof typeof READING_PROMPTS.soundsBF];
   }
   if (round.word === 'CAT') return READING_PROMPTS.buildCat;
   if (round.word === 'DOG') return READING_PROMPTS.buildDog;
@@ -170,6 +182,7 @@ export default function ReadingScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const history = useRef<string[]>([]);
+  const autoPromptTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [rounds, setRounds] = useState<Round[]>(() => {
     const nextRounds = createRounds();
     history.current = nextRounds.map(roundKey);
@@ -180,7 +193,7 @@ export default function ReadingScreen() {
   const [feedback, setFeedback] = useState<Feedback>('idle');
   const [selectedLetters, setSelectedLetters] = useState<number[]>([]);
 
-  const promptPlayer = useAudioPlayer(READING_PROMPTS.cat);
+  const promptPlayer = useAudioPlayer(READING_PROMPTS.match.cat);
 
   const round = rounds[roundIndex];
   const isComplete = feedback === 'complete';
@@ -204,6 +217,10 @@ export default function ReadingScreen() {
 
   const playPrompt = () => {
     if (isComplete) return;
+    if (autoPromptTimer.current) {
+      clearTimeout(autoPromptTimer.current);
+      autoPromptTimer.current = null;
+    }
     const source = promptSourceForRound(round, soundItemIndex);
     promptPlayer.replace(source);
     void promptPlayer.seekTo(0);
@@ -212,13 +229,19 @@ export default function ReadingScreen() {
 
   useEffect(() => {
     if (isComplete) return undefined;
-    const timer = setTimeout(() => {
+    autoPromptTimer.current = setTimeout(() => {
       const source = promptSourceForRound(round, soundItemIndex);
       promptPlayer.replace(source);
       void promptPlayer.seekTo(0);
       promptPlayer.play();
-    }, 220);
-    return () => clearTimeout(timer);
+      autoPromptTimer.current = null;
+    }, 1000);
+    return () => {
+      if (autoPromptTimer.current) {
+        clearTimeout(autoPromptTimer.current);
+        autoPromptTimer.current = null;
+      }
+    };
   }, [isComplete, promptPlayer, round, rounds, soundItemIndex]);
 
   const answerMatch = (word: string) => {

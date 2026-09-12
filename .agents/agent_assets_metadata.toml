@@ -266,3 +266,108 @@ uri = "file://artifacts/little-playroom/assets/audio/reading-build-car.mp3"
 type = "audio"
 title = "build-the-word-car"
 description = "Text-to-speech audio: Build the word car."
+
+[[outputs]]
+id = "XwceX5eKAROSJLr2V_khc"
+uri = "file://artifacts/little-playroom/assets/audio/reading-match-cat.mp3"
+type = "audio"
+title = "reading match cat instruction"
+description = "Text-to-speech audio: Tap the picture of the cat."
+
+[[outputs]]
+id = "FkeQHgieRzLKesHoMbc6V"
+uri = "file://artifacts/little-playroom/assets/audio/reading-match-dog.mp3"
+type = "audio"
+title = "reading match dog instruction"
+description = "Text-to-speech audio: Tap the picture of the dog."
+
+[[outputs]]
+id = "XPxSFXOFvXvubrsoTUq3G"
+uri = "file://artifacts/little-playroom/assets/audio/reading-match-fish.mp3"
+type = "audio"
+title = "reading match fish instruction"
+description = "Text-to-speech audio: Tap the picture of the fish."
+
+[[outputs]]
+id = "LUmWSeCLKqq5pL_0qe9uc"
+uri = "file://artifacts/little-playroom/assets/audio/reading-sound-cat-c-d.mp3"
+type = "audio"
+title = "reading sound cat instruction"
+description = "Text-to-speech audio: Cat starts with which sound, C or D?"
+
+[[outputs]]
+id = "wc24NveQVIKDbHNf4NobS"
+uri = "file://artifacts/little-playroom/assets/audio/reading-sound-dog-c-d.mp3"
+type = "audio"
+title = "reading sound dog instruction"
+description = "Text-to-speech audio: Dog starts with which sound, C or D?"
+
+[[outputs]]
+id = "z6Skn7BU0Km0Dnqn-S4w-"
+uri = "file://artifacts/little-playroom/assets/audio/reading-sound-car-c-d.mp3"
+type = "audio"
+title = "reading sound car instruction"
+description = "Text-to-speech audio: Car starts with which sound, C or D?"
+
+[[outputs]]
+id = "fKjAlafaBGnaJCrti_GyB"
+uri = "file://artifacts/little-playroom/assets/audio/reading-sound-ball-b-f.mp3"
+type = "audio"
+title = "reading sound ball instruction"
+description = "Text-to-speech audio: Ball starts with which sound, B or F?"
+
+[[outputs]]
+id = "Vjl3-X9aeyLiTosQ4ROOv"
+uri = "file://artifacts/little-playroom/assets/audio/reading-sound-fish-b-f.mp3"
+type = "audio"
+title = "reading sound fish instruction"
+description = "Text-to-speech audio: Fish starts with which sound, B or F?"
+
+[[outputs]]
+id = "F7L8t21r2BDbZppgSamOZ"
+uri = "file://artifacts/little-playroom/assets/audio/reading-sound-duck-c-d.mp3"
+type = "audio"
+title = "reading sound duck instruction"
+description = "Text-to-speech audio: Duck starts with which sound, C or D?"
+
+[[outputs]]
+id = "kOLxVCV8bRAIJaO7wi3MP"
+uri = "file://artifacts/little-playroom/assets/audio/reading-sound-fox-b-f.mp3"
+type = "audio"
+title = "reading sound fox instruction"
+description = "Text-to-speech audio: Fox starts with which sound, B or F?"
+
+[[outputs]]
+id = "ZE9Yaa4v5uI4rpca49a0-"
+uri = "file://artifacts/little-playroom/assets/audio/reading-sound-boat-b-f.mp3"
+type = "audio"
+title = "reading sound boat instruction"
+description = "Text-to-speech audio: Boat starts with which sound, B or F?"
+
+[[outputs]]
+id = "H2dPsBZ4C6yE8ZGvsEvo-"
+uri = "file://artifacts/little-playroom/assets/audio/reading-build-dog_2.mp3"
+type = "audio"
+title = "reading build dog full instruction"
+description = "Text-to-speech audio: Tap the letters in order to build the word dog."
+
+[[outputs]]
+id = "PpcKQijz41HBknbJt2XEG"
+uri = "file://artifacts/little-playroom/assets/audio/reading-build-cat_2.mp3"
+type = "audio"
+title = "reading build cat full instruction"
+description = "Text-to-speech audio: Tap the letters in order to build the word cat."
+
+[[outputs]]
+id = "FkvlUXwVXmhwgFszbmKUH"
+uri = "file://artifacts/little-playroom/assets/audio/reading-build-fox_2.mp3"
+type = "audio"
+title = "reading build fox full instruction"
+description = "Text-to-speech audio: Tap the letters in order to build the word fox."
+
+[[outputs]]
+id = "ZsGWPeGN4uFbNVO9vyFO0"
+uri = "file://artifacts/little-playroom/assets/audio/reading-build-car_2.mp3"
+type = "audio"
+title = "reading build car full instruction"
+description = "Text-to-speech audio: Tap the letters in order to build the word car."
