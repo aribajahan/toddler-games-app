@@ -9,8 +9,8 @@ Make the visible object itself the control whenever a child is choosing between 
 
 **How to apply:** Use this pattern across child-facing games when the action can be represented visually. Keep descriptive accessibility labels for assistive technology even when visible labels are removed.
 
-For early-literacy activities, do not reveal a spoken target word in the visible prompt. Present one clear classification at a time, provide replayable audio, and preserve already-correct progress after a mistake.
+For early-literacy activities, keep the visible instruction aligned with the spoken instruction. Present one clear classification at a time, provide replayable audio, and preserve already-correct progress after a mistake.
 
-**Why:** Showing the answer defeats listening practice, multi-step sorting adds avoidable interaction overhead, and erasing correct letters makes practice feel punitive.
+**Why:** Mismatched spoken and written directions create uncertainty for children and adults helping them. Multi-step sorting adds avoidable interaction overhead, and erasing correct letters makes practice feel punitive.
 
-**How to apply:** Use neutral prompts such as “Listen and find it” or “Build the word,” advance sound-sorting pictures one at a time, and let the child retry only the incorrect choice.
+**How to apply:** Write the same complete action, target, and choices that the audio speaks, or a very close equivalent. Advance sound-sorting pictures one at a time and let the child retry only the incorrect choice.

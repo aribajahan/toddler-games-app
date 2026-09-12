@@ -154,10 +154,16 @@ function createRounds(previousKeys: string[] = []) {
   return nextRounds;
 }
 
-function promptForRound(round: Round) {
-  if (round.type === 'match') return 'Tap the picture you hear';
-  if (round.type === 'sounds') return 'Tap the first sound';
-  return 'Tap the letters in order';
+function promptForRound(round: Round, soundItemIndex: number) {
+  if (round.type === 'match') {
+    return `Tap the picture of the ${round.word}.`;
+  }
+  if (round.type === 'sounds') {
+    const word = round.items[soundItemIndex].word;
+    const displayWord = `${word.charAt(0).toUpperCase()}${word.slice(1)}`;
+    return `${displayWord} starts with which sound, ${round.firstSound} or ${round.secondSound}?`;
+  }
+  return `Tap the letters in order to build the word ${round.word.toLowerCase()}.`;
 }
 
 function promptSourceForRound(round: Round, soundItemIndex: number) {
@@ -307,7 +313,7 @@ export default function ReadingScreen() {
       ? 'Nice reading!'
       : feedback === 'tryAgain'
         ? 'Try one more time'
-        : promptForRound(round);
+        : promptForRound(round, soundItemIndex);
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
@@ -516,9 +522,17 @@ const styles = StyleSheet.create({
   progressDots: { flexDirection: 'row', gap: 5 },
   progressDot: { backgroundColor: COLORS.line, borderRadius: 3, height: 6, width: 6 },
   progressDotActive: { backgroundColor: COLORS.yellow },
-  instructions: { alignItems: 'center', marginTop: 32, minHeight: 70 },
-  questionRow: { alignItems: 'center', flexDirection: 'row', gap: 10, justifyContent: 'center' },
-  question: { color: COLORS.ink, fontFamily: 'Inter_700Bold', fontSize: 25, textAlign: 'center' },
+  instructions: { alignItems: 'center', marginTop: 32, minHeight: 90 },
+  questionRow: { alignItems: 'center', flexDirection: 'row', gap: 10, justifyContent: 'center', width: '100%' },
+  question: {
+    color: COLORS.ink,
+    flexShrink: 1,
+    fontFamily: 'Inter_700Bold',
+    fontSize: 20,
+    lineHeight: 26,
+    maxWidth: 270,
+    textAlign: 'center',
+  },
   listenButton: { alignItems: 'center', backgroundColor: COLORS.yellow, borderRadius: 20, height: 40, justifyContent: 'center', width: 40 },
   helper: { color: COLORS.muted, fontFamily: 'Inter_400Regular', fontSize: 14, marginTop: 7, textAlign: 'center' },
   matchChoices: { flexDirection: 'row', flexWrap: 'wrap', gap: 16, justifyContent: 'center', marginTop: 50 },
